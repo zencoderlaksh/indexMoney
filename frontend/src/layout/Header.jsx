@@ -8,14 +8,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { IMAGES } from "@/constants/images";
 
 const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container mx-auto px-4 md:px-8 lg:px-16 flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="text-xl font-bold text-primary">
-          Index Money
+        <Link to="/" className="flex items-center gap-2">
+          <img
+            src={IMAGES.logoIcon}
+            alt="Index Money"
+            className="h-9 w-auto rounded-2xl"
+          />
+
+          <span className="text-lg font-semibold tracking-tight">
+            Index<span className="text-primary">Money</span>
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
