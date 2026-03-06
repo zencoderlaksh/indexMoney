@@ -1,15 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Star, MapPin, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, A11y } from "swiper/modules";
+import { Pagination, Autoplay, A11y } from "swiper/modules";
 
-// Swiper core styles
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-// ─── Data ──────────────────────────────────────────────────────────────────────
+// ─── Data ─────────────────────────────────────────────────────────────────────
 
 const testimonials = [
     {
@@ -62,7 +60,7 @@ const testimonials = [
     },
 ];
 
-// ─── Sub-components ────────────────────────────────────────────────────────────
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 const StarRating = ({ count = 5 }) => (
     <div className="flex items-center gap-0.5">
@@ -106,15 +104,23 @@ const TestimonialCard = ({ name, location, avatar, review, rating }) => (
     </motion.div>
 );
 
-// ─── Main Component ────────────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 const TestimonialsSection = () => {
+    const swiperRef = useRef(null);
+
     return (
-        <section className="py-20 bg-gradient-to-b from-white to-slate-50 overflow-hidden">
+        <section className="py-20 bg-transparent">
             <div className="max-w-6xl mx-auto px-6">
 
                 {/* Heading */}
-                <div className="text-center mb-12">
+                <motion.div
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.55 }}
+                    className="text-center mb-12"
+                >
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 mb-4 leading-tight">
                         What Our{" "}
                         <span className="text-teal-600">Clients Say</span>
@@ -122,55 +128,88 @@ const TestimonialsSection = () => {
                     <p className="text-slate-500 text-base md:text-lg max-w-xl mx-auto">
                         Real feedback from traders using Index Money advisory services.
                     </p>
-                </div>
+                </motion.div>
 
-                {/* Slider wrapper — extra horizontal padding to keep arrows inside */}
-                <div className="relative px-10 md:px-12">
-
-                    {/* Custom nav buttons */}
-                    <button
-                        id="tm-prev"
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm hover:border-teal-400 hover:text-teal-600 text-slate-500 transition-colors duration-200"
-                        aria-label="Previous testimonial"
-                    >
-                        <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                        id="tm-next"
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm hover:border-teal-400 hover:text-teal-600 text-slate-500 transition-colors duration-200"
-                        aria-label="Next testimonial"
-                    >
-                        <ChevronRight className="w-5 h-5" />
-                    </button>
-
+                {/* Slider */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.55, delay: 0.1 }}
+                >
                     <Swiper
-                        modules={[Navigation, Pagination, A11y]}
-                        navigation={{
-                            prevEl: "#tm-prev",
-                            nextEl: "#tm-next",
-                        }}
+                        onSwiper={(sw) => (swiperRef.current = sw)}
+                        modules={[Pagination, Autoplay, A11y]}
                         pagination={{
                             clickable: true,
                             el: "#tm-pagination",
                         }}
+                        autoplay={{
+                            delay: 3500,
+                            disableOnInteraction: false,
+                            pauseOnMouseEnter: true,
+                        }}
+                        loop={true}
                         spaceBetween={20}
                         slidesPerView={1}
                         breakpoints={{
                             640: { slidesPerView: 2 },
                             1024: { slidesPerView: 3 },
                         }}
+                        grabCursor={true}
                         className="!pb-2"
                     >
                         {testimonials.map((t, i) => (
-                            <SwiperSlide key={i} className="h-auto">
+                            <SwiperSlide key={i} className="h-auto !flex">
                                 <TestimonialCard {...t} />
                             </SwiperSlide>
                         ))}
                     </Swiper>
-                </div>
+                </motion.div>
 
-                {/* Pagination dots */}
-                <div id="tm-pagination" className="flex justify-center gap-2 mt-8 [&_.swiper-pagination-bullet]:w-2 [&_.swiper-pagination-bullet]:h-2 [&_.swiper-pagination-bullet]:rounded-full [&_.swiper-pagination-bullet]:bg-slate-300 [&_.swiper-pagination-bullet]:transition-colors [&_.swiper-pagination-bullet-active]:bg-teal-500 [&_.swiper-pagination-bullet-active]:w-5" />
+                {/* Controls row */}
+                <div className="flex items-center justify-center gap-4 mt-8">
+
+                    {/* Prev */}
+                    <motion.button
+                        aria-label="Previous testimonial"
+                        onClick={() => swiperRef.current?.slidePrev()}
+                        whileHover={{ scale: 1.1, borderColor: "#0d9488", color: "#0d9488" }}
+                        whileTap={{ scale: 0.92 }}
+                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm text-slate-500 transition-colors duration-200 hover:shadow-md"
+                    >
+                        <ChevronLeft className="w-5 h-5" />
+                    </motion.button>
+
+                    {/* Pagination dots — centered */}
+                    <div
+                        id="tm-pagination"
+                        className="
+                            flex flex-1 items-center justify-center gap-1.5
+                            [&_.swiper-pagination-bullet]:w-2
+                            [&_.swiper-pagination-bullet]:h-2
+                            [&_.swiper-pagination-bullet]:rounded-full
+                            [&_.swiper-pagination-bullet]:bg-slate-300
+                            [&_.swiper-pagination-bullet]:transition-all
+                            [&_.swiper-pagination-bullet]:duration-300
+                            [&_.swiper-pagination-bullet]:cursor-pointer
+                            [&_.swiper-pagination-bullet-active]:bg-teal-500
+                            [&_.swiper-pagination-bullet-active]:w-5
+                        "
+                    />
+
+                    {/* Next */}
+                    <motion.button
+                        aria-label="Next testimonial"
+                        onClick={() => swiperRef.current?.slideNext()}
+                        whileHover={{ scale: 1.1, borderColor: "#0d9488", color: "#0d9488" }}
+                        whileTap={{ scale: 0.92 }}
+                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm text-slate-500 transition-colors duration-200 hover:shadow-md"
+                    >
+                        <ChevronRight className="w-5 h-5" />
+                    </motion.button>
+
+                </div>
 
             </div>
         </section>

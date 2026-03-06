@@ -35,7 +35,7 @@ const features = [
 
 const Trust = () => {
     return (
-        <section className="py-20 bg-gradient-to-b from-white to-slate-50">
+        <section className="py-20 bg-transparent">
             <div className="max-w-6xl mx-auto px-6">
                 {/* Heading */}
                 <div className="text-center mb-14">

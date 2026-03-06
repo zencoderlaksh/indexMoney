@@ -30,7 +30,7 @@ const BgDecor = () => (
 
 const FinalCTASection = () => {
     return (
-        <section className="py-20 bg-gradient-to-b from-teal-50/40 to-white">
+        <section className="py-20 bg-transparent">
             <div className="max-w-4xl mx-auto px-6">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
