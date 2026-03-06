@@ -1,186 +1,177 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import React from "react";
+import { Star, MapPin, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, A11y } from "swiper/modules";
+
+// Swiper core styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+// ─── Data ──────────────────────────────────────────────────────────────────────
 
 const testimonials = [
     {
         name: "Rahul Sharma",
-        city: "Delhi",
-        initials: "RS",
-        color: "from-teal-400 to-emerald-500",
-        rating: 5,
+        location: "Mumbai, Maharashtra",
+        avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=rahul&backgroundColor=d1fae5",
         review:
-            "The trading guidance from Index Money is structured and disciplined. Clear entry and stop-loss levels help me trade with confidence.",
+            "Index Money has completely transformed the way I trade. The entry, stop-loss, and target levels are spot-on every single time. Consistent profits since day one.",
+        rating: 5,
     },
     {
         name: "Priya Mehta",
-        city: "Mumbai",
-        initials: "PM",
-        color: "from-cyan-400 to-teal-500",
-        rating: 5,
+        location: "Ahmedabad, Gujarat",
+        avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=priya&backgroundColor=ccfbf1",
         review:
-            "Extremely professional advisory service. The technical analysis is spot-on and the support team responds quickly during market hours.",
+            "Finally an advisory service that actually delivers. Real-time updates during market hours give me the confidence to execute trades without second-guessing myself.",
+        rating: 5,
     },
     {
-        name: "Arjun Verma",
-        city: "Bangalore",
-        initials: "AV",
-        color: "from-emerald-400 to-green-500",
-        rating: 5,
+        name: "Ankit Verma",
+        location: "Delhi, NCR",
+        avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=ankit&backgroundColor=d1fae5",
         review:
-            "Index Money has transformed how I approach trading. The defined SL and target system keeps emotions out of the trade completely.",
+            "The Bank Nifty plan has been incredibly accurate. Their defined SL and target system keeps my risk in check. Best investment I've made for my trading career.",
+        rating: 5,
     },
     {
         name: "Sneha Patel",
-        city: "Ahmedabad",
-        initials: "SP",
-        color: "from-teal-500 to-cyan-600",
-        rating: 5,
+        location: "Pune, Maharashtra",
+        avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=sneha&backgroundColor=ccfbf1",
         review:
-            "I've been following Index Money for 8 months and the accuracy is impressive. Transparent results, no fake calls.",
+            "What I love most is the dedicated support during market hours. Whenever I have a doubt, the team is right there. Highly recommend Index Money to every serious trader.",
+        rating: 5,
     },
     {
-        name: "Karan Singh",
-        city: "Jaipur",
-        initials: "KS",
-        color: "from-green-400 to-teal-500",
-        rating: 4,
+        name: "Vikram Singh",
+        location: "Jaipur, Rajasthan",
+        avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=vikram&backgroundColor=d1fae5",
         review:
-            "Well-researched Bank Nifty calls with clear reasoning. The real-time updates during market hours are very helpful.",
+            "I've tried many advisory services but Index Money stands apart. The disciplined approach with pre-defined levels has helped me maintain consistent profitability.",
+        rating: 5,
     },
     {
-        name: "Anita Reddy",
-        city: "Hyderabad",
-        initials: "AR",
-        color: "from-cyan-500 to-emerald-600",
-        rating: 5,
+        name: "Neha Gupta",
+        location: "Hyderabad, Telangana",
+        avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=neha&backgroundColor=ccfbf1",
         review:
-            "Trustworthy, disciplined, and professional. Index Money is the best advisory I have subscribed to in over 5 years of trading.",
+            "The Sensex Option Plan is worth every rupee. Accurate calls, timely updates, and a professional team. My portfolio has grown significantly in just 3 months.",
+        rating: 5,
     },
 ];
 
-const StarRating = ({ count }) => (
-    <div className="flex gap-0.5">
-        {Array.from({ length: 5 }).map((_, i) => (
-            <Star
-                key={i}
-                className={`w-4 h-4 ${i < count ? "text-amber-400 fill-amber-400" : "text-slate-200 fill-slate-200"}`}
-            />
+// ─── Sub-components ────────────────────────────────────────────────────────────
+
+const StarRating = ({ count = 5 }) => (
+    <div className="flex items-center gap-0.5">
+        {Array.from({ length: count }).map((_, i) => (
+            <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" strokeWidth={0} />
         ))}
     </div>
 );
 
-const TestimonialCard = ({ name, city, initials, color, rating, review }) => (
+const TestimonialCard = ({ name, location, avatar, review, rating }) => (
     <motion.div
-        whileHover={{ y: -6, boxShadow: "0 22px 44px rgba(0,0,0,0.10)" }}
+        whileHover={{ y: -5, boxShadow: "0 20px 44px rgba(0,0,0,0.09)" }}
         transition={{ type: "spring", stiffness: 280, damping: 20 }}
-        className="bg-white rounded-2xl shadow-md border border-slate-100 hover:border-teal-200 transition-colors duration-300 p-6 flex flex-col gap-4 relative overflow-hidden"
+        className="relative bg-white rounded-2xl shadow-md border border-slate-100 p-6 flex flex-col gap-4 cursor-default hover:border-teal-200 transition-colors duration-300 h-full"
     >
-        {/* Decorative quote icon */}
-        <Quote className="absolute top-4 right-5 w-10 h-10 text-teal-50 fill-teal-50 stroke-none" />
+        {/* Watermark quote */}
+        <div className="absolute top-4 right-4 opacity-[0.07]">
+            <Quote className="w-10 h-10 text-teal-600" />
+        </div>
 
-        {/* Stars */}
         <StarRating count={rating} />
 
-        {/* Review text */}
-        <p className="text-slate-600 text-sm leading-relaxed flex-1">
+        <p className="text-slate-500 text-sm leading-relaxed flex-1">
             "{review}"
         </p>
 
-        {/* Divider */}
-        <div className="border-t border-slate-100" />
-
-        {/* Client info */}
-        <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${color} flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-sm`}>
-                {initials}
-            </div>
-            <div>
-                <p className="text-slate-800 font-semibold text-sm">{name}</p>
-                <p className="text-slate-400 text-xs">{city}</p>
+        <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
+            <img
+                src={avatar}
+                alt={name}
+                className="w-11 h-11 rounded-full object-cover bg-teal-50 border-2 border-teal-100 shrink-0"
+            />
+            <div className="min-w-0">
+                <p className="text-slate-800 font-semibold text-sm truncate">{name}</p>
+                <p className="text-teal-500 text-xs flex items-center gap-1 truncate">
+                    <MapPin className="w-3 h-3 shrink-0" />
+                    {location}
+                </p>
             </div>
         </div>
     </motion.div>
 );
 
-const CARDS_PER_PAGE_DESKTOP = 3;
-const CARDS_PER_PAGE_MOBILE = 1;
+// ─── Main Component ────────────────────────────────────────────────────────────
 
 const TestimonialsSection = () => {
-    const [page, setPage] = useState(0);
-    const totalPages = Math.ceil(testimonials.length / CARDS_PER_PAGE_DESKTOP);
-
-    const prev = () => setPage((p) => (p - 1 + totalPages) % totalPages);
-    const next = () => setPage((p) => (p + 1) % totalPages);
-
-    const visible = testimonials.slice(
-        page * CARDS_PER_PAGE_DESKTOP,
-        page * CARDS_PER_PAGE_DESKTOP + CARDS_PER_PAGE_DESKTOP
-    );
-
     return (
-        <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
+        <section className="py-20 bg-gradient-to-b from-white to-slate-50 overflow-hidden">
             <div className="max-w-6xl mx-auto px-6">
+
                 {/* Heading */}
-                <div className="text-center mb-14">
+                <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 mb-4 leading-tight">
-                        What Our <span className="text-teal-600">Clients Say</span>
+                        What Our{" "}
+                        <span className="text-teal-600">Clients Say</span>
                     </h2>
                     <p className="text-slate-500 text-base md:text-lg max-w-xl mx-auto">
-                        Real feedback from traders who use Index Money advisory services.
+                        Real feedback from traders using Index Money advisory services.
                     </p>
                 </div>
 
-                {/* Cards */}
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={page}
-                        initial={{ opacity: 0, x: 40 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -40 }}
-                        transition={{ duration: 0.35, ease: "easeInOut" }}
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                {/* Slider wrapper — extra horizontal padding to keep arrows inside */}
+                <div className="relative px-10 md:px-12">
+
+                    {/* Custom nav buttons */}
+                    <button
+                        id="tm-prev"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm hover:border-teal-400 hover:text-teal-600 text-slate-500 transition-colors duration-200"
+                        aria-label="Previous testimonial"
                     >
-                        {visible.map((t, i) => (
-                            <TestimonialCard key={t.name + i} {...t} />
+                        <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                        id="tm-next"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm hover:border-teal-400 hover:text-teal-600 text-slate-500 transition-colors duration-200"
+                        aria-label="Next testimonial"
+                    >
+                        <ChevronRight className="w-5 h-5" />
+                    </button>
+
+                    <Swiper
+                        modules={[Navigation, Pagination, A11y]}
+                        navigation={{
+                            prevEl: "#tm-prev",
+                            nextEl: "#tm-next",
+                        }}
+                        pagination={{
+                            clickable: true,
+                            el: "#tm-pagination",
+                        }}
+                        spaceBetween={20}
+                        slidesPerView={1}
+                        breakpoints={{
+                            640: { slidesPerView: 2 },
+                            1024: { slidesPerView: 3 },
+                        }}
+                        className="!pb-2"
+                    >
+                        {testimonials.map((t, i) => (
+                            <SwiperSlide key={i} className="h-auto">
+                                <TestimonialCard {...t} />
+                            </SwiperSlide>
                         ))}
-                    </motion.div>
-                </AnimatePresence>
-
-                {/* Pagination controls */}
-                <div className="flex items-center justify-center gap-4 mt-10">
-                    <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={prev}
-                        className="w-10 h-10 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:border-teal-400 hover:text-teal-600 transition-colors"
-                    >
-                        <ChevronLeft className="w-4 h-4" />
-                    </motion.button>
-
-                    {/* Dots */}
-                    <div className="flex gap-2">
-                        {Array.from({ length: totalPages }).map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => setPage(i)}
-                                className={`rounded-full transition-all duration-300 ${i === page
-                                        ? "bg-teal-500 w-6 h-2.5"
-                                        : "bg-slate-200 w-2.5 h-2.5"
-                                    }`}
-                            />
-                        ))}
-                    </div>
-
-                    <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={next}
-                        className="w-10 h-10 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:border-teal-400 hover:text-teal-600 transition-colors"
-                    >
-                        <ChevronRight className="w-4 h-4" />
-                    </motion.button>
+                    </Swiper>
                 </div>
+
+                {/* Pagination dots */}
+                <div id="tm-pagination" className="flex justify-center gap-2 mt-8 [&_.swiper-pagination-bullet]:w-2 [&_.swiper-pagination-bullet]:h-2 [&_.swiper-pagination-bullet]:rounded-full [&_.swiper-pagination-bullet]:bg-slate-300 [&_.swiper-pagination-bullet]:transition-colors [&_.swiper-pagination-bullet-active]:bg-teal-500 [&_.swiper-pagination-bullet-active]:w-5" />
+
             </div>
         </section>
     );
