@@ -208,8 +208,8 @@ const TradeCard = ({ date, index, callType, entry, sl, target, result, points, c
 
 const PerformanceSection = () => {
     return (
-        <section className="py-20 bg-transparent">
-            <div className="max-w-6xl mx-auto px-6">
+        <section className="py-16 md:py-20 bg-transparent">
+            <div className="max-w-6xl mx-auto px-5 md:px-6">
 
                 {/* Heading */}
                 <motion.div
