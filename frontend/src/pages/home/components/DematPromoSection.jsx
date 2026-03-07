@@ -69,8 +69,8 @@ const MiniChart = () => (
 
 const DematPromoSection = () => {
     return (
-        <section className="py-20 bg-transparent">
-            <div className="max-w-6xl mx-auto px-6">
+        <section className="py-16 md:py-20 bg-transparent overflow-hidden">
+            <div className="max-w-6xl mx-auto px-5 md:px-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
                     {/* ── Left: Content ── */}
@@ -85,7 +85,7 @@ const DematPromoSection = () => {
                             <span className="inline-block text-xs font-semibold text-teal-600 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full mb-3 tracking-wide uppercase">
                                 Free to Start
                             </span>
-                            <h2 className="text-3xl md:text-4xl lg:text-[2.6rem] font-bold text-slate-800 leading-tight">
+                            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-bold text-slate-800 leading-tight">
                                 Open Free Demat Account &amp;{" "}
                                 <span className="text-teal-600">Get Special Benefits</span>
                             </h2>
@@ -115,7 +115,7 @@ const DematPromoSection = () => {
                             <motion.button
                                 whileHover={{ scale: 1.04, boxShadow: "0 8px 30px rgba(13,148,136,0.30)" }}
                                 whileTap={{ scale: 0.97 }}
-                                className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm px-7 py-3.5 rounded-xl transition-colors duration-200 shadow-md"
+                                className="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm px-7 py-3.5 rounded-xl transition-colors duration-200 shadow-md w-full sm:w-auto"
                             >
                                 Open Demat Account
                                 <ArrowRight className="w-4 h-4" />
@@ -129,7 +129,7 @@ const DematPromoSection = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true, amount: 0.3 }}
                         transition={{ duration: 0.55, ease: "easeOut" }}
-                        className="relative"
+                        className="relative mt-4 lg:mt-0"
                     >
                         <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 flex flex-col gap-6">
                             {/* Top stat row */}
@@ -160,7 +160,7 @@ const DematPromoSection = () => {
                             </div>
 
                             {/* Floating badge */}
-                            <div className="absolute -top-4 -right-4 bg-teal-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                            <div className="absolute top-3 right-3 bg-teal-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
                                 ₹0 Opening Fee
                             </div>
                         </div>

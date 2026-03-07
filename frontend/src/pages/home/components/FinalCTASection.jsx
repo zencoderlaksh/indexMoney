@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, ArrowRight, PlayCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 /* Decorative background chart lines */
 const BgDecor = () => (
@@ -29,15 +30,16 @@ const BgDecor = () => (
 );
 
 const FinalCTASection = () => {
+    const navigate = useNavigate();
     return (
-        <section className="py-20 bg-transparent">
-            <div className="max-w-4xl mx-auto px-6">
+        <section className="py-14 md:py-20 bg-transparent">
+            <div className="max-w-4xl mx-auto px-5 md:px-6">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.4 }}
                     transition={{ duration: 0.55, ease: "easeOut" }}
-                    className="relative bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-700 rounded-3xl px-8 py-14 md:px-16 text-center shadow-2xl overflow-hidden"
+                    className="relative bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-700 rounded-3xl px-6 py-12 md:px-16 md:py-14 text-center shadow-2xl overflow-hidden"
                 >
                     <BgDecor />
 
@@ -47,7 +49,7 @@ const FinalCTASection = () => {
                     </div>
 
                     {/* Heading */}
-                    <h2 className="relative text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-5">
+                    <h2 className="relative text-2xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-5">
                         Start Trading With<br className="hidden sm:block" />{" "}
                         Professional Guidance Today
                     </h2>
@@ -61,6 +63,7 @@ const FinalCTASection = () => {
                     {/* Buttons */}
                     <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4">
                         <motion.button
+                            onClick={() => navigate("/signup")}
                             whileHover={{ scale: 1.05, boxShadow: "0 10px 32px rgba(0,0,0,0.25)" }}
                             whileTap={{ scale: 0.97 }}
                             className="inline-flex items-center gap-2 bg-white text-teal-700 font-semibold text-sm px-8 py-3.5 rounded-xl shadow-md transition-colors duration-200 hover:bg-teal-50 w-full sm:w-auto justify-center"

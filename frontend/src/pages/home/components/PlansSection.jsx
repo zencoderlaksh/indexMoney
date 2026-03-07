@@ -5,6 +5,7 @@ import {
     ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay, A11y } from "swiper/modules";
 
@@ -22,36 +23,42 @@ const plans = [
         title: "Nifty Option Plan",
         subtitle: "Perfect for Nifty traders",
         icon: TrendingUp,
+        iconName: "TrendingUp",
         price: "₹1,999",
     },
     {
         title: "Bank Nifty Option Plan",
         subtitle: "Our most requested service",
         icon: BarChart2,
+        iconName: "BarChart2",
         price: "₹2,499",
     },
     {
         title: "Sensex Option Plan",
         subtitle: "Sensex-focused strategies",
         icon: Activity,
+        iconName: "Activity",
         price: "₹1,999",
     },
     {
         title: "Nifty Futures Plan",
         subtitle: "High-conviction futures calls",
         icon: TrendingUp,
+        iconName: "TrendingUp",
         price: "₹3,499",
     },
     {
         title: "Bank Nifty Futures Plan",
         subtitle: "Premium futures advisory",
         icon: BarChart2,
+        iconName: "BarChart2",
         price: "₹3,999",
     },
     {
         title: "Sensex Futures Plan",
         subtitle: "Sensex F&O edge",
         icon: Activity,
+        iconName: "Activity",
         price: "₹3,499",
     },
 ];
@@ -65,16 +72,17 @@ const features = [
 
 // ─── Plan Card ────────────────────────────────────────────────────────────────
 
-const PlanCard = ({ title, subtitle, icon: Icon, price, onHover, onLeave }) => {
+const PlanCard = ({ title, subtitle, icon: Icon, iconName, price, onHover, onLeave }) => {
     const [hovered, setHovered] = useState(false);
+    const navigate = useNavigate();
 
-    const handleEnter = () => {
-        setHovered(true);
-        onHover?.();
-    };
-    const handleLeave = () => {
-        setHovered(false);
-        onLeave?.();
+    const handleEnter = () => { setHovered(true); onHover?.(); };
+    const handleLeave = () => { setHovered(false); onLeave?.(); };
+
+    const handleSubscribe = () => {
+        navigate("/subscribe", {
+            state: { plan: { title, price, iconName } },
+        });
     };
 
     return (
@@ -189,6 +197,7 @@ const PlanCard = ({ title, subtitle, icon: Icon, price, onHover, onLeave }) => {
             {/* CTA */}
             <motion.button
                 whileTap={{ scale: 0.96 }}
+                onClick={handleSubscribe}
                 className="w-full py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
                 style={
                     hovered
@@ -222,11 +231,12 @@ const PlansSection = () => {
 
     return (
         <section
-            className="relative py-20 bg-transparent"
+            id="plans-section"
+            className="relative py-16 md:py-20 bg-transparent"
         >
 
 
-            <div className="relative max-w-6xl mx-auto px-6">
+            <div className="relative max-w-6xl mx-auto px-5 md:px-6">
 
                 {/* ── Heading ── */}
                 <motion.div
