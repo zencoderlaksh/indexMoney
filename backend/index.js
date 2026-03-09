@@ -1,12 +1,18 @@
 const express = require("express");
+const config = require("./config");
+const requestLogger = require("./middlewares/logger");
+const routes = require("./routes");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = config.port;
 
 // Middleware
 app.use(express.json());
+app.use(requestLogger);
 
 // Routes
+app.use("/api", routes);
+
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to indexMoney API" });
 });
