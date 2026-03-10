@@ -27,4 +27,9 @@ export default defineConfig({
     // older Android Chrome versions and produce a blank white screen.
     target: "es2015",
   },
+  server: {
+    proxy: {
+      "/api": "http://localhost:3000",
+    },
+  },
 });

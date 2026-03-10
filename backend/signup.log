@@ -1,0 +1,2 @@
+
+[2026-03-10T04:47:09.472Z] signup request: {"fullName":"John","email":"john@gmail.com","mobileNumber":"9829488722","city":"Rajsamand","password":"12345678","confirmPassword":"12345678"}

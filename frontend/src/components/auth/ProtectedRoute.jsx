@@ -1,5 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
 
 /**
  * ProtectedRoute
@@ -7,8 +8,8 @@ import { Navigate } from "react-router-dom";
  * Usage:  <ProtectedRoute><DashboardPage /></ProtectedRoute>
  */
 const ProtectedRoute = ({ children }) => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    return isLoggedIn ? children : <Navigate to="/login" replace />;
+  const user = useAuthStore((state) => state.user);
+  return user ? children : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;

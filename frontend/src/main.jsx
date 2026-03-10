@@ -3,7 +3,11 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./appRoutes/AppRoutes";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { useAuthStore } from "./stores/authStore";
 import "./index.css";
+
+// Load persisted auth state from localStorage before app render
+useAuthStore.getState().loadFromStorage();
 
 try {
   const rootEl = document.getElementById("root");
