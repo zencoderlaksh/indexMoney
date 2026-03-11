@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "../layout/Layout";
 import Home from "../pages/home/Home";
+import About from "../pages/about/About";
 import SignupPage from "../pages/auth/SignupPage";
 import LoginPage from "../pages/auth/LoginPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
@@ -13,10 +14,11 @@ const AppRoutes = () => {
       {/* Public — with header/footer */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
       </Route>
 
       {/* Subscription checkout — no header, standalone page */}
-      <Route path="/subscribe" element={<SubscriptionPage />} />
+      <Route path="/pay-now" element={<SubscriptionPage />} />
 
       {/* Auth pages — no header/footer */}
       <Route path="/signup" element={<SignupPage />} />
