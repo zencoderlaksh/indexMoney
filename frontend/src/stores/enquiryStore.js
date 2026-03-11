@@ -1,7 +1,8 @@
 import { create } from "zustand";
 
-const API_BASE =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+// Use a relative path by default so the app works behind HTTPS hosts (Netlify/Render/etc).
+// Override via VITE_API_BASE_URL in your environment for custom backends.
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 export const useEnquiryStore = create((set) => ({
   isSubmitting: false,
