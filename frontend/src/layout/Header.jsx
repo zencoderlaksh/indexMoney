@@ -20,7 +20,10 @@ const moreLinks = [
 
 /* ── Animated underline nav link ────────────────────────────────────────────── */
 const NavLink = ({ to, children }) => (
-  <Link to={to} className="relative group py-1 text-slate-600 hover:text-[#105F68] transition-colors duration-200 text-sm font-medium">
+  <Link
+    to={to}
+    className="relative group py-1 text-slate-600 hover:text-[#105F68] transition-colors duration-200 text-sm font-medium"
+  >
     {children}
     <motion.span
       className="absolute bottom-0 left-0 h-[2px] rounded-full bg-[#63C1BB] origin-left"
@@ -51,15 +54,18 @@ const Header = () => {
         initial={{ y: -16, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.45, ease: "easeOut" }}
-        className={`sticky top-0 z-50 w-full transition-all duration-300 ${scrolled
-            ? "backdrop-blur-lg bg-white/90 shadow-md shadow-slate-200/60 border-b border-slate-100"
-            : "backdrop-blur-md bg-white/70 border-b border-slate-100/50"
-          }`}
+        className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+          scrolled ?
+            "backdrop-blur-lg bg-white/90 shadow-md shadow-slate-200/60 border-b border-slate-100"
+          : "backdrop-blur-md bg-white/70 border-b border-slate-100/50"
+        }`}
       >
         <div className="max-w-7xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
-
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 group flex-shrink-0"
+          >
             <motion.span
               whileHover={{ rotate: 12, scale: 1.1 }}
               transition={{ type: "spring", stiffness: 380, damping: 22 }}
@@ -74,7 +80,11 @@ const Header = () => {
 
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-6">
-            {navLinks.map((l) => <NavLink key={l.to} to={l.to}>{l.label}</NavLink>)}
+            {navLinks.map((l) => (
+              <NavLink key={l.to} to={l.to}>
+                {l.label}
+              </NavLink>
+            ))}
 
             {/* More dropdown */}
             <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
@@ -82,7 +92,10 @@ const Header = () => {
                 onMouseEnter={() => setMoreOpen(true)}
                 className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-[#105F68] transition-colors duration-200 py-1"
               >
-                More <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${moreOpen ? "rotate-180" : ""}`} />
+                More{" "}
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${moreOpen ? "rotate-180" : ""}`}
+                />
               </button>
               <AnimatePresence>
                 {moreOpen && (
@@ -118,12 +131,15 @@ const Header = () => {
               Open Free Demat
             </motion.button>
             <motion.button
-              onClick={() => navigate("/signup")}
-              whileHover={{ scale: 1.04, boxShadow: "0 6px 20px rgba(58,146,149,0.35)" }}
+              onClick={() => navigate("/partner-with-us")}
+              whileHover={{
+                scale: 1.04,
+                boxShadow: "0 6px 20px rgba(58,146,149,0.35)",
+              }}
               whileTap={{ scale: 0.97 }}
               className="flex items-center gap-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#3A9295] to-[#105F68] px-4 py-2 rounded-xl shadow-sm transition-all duration-200"
             >
-              Start Free Trial <ArrowRight className="w-3.5 h-3.5" />
+              Partner with us <ArrowRight className="w-3.5 h-3.5" />
             </motion.button>
           </div>
 
@@ -163,7 +179,9 @@ const Header = () => {
               className="fixed right-0 top-0 bottom-0 z-50 w-72 bg-white shadow-xl flex flex-col"
             >
               <div className="flex items-center justify-between px-5 h-16 border-b border-slate-100">
-                <span className="font-bold text-slate-800">Index<span className="text-[#3A9295]">Money</span></span>
+                <span className="font-bold text-slate-800">
+                  Index<span className="text-[#3A9295]">Money</span>
+                </span>
                 <button
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"
@@ -188,10 +206,13 @@ const Header = () => {
                   Open Free Demat
                 </button>
                 <button
-                  onClick={() => { navigate("/signup"); setMobileOpen(false); }}
+                  onClick={() => {
+                    navigate("/partner-with-us");
+                    setMobileOpen(false);
+                  }}
                   className="w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#3A9295] to-[#105F68] rounded-xl"
                 >
-                  Start Free Trial
+                  Partner with us
                 </button>
               </div>
             </motion.div>

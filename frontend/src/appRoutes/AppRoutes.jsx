@@ -7,6 +7,9 @@ import LoginPage from "../pages/auth/LoginPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import SubscriptionPage from "../pages/subscription/SubscriptionPage";
+import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
+import Disclaimer from "../pages/legal/Disclaimer";
+import TermsAndConditions from "../pages/legal/TermsAndConditions";
 
 const AppRoutes = () => {
   return (
@@ -15,6 +18,9 @@ const AppRoutes = () => {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/disclaimer" element={<Disclaimer />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
       </Route>
 
       {/* Subscription checkout — no header, standalone page */}

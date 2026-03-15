@@ -30,12 +30,11 @@ const Footer = () => {
 
           {/* Plans */}
           <div>
-            <h3 className="font-semibold mb-3">Plans</h3>
+            <h3 className="font-semibold mb-3">Legal</h3>
             <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <Link to="#">Nifty Option Plan</Link>
-              <Link to="#">Bank Nifty Option Plan</Link>
-              <Link to="#">Sensex Option Plan</Link>
-              <Link to="#">Futures Trading Plans</Link>
+              <Link to="/privacy-policy">Privacy Policy</Link>
+              <Link to="/disclaimer">Disclaimer</Link>
+              <Link to="/terms-and-conditions">Terms & Conditions</Link>
             </div>
           </div>
 

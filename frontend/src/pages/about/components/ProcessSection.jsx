@@ -67,34 +67,55 @@ const ProcessSection = () => {
         ))}
       </div>
 
-      <div className="mt-14 rounded-2xl border border-[#C8E6E2] bg-[#E7F7F5]/50 p-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-900">
-              Why traders trust Index Money
-            </h3>
-            <p className="mt-2 text-sm text-slate-600">
-              Trust is built through consistency and discipline — not marketing
-              promises.
-            </p>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-3">
-            {[
-              "Strategy-Based Trading",
-              "Transparent Communication",
-              "No Unrealistic Profit Claims",
-              "Dedicated Support System",
-            ].map((item) => (
-              <span
-                key={item}
-                className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-[#105F68] shadow-sm"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
+      <section className="mt-14">
+        <div className="mb-8 max-w-3xl">
+          <h3 className="text-3xl font-extrabold text-slate-900">
+            Why traders trust Index Money
+          </h3>
+          <p className="mt-3 text-base text-slate-600">
+            Trust comes from transparent trade plans, accountable performance,
+            and responsive support.
+          </p>
         </div>
-      </div>
+
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-2">
+          {[
+            {
+              title: "Strategy-Based Trading",
+              description:
+                "Data-driven trade plans built on index structure and risk-managed entries.",
+            },
+            {
+              title: "Transparent Communication",
+              description:
+                "Trade updates and alerts are shared in real-time with clear reasoning.",
+            },
+            {
+              title: "No Unrealistic Claims",
+              description:
+                "We focus on repeatable process performance, not shortcuts or hype.",
+            },
+            {
+              title: "Dedicated Support",
+              description:
+                "Live assistance and strategy reviews to keep traders aligned and confident.",
+            },
+          ].map((item) => (
+            <article
+              key={item.title}
+              className="rounded-2xl border border-[#B9E3DD] bg-gradient-to-br from-[#E7F7F5] via-[#CAEDF0] to-white p-5 shadow-lg transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl"
+            >
+              <div className="mb-3 inline-flex items-center justify-center rounded-full bg-[#63C1BB]/15 p-3 text-[#105F68]">
+                <Zap className="h-5 w-5" />
+              </div>
+              <h4 className="text-lg font-semibold text-slate-900">
+                {item.title}
+              </h4>
+              <p className="mt-2 text-sm text-slate-600">{item.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
     </section>
   );
 };

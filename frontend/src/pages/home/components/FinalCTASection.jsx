@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, ArrowRight, PlayCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 /* Decorative background chart lines */
 const BgDecor = () => (
@@ -30,7 +29,6 @@ const BgDecor = () => (
 );
 
 const FinalCTASection = () => {
-    const navigate = useNavigate();
     return (
         <section className="py-14 md:py-20 bg-transparent">
             <div className="max-w-4xl mx-auto px-5 md:px-6">
@@ -63,22 +61,23 @@ const FinalCTASection = () => {
                     {/* Buttons */}
                     <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4">
                         <motion.button
-                            onClick={() => navigate("/signup")}
+                            onClick={() => window.open("https://webinar.example.com", "_blank")}
                             whileHover={{ scale: 1.05, boxShadow: "0 10px 32px rgba(0,0,0,0.25)" }}
                             whileTap={{ scale: 0.97 }}
                             className="inline-flex items-center gap-2 bg-white text-teal-700 font-semibold text-sm px-8 py-3.5 rounded-xl shadow-md transition-colors duration-200 hover:bg-teal-50 w-full sm:w-auto justify-center"
                         >
-                            Get Started Now
+                            Join Live Webinar
                             <ArrowRight className="w-4 h-4" />
                         </motion.button>
 
                         <motion.button
+                            onClick={() => window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank")}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.97 }}
                             className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm px-8 py-3.5 rounded-xl transition-colors duration-200 w-full sm:w-auto justify-center"
                         >
                             <PlayCircle className="w-4 h-4" />
-                            Join Free Trial
+                            Watch a Demo
                         </motion.button>
                     </div>
 

@@ -121,7 +121,7 @@ const Hero = () => {
             transition={{ duration: 0.55, delay: 0.1 }}
           >
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] font-extrabold text-slate-900 leading-[1.08] tracking-tight">
-              Trade Smarter.
+              Invest with clarity.
               <br />
               <span
                 className="bg-clip-text text-transparent"
@@ -129,7 +129,7 @@ const Hero = () => {
                   backgroundImage: "linear-gradient(135deg, #3A9295, #105F68)",
                 }}
               >
-                Grow Faster.
+                Build confidence.
               </span>
             </h1>
           </motion.div>
@@ -190,12 +190,12 @@ const Hero = () => {
             </motion.button>
 
             <motion.button
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/webinar")}
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
               className="flex items-center justify-center gap-2 text-[#105F68] font-bold text-sm px-7 py-3.5 rounded-xl border-2 border-[#9ED5D1] hover:border-[#63C1BB] hover:bg-[#C8E6E2]/30 transition-all duration-200"
             >
-              Start Free Trial
+              Webinar
             </motion.button>
           </motion.div>
         </div>
@@ -210,7 +210,7 @@ const Hero = () => {
           <div className="relative bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl shadow-slate-200/60 border border-white p-6">
             <div className="mb-4">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
-                Enquiry Form
+                Free Trial
               </p>
               <p className="text-2xl font-extrabold text-slate-800 mt-0.5">
                 Get in touch
@@ -290,6 +290,34 @@ const Hero = () => {
                 <FieldError message={errors.phone?.message} />
               </div>
 
+              {/* Plan selection */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                  Choose your plan
+                </label>
+                <select
+                  {...register("planType")}
+                  className={`${inputBase} ${errors.planType ? inputError : inputNormal}`}
+                >
+                  <option value="">Select plan</option>
+                  <option value="Bank Nifty Options Plan">
+                    Bank Nifty Options Plan
+                  </option>
+                  <option value="Sensex Option plan">Sensex Option plan</option>
+                  <option value="Nifty Futures Plan">Nifty Futures Plan</option>
+                  <option value="Bank Nifty Futures Plan">
+                    Bank Nifty Futures Plan
+                  </option>
+                  <option value="Sensex futures plan">
+                    Sensex futures plan
+                  </option>
+                  <option value="Nifty option plan">Nifty option plan</option>
+                  <option value="Unlisted">Unlisted</option>
+                  <option value="Demat account">Demat account</option>
+                </select>
+                <FieldError message={errors.planType?.message} />
+              </div>
+
               {/* Agree policy */}
               <label className="flex items-start gap-2 text-sm text-slate-600">
                 <input
@@ -338,7 +366,7 @@ const Hero = () => {
                     Sending…
                   </span>
                 : <>
-                    Send enquiry <ArrowRight className="w-4 h-4" />
+                    Send Free Trial Request <ArrowRight className="w-4 h-4" />
                   </>
                 }
               </motion.button>

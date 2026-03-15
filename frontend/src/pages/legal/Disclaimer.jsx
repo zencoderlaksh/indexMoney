@@ -1,0 +1,14 @@
+import React from "react";
+
+const Disclaimer = () => {
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-4">Disclaimer</h1>
+      <p className="mb-4">
+        This is a placeholder for the Disclaimer page.
+      </p>
+    </div>
+  );
+};
+
+export default Disclaimer;
