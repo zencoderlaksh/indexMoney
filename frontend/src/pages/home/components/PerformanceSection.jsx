@@ -403,7 +403,10 @@ const PerformanceSection = () => {
   );
 
   return (
-    <section className="py-16 md:py-20 bg-transparent">
+    <section
+      id="performance-section"
+      className="py-16 md:py-20 bg-transparent"
+    >
       <div className="max-w-6xl mx-auto px-5 md:px-6">
         {/* Heading */}
         <motion.div

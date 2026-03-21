@@ -3,7 +3,6 @@ import HeroSection from "./components/HeroSection";
 import WhoWeAreSection from "./components/WhoWeAreSection";
 import MissionVisionSection from "./components/MissionVisionSection";
 import ProcessSection from "./components/ProcessSection";
-import PlansSection from "./components/PlansSection";
 import HowItWorksSection from "./components/HowItWorksSection";
 import FAQSection from "./components/FAQSection";
 import Disclaimer from "./components/Disclaimer";
@@ -16,7 +15,6 @@ const About = () => {
         <WhoWeAreSection />
         <MissionVisionSection />
         <ProcessSection />
-        <PlansSection />
         <HowItWorksSection />
         <FAQSection />
         <Disclaimer />

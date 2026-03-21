@@ -6,6 +6,7 @@ import { TrendingUp, Menu, X, ChevronDown, ArrowRight } from "lucide-react";
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "About Us", to: "/about" },
+  { label: "Unlisted Shares", to: "/unlisted-shares" },
   { label: "Services", to: "/services" },
   { label: "Past Performance", to: "/performance" },
   { label: "Pay Now", to: "/pay-now" },

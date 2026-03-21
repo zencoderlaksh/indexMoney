@@ -7,58 +7,66 @@ import {
   Zap,
   Shield,
   Clock,
+  Flame,
+  ArrowRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-// ─── Brand palette (mirrors index.css tokens) ─────────────────────────────────
-// im-50  → #C8E6E2   im-100 → #9ED5D1
-// im-300 → #63C1BB   im-600 → #3A9295   im-900 → #105F68
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
 const plans = [
   {
     title: "Nifty Option Plan",
-    subtitle: "Perfect for Nifty traders",
+    subtitle: "Best for Nifty traders",
     icon: TrendingUp,
     iconName: "TrendingUp",
-    price: "₹1,999",
+    oldPrice: "\u20B94,499",
+    price: "\u20B91,999",
+    popular: false,
   },
   {
     title: "Bank Nifty Option Plan",
     subtitle: "Our most requested service",
     icon: BarChart2,
     iconName: "BarChart2",
-    price: "₹2,499",
+    oldPrice: "\u20B94,999",
+    price: "\u20B92,499",
+    popular: true,
   },
   {
     title: "Sensex Option Plan",
-    subtitle: "Sensex-focused strategies",
+    subtitle: "Fast-moving intraday opportunities",
     icon: Activity,
     iconName: "Activity",
-    price: "₹1,999",
+    oldPrice: "\u20B94,499",
+    price: "\u20B91,999",
+    popular: false,
   },
   {
     title: "Nifty Futures Plan",
     subtitle: "High-conviction futures calls",
     icon: TrendingUp,
     iconName: "TrendingUp",
-    price: "₹3,499",
+    oldPrice: "\u20B96,999",
+    price: "\u20B93,499",
+    popular: false,
   },
   {
     title: "Bank Nifty Futures Plan",
     subtitle: "Premium futures advisory",
     icon: BarChart2,
     iconName: "BarChart2",
-    price: "₹3,999",
+    oldPrice: "\u20B97,499",
+    price: "\u20B93,999",
+    popular: false,
   },
   {
     title: "Sensex Futures Plan",
     subtitle: "Sensex F&O edge",
     icon: Activity,
     iconName: "Activity",
-    price: "₹3,499",
+    oldPrice: "\u20B96,999",
+    price: "\u20B93,499",
+    popular: false,
   },
 ];
 
@@ -69,27 +77,33 @@ const features = [
   { icon: CheckCircle2, text: "Trade management guidance" },
 ];
 
-// ─── Plan Card ────────────────────────────────────────────────────────────────
+const trustPoints = [
+  "Instant Access",
+  "No Hidden Charges",
+  "WhatsApp Support",
+];
 
 const PlanCard = ({
   title,
   subtitle,
   icon: Icon,
   iconName,
+  oldPrice,
   price,
+  popular,
   isSelected,
   onSelect,
 }) => {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
 
-  const active = hovered || isSelected;
+  const active = hovered || isSelected || popular;
 
   const handleEnter = () => setHovered(true);
   const handleLeave = () => setHovered(false);
 
   const handleSubscribe = () => {
-    navigate("/subscribe", {
+    navigate("/pay-now", {
       state: { plan: { title, price, iconName } },
     });
   };
@@ -99,13 +113,19 @@ const PlanCard = ({
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
       onClick={() => onSelect?.(title)}
-      animate={active ? { y: -10, scale: 1.02 } : { y: 0, scale: 1 }}
+      animate={
+        active ?
+          { y: -10, scale: popular ? 1.04 : 1.02 }
+        : { y: 0, scale: 1 }
+      }
       transition={{ type: "spring", stiffness: 300, damping: 22 }}
       style={
         active ?
           {
             background: "linear-gradient(135deg, #63C1BB, #3A9295)",
-            boxShadow: "0 24px 52px rgba(99,193,187,0.40)",
+            boxShadow: popular ?
+              "0 28px 60px rgba(58,146,149,0.34)"
+            : "0 24px 52px rgba(99,193,187,0.40)",
             borderColor: "transparent",
           }
         : {
@@ -114,9 +134,17 @@ const PlanCard = ({
             borderColor: "#C8E6E2",
           }
       }
-      className="relative rounded-2xl border flex flex-col p-6 gap-5 cursor-pointer h-full transition-colors duration-300"
+      className="relative flex h-full cursor-pointer flex-col gap-5 rounded-2xl border p-6 transition-colors duration-300"
     >
-      {/* Icon + Title */}
+      {popular && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[#105F68] px-3 py-1 text-xs font-bold text-white shadow-lg">
+            <Flame className="h-3.5 w-3.5" />
+            Most Popular
+          </span>
+        </div>
+      )}
+
       <div className="flex items-center gap-3">
         <motion.div
           animate={
@@ -125,32 +153,31 @@ const PlanCard = ({
             : { backgroundColor: "#C8E6E2" }
           }
           transition={{ duration: 0.25 }}
-          className="p-2.5 rounded-xl flex-shrink-0"
+          className="flex-shrink-0 rounded-xl p-2.5"
         >
           <Icon
-            className="w-5 h-5 transition-colors duration-300"
-            style={{ color: hovered ? "#ffffff" : "#105F68" }}
+            className="h-5 w-5 transition-colors duration-300"
+            style={{ color: active ? "#ffffff" : "#105F68" }}
             strokeWidth={2}
           />
         </motion.div>
 
         <div>
           <h3
-            className="font-bold text-base leading-snug transition-colors duration-300"
+            className="text-base font-bold leading-snug transition-colors duration-300"
             style={{ color: active ? "#ffffff" : "#105F68" }}
           >
             {title}
           </h3>
           <p
-            className="text-xs mt-0.5 transition-colors duration-300"
-            style={{ color: active ? "rgba(255,255,255,0.70)" : "#3A9295" }}
+            className="mt-0.5 text-xs transition-colors duration-300"
+            style={{ color: active ? "rgba(255,255,255,0.78)" : "#3A9295" }}
           >
             {subtitle}
           </p>
         </div>
       </div>
 
-      {/* Divider */}
       <div
         className="h-px transition-colors duration-300"
         style={{
@@ -158,25 +185,24 @@ const PlanCard = ({
         }}
       />
 
-      {/* Features */}
-      <ul className="flex flex-col gap-2.5 flex-1">
-        {features.map(({ icon: FIcon, text }, i) => (
-          <li key={i} className="flex items-center gap-2.5">
+      <ul className="flex flex-1 flex-col gap-2.5">
+        {features.map(({ icon: FIcon, text }) => (
+          <li key={text} className="flex items-center gap-2.5">
             <span
-              className="flex items-center justify-center w-5 h-5 rounded-full flex-shrink-0 transition-colors duration-300"
+              className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full transition-colors duration-300"
               style={{
                 backgroundColor: active ? "rgba(255,255,255,0.20)" : "#C8E6E2",
               }}
             >
               <FIcon
-                className="w-3 h-3 transition-colors duration-300"
+                className="h-3 w-3 transition-colors duration-300"
                 style={{ color: active ? "#ffffff" : "#3A9295" }}
                 strokeWidth={2.5}
               />
             </span>
             <span
               className="text-sm transition-colors duration-300"
-              style={{ color: active ? "rgba(255,255,255,0.90)" : "#105F68" }}
+              style={{ color: active ? "rgba(255,255,255,0.92)" : "#105F68" }}
             >
               {text}
             </span>
@@ -184,29 +210,38 @@ const PlanCard = ({
         ))}
       </ul>
 
-      {/* Price */}
-      <div className="flex items-baseline gap-1">
-        <span
-          className="text-2xl font-extrabold tracking-tight transition-colors duration-300"
-          style={{ color: active ? "#ffffff" : "#105F68" }}
+      <div>
+        <div className="flex items-end gap-2">
+          <span
+            className="text-sm font-semibold line-through transition-colors duration-300"
+            style={{ color: active ? "rgba(255,255,255,0.65)" : "#6B7280" }}
+          >
+            {oldPrice}
+          </span>
+          <span
+            className="text-3xl font-extrabold tracking-tight transition-colors duration-300"
+            style={{ color: active ? "#ffffff" : "#105F68" }}
+          >
+            {price}
+          </span>
+        </div>
+        <div
+          className="mt-1 text-xs font-semibold transition-colors duration-300"
+          style={{ color: active ? "#FDE68A" : "#B45309" }}
         >
-          {price}
-        </span>
-        <span
-          className="text-sm transition-colors duration-300"
-          style={{ color: active ? "rgba(255,255,255,0.60)" : "#3A9295" }}
-        >
-          / month
-        </span>
+          ⏳ Limited Time Offer
+        </div>
       </div>
 
-      {/* CTA */}
       <motion.button
         whileTap={{ scale: 0.96 }}
-        onClick={handleSubscribe}
-        className="w-full py-2.5 rounded-xl text-sm font-bold transition-all duration-300"
+        onClick={(event) => {
+          event.stopPropagation();
+          handleSubscribe();
+        }}
+        className="w-full rounded-xl py-2.5 text-sm font-bold transition-all duration-300"
         style={
-          hovered ?
+          active ?
             {
               backgroundColor: "#ffffff",
               color: "#105F68",
@@ -218,37 +253,56 @@ const PlanCard = ({
             }
         }
       >
-        Subscribe Now
+        🚀 Get Instant Access
       </motion.button>
+
+      <div
+        className="flex flex-col gap-1.5 text-xs font-medium transition-colors duration-300"
+        style={{ color: active ? "rgba(255,255,255,0.92)" : "#105F68" }}
+      >
+        {trustPoints.map((point) => (
+          <div key={point} className="flex items-center gap-2">
+            <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+            <span>{point}</span>
+          </div>
+        ))}
+      </div>
+
+      <div
+        className="rounded-xl px-3 py-2 text-center text-xs font-semibold transition-colors duration-300"
+        style={{
+          backgroundColor: active ? "rgba(255,255,255,0.12)" : "#F3FAF8",
+          color: active ? "#FDE68A" : "#105F68",
+        }}
+      >
+        ⏳ Offer valid till today
+      </div>
     </motion.div>
   );
 };
 
-// ─── Section ──────────────────────────────────────────────────────────────────
-
 const PlansSection = () => {
-  const [selectedPlan, setSelectedPlan] = useState(plans[0]?.title ?? "");
+  const [selectedPlan, setSelectedPlan] = useState("Bank Nifty Option Plan");
 
   return (
     <section
       id="plans-section"
-      className="relative py-16 md:py-20 bg-transparent"
+      className="relative bg-transparent py-16 md:py-20"
     >
-      <div className="relative max-w-6xl mx-auto px-5 md:px-6">
-        {/* ── Heading ── */}
+      <div className="relative mx-auto max-w-6xl px-5 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55 }}
-          className="text-center mb-14"
+          className="mb-14 text-center"
         >
           <motion.span
             initial={{ opacity: 0, scale: 0.85 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="inline-block mb-3 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest border"
+            className="mb-3 inline-block rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
             style={{
               backgroundColor: "#C8E6E2",
               color: "#105F68",
@@ -259,27 +313,27 @@ const PlansSection = () => {
           </motion.span>
 
           <h2
-            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight"
+            className="mb-4 text-3xl font-bold leading-tight md:text-4xl lg:text-5xl"
             style={{ color: "#105F68" }}
           >
-            Choose Your <span style={{ color: "#3A9295" }}>Trading Plan</span>
+            Start Earning with Our{" "}
+            <span style={{ color: "#3A9295" }}>Trading Plans 🚀</span>
           </h2>
           <p
-            className="text-base md:text-lg max-w-2xl mx-auto"
+            className="mx-auto max-w-2xl text-base md:text-lg"
             style={{ color: "#3A9295" }}
           >
-            Professional index and F&amp;O advisory services designed for
-            disciplined traders.
+            Get real-time Nifty, BankNifty & Sensex calls with proper entry, SL
+            & targets.
           </p>
         </motion.div>
 
-        {/* ── Static grid • 2 rows x 3 cols (responsive) ── */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
           {plans.map((plan) => (
             <PlanCard
@@ -291,9 +345,8 @@ const PlansSection = () => {
           ))}
         </motion.div>
 
-        <div className="mt-5 text-center text-sm font-medium text-[#105F68]">
-          Selected plan:{" "}
-          <span className="font-bold">{selectedPlan || "None"}</span>
+        <div className="mt-6 text-center text-sm font-semibold text-[#105F68]">
+          ⏳ Offer valid till today
         </div>
       </div>
     </section>

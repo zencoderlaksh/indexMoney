@@ -22,6 +22,7 @@ const Footer = () => {
             <div className="flex flex-col gap-2 text-sm text-muted-foreground">
               <Link to="/">Home</Link>
               <Link to="/about">About Us</Link>
+              <Link to="/unlisted-shares">Unlisted Shares</Link>
               <Link to="/services">Services</Link>
               <Link to="/performance">Past Performance</Link>
               <Link to="/contact">Contact Us</Link>

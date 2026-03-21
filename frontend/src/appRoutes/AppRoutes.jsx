@@ -10,6 +10,9 @@ import SubscriptionPage from "../pages/subscription/SubscriptionPage";
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
 import Disclaimer from "../pages/legal/Disclaimer";
 import TermsAndConditions from "../pages/legal/TermsAndConditions";
+import ContactPage from "../pages/contact/ContactPage";
+import UnlistedSharesPage from "../pages/unlistedShares/UnlistedSharesPage";
+import ServicesPage from "../pages/services/ServicesPage";
 
 const AppRoutes = () => {
   return (
@@ -18,6 +21,9 @@ const AppRoutes = () => {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/unlisted-shares" element={<UnlistedSharesPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
