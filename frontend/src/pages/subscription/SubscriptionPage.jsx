@@ -243,12 +243,14 @@ const SubscriptionPage = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!user) {
-      navigate("/login", { replace: true });
-    }
-  }, [user, navigate]);
+  // Testing phase:
+  // Keep checkout accessible without forcing login for now.
+  // Re-enable this guard later when payment flow testing is complete.
+  // useEffect(() => {
+  //   if (!user) {
+  //     navigate("/login", { replace: true });
+  //   }
+  // }, [user, navigate]);
 
   // Plan from router state, with sensible fallback
   const plan = location.state?.plan ?? {
