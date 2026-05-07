@@ -8,4 +8,5 @@ module.exports = {
   // JWT secrets + expiry
   jwtSecret: process.env.JWT_SECRET || "indexmoney-secret",
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
+  adminEmail: (process.env.ADMIN_EMAIL || "").trim().toLowerCase(),
 };

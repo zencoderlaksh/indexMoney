@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, Menu, X, ChevronDown, ArrowRight } from "lucide-react";
+import { useAuthStore } from "../stores/authStore";
 
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "About Us", to: "/about" },
   { label: "Unlisted Shares", to: "/unlisted-shares" },
   { label: "Services", to: "/services" },
-  { label: "Past Performance", to: "/performance" },
+  { label: "Past Performance", to: "/past-performance" },
   { label: "Pay Now", to: "/pay-now" },
   { label: "Contact", to: "/contact" },
 ];
@@ -42,12 +43,23 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.token);
+  const logout = useAuthStore((state) => state.logout);
+  const isLoggedIn = Boolean(user && token);
+  const isAdmin = Boolean(user?.isAdmin);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 18);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    setMobileOpen(false);
+    navigate("/", { replace: true });
+  };
 
   return (
     <>
@@ -124,24 +136,52 @@ const Header = () => {
 
           {/* CTA buttons — desktop */}
           <div className="hidden lg:flex items-center gap-3">
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              className="text-sm font-semibold text-[#105F68] border border-[#9ED5D1] hover:border-[#63C1BB] hover:bg-[#C8E6E2]/30 px-4 py-2 rounded-xl transition-colors duration-200"
-            >
-              Open Free Demat
-            </motion.button>
-            <motion.button
-              onClick={() => navigate("/partner-with-us")}
-              whileHover={{
-                scale: 1.04,
-                boxShadow: "0 6px 20px rgba(58,146,149,0.35)",
-              }}
-              whileTap={{ scale: 0.97 }}
-              className="flex items-center gap-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#3A9295] to-[#105F68] px-4 py-2 rounded-xl shadow-sm transition-all duration-200"
-            >
-              Partner with us <ArrowRight className="w-3.5 h-3.5" />
-            </motion.button>
+            {isLoggedIn ? (
+              <>
+                {isAdmin ? (
+                  <motion.button
+                    onClick={() => navigate("/dashboard")}
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="text-sm font-semibold text-[#105F68] border border-[#9ED5D1] hover:border-[#63C1BB] hover:bg-[#C8E6E2]/30 px-4 py-2 rounded-xl transition-colors duration-200"
+                  >
+                    Admin Dashboard
+                  </motion.button>
+                ) : null}
+                <motion.button
+                  onClick={handleLogout}
+                  whileHover={{
+                    scale: 1.04,
+                    boxShadow: "0 6px 20px rgba(58,146,149,0.2)",
+                  }}
+                  whileTap={{ scale: 0.97 }}
+                  className="flex items-center gap-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#3A9295] to-[#105F68] px-4 py-2 rounded-xl shadow-sm transition-all duration-200"
+                >
+                  Logout <ArrowRight className="w-3.5 h-3.5" />
+                </motion.button>
+              </>
+            ) : (
+              <>
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="text-sm font-semibold text-[#105F68] border border-[#9ED5D1] hover:border-[#63C1BB] hover:bg-[#C8E6E2]/30 px-4 py-2 rounded-xl transition-colors duration-200"
+                >
+                  Open Free Demat
+                </motion.button>
+                <motion.button
+                  onClick={() => navigate("/partner-with-us")}
+                  whileHover={{
+                    scale: 1.04,
+                    boxShadow: "0 6px 20px rgba(58,146,149,0.35)",
+                  }}
+                  whileTap={{ scale: 0.97 }}
+                  className="flex items-center gap-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#3A9295] to-[#105F68] px-4 py-2 rounded-xl shadow-sm transition-all duration-200"
+                >
+                  Partner with us <ArrowRight className="w-3.5 h-3.5" />
+                </motion.button>
+              </>
+            )}
           </div>
 
           {/* Mobile hamburger */}
@@ -203,18 +243,42 @@ const Header = () => {
                 ))}
               </nav>
               <div className="p-4 border-t border-slate-100 flex flex-col gap-3">
-                <button className="w-full py-2.5 text-sm font-semibold text-[#105F68] border border-[#9ED5D1] rounded-xl hover:bg-[#C8E6E2]/30 transition-colors duration-200">
-                  Open Free Demat
-                </button>
-                <button
-                  onClick={() => {
-                    navigate("/partner-with-us");
-                    setMobileOpen(false);
-                  }}
-                  className="w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#3A9295] to-[#105F68] rounded-xl"
-                >
-                  Partner with us
-                </button>
+                {isLoggedIn ? (
+                  <>
+                    {isAdmin ? (
+                      <button
+                        onClick={() => {
+                          navigate("/dashboard");
+                          setMobileOpen(false);
+                        }}
+                        className="w-full py-2.5 text-sm font-semibold text-[#105F68] border border-[#9ED5D1] rounded-xl hover:bg-[#C8E6E2]/30 transition-colors duration-200"
+                      >
+                        Admin Dashboard
+                      </button>
+                    ) : null}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#3A9295] to-[#105F68] rounded-xl"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button className="w-full py-2.5 text-sm font-semibold text-[#105F68] border border-[#9ED5D1] rounded-xl hover:bg-[#C8E6E2]/30 transition-colors duration-200">
+                      Open Free Demat
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigate("/partner-with-us");
+                        setMobileOpen(false);
+                      }}
+                      className="w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#3A9295] to-[#105F68] rounded-xl"
+                    >
+                      Partner with us
+                    </button>
+                  </>
+                )}
               </div>
             </motion.div>
           </>

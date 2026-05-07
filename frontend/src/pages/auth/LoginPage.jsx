@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, TrendingUp, CheckCircle2 } from "lucide-react";
 import LoginForm from "../../components/auth/LoginForm";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
 
 /* ── Background decoration ─────────────────────────────────────────────────── */
 const BgDecor = () => (
@@ -31,6 +32,8 @@ const BgDecor = () => (
 const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const user = useAuthStore((state) => state.user);
+    const token = useAuthStore((state) => state.token);
 
     // Success msg passed via router state (from future flows if needed)
     const [successMsg, setSuccessMsg] = useState(location.state?.successMsg || "");
@@ -39,6 +42,11 @@ const LoginPage = () => {
         const t = setTimeout(() => setSuccessMsg(""), 4000);
         return () => clearTimeout(t);
     }, [successMsg]);
+
+    useEffect(() => {
+        if (!user || !token) return;
+        navigate(user.isAdmin ? "/dashboard" : "/", { replace: true });
+    }, [user, token, navigate]);
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10">

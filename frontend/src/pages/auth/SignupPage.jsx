@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ShieldCheck, TrendingUp, CheckCircle2, Circle } from "lucide-react";
 import SignupForm from "../../components/auth/SignupForm";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
 
 /* ── Background decoration ─────────────────────────────────────────────────── */
 const BgDecor = () => (
@@ -92,10 +93,16 @@ const ProgressSteps = ({ current = 0 }) => (
 /* ── SignupPage ─────────────────────────────────────────────────────────────── */
 const SignupPage = () => {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.token);
 
-  const handleSuccess = () => {
-    // Redirect straight to dashboard after successful signup
-    navigate("/dashboard", { replace: true });
+  React.useEffect(() => {
+    if (!user || !token) return;
+    navigate(user.isAdmin ? "/dashboard" : "/", { replace: true });
+  }, [user, token, navigate]);
+
+  const handleSuccess = (user) => {
+    navigate(user?.isAdmin ? "/dashboard" : "/", { replace: true });
   };
 
   return (

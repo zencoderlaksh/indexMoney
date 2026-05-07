@@ -4,3 +4,7 @@
 [2026-03-10T07:55:02.847Z] signup request: {"fullName":"Rohan Sharma","email":"rohan@gmail.com","mobileNumber":"7789463247","city":"Jaipur","password":"12345678","confirmPassword":"12345678"}
 
 [2026-03-10T09:48:23.888Z] signup request: {"fullName":"shruti","email":"shruti@gmail.com","mobileNumber":"7894564123","city":"Ajmer","password":"12345678","confirmPassword":"12345678"}
+
+[2026-04-01T05:40:05.213Z] signup request: {"fullName":"Raju","email":"raju@gmail.com","mobileNumber":"8854888165","city":"RAJSAMAND","password":"12345678","confirmPassword":"12345678"}
+
+[2026-04-12T04:11:44.124Z] signup request: {"fullName":"Laksh","email":"laksh@gmail.com","mobileNumber":"8854888165","city":"RAJSAMAND","password":"12345678","confirmPassword":"12345678"}

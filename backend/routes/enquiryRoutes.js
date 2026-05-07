@@ -3,6 +3,7 @@ const {
   createEnquiry,
   listEnquiries,
 } = require("../controllers/enquiryController");
+const { requireAdmin } = require("../middlewares/auth");
 
 const router = express.Router();
 
@@ -10,6 +11,6 @@ const router = express.Router();
 router.post("/", createEnquiry);
 
 // List all enquiries (admin / internal use)
-router.get("/", listEnquiries);
+router.get("/", requireAdmin, listEnquiries);
 
 module.exports = router;

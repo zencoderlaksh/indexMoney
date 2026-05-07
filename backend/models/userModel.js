@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     mobileNumber: { type: String, required: true, trim: true },
     city: { type: String, required: true, trim: true },
+    isAdmin: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

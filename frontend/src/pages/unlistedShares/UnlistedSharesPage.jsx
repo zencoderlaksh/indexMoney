@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
   BadgeIndianRupee,
-  BriefcaseBusiness,
   Building2,
   CheckCircle2,
   ClipboardCheck,
@@ -16,8 +15,9 @@ import {
   ShieldAlert,
   Sparkles,
   TrendingUp,
-  Wallet,
 } from "lucide-react";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 const bulletPoints = [
   "Pre-IPO Companies",
@@ -52,25 +52,25 @@ const serviceCards = [
   },
 ];
 
-const opportunities = [
+const fallbackOpportunities = [
   {
     company: "ABC Ltd",
     sector: "Fintech",
-    price: "₹850",
+    price: "Rs850",
     minimumInvestment: "100 Shares",
     status: "Available",
   },
   {
     company: "XYZ Pvt Ltd",
     sector: "Technology",
-    price: "₹1200",
+    price: "Rs1200",
     minimumInvestment: "50 Shares",
     status: "Limited",
   },
   {
     company: "Prime Infra Tech",
     sector: "Infrastructure",
-    price: "₹640",
+    price: "Rs640",
     minimumInvestment: "150 Shares",
     status: "Available",
   },
@@ -95,34 +95,101 @@ const UnlistedSharesPage = () => {
     investmentAmount: "",
     message: "",
   });
+  const [opportunities, setOpportunities] = useState(fallbackOpportunities);
+  const [sheetMeta, setSheetMeta] = useState({
+    title: "Indicative Opportunities Snapshot",
+    sourceFileName: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState({
+    kind: "",
+    text: "",
+  });
 
   const whatsappLink = "https://wa.me/919876543210";
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadUnlistedOpportunities = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/unlisted/opportunities`, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = await response.json();
+        const latestUpload = payload?.data;
+
+        if (latestUpload?.opportunities?.length) {
+          setOpportunities(latestUpload.opportunities);
+          setSheetMeta({
+            title:
+              latestUpload.title?.trim() || "Indicative Opportunities Snapshot",
+            sourceFileName: latestUpload.sourceFileName || "",
+          });
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          setOpportunities(fallbackOpportunities);
+        }
+      }
+    };
+
+    loadUnlistedOpportunities();
+
+    return () => controller.abort();
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setSubmitStatus({ kind: "", text: "" });
 
-    const subject = encodeURIComponent(
-      `Unlisted Shares Inquiry - ${form.interestedCompany || "General"}`,
-    );
-    const body = encodeURIComponent(
-      [
-        `Full Name: ${form.fullName}`,
-        `Mobile Number: ${form.mobileNumber}`,
-        `Email: ${form.email}`,
-        `Interested Company: ${form.interestedCompany}`,
-        `Investment Amount: ${form.investmentAmount}`,
-        "",
-        "Message:",
-        form.message,
-      ].join("\n"),
-    );
+    try {
+      setIsSubmitting(true);
 
-    window.location.href = `mailto:support@indexmoney.com?subject=${subject}&body=${body}`;
+      const response = await fetch(`${API_BASE}/unlisted/inquiries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload?.error || "Unable to submit inquiry");
+      }
+
+      setForm({
+        fullName: "",
+        mobileNumber: "",
+        email: "",
+        interestedCompany: "",
+        investmentAmount: "",
+        message: "",
+      });
+      setSubmitStatus({
+        kind: "success",
+        text:
+          payload?.message ||
+          "Inquiry submitted successfully. Our team will get back to you soon.",
+      });
+    } catch (error) {
+      setSubmitStatus({
+        kind: "error",
+        text: error.message || "Unable to submit inquiry",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -147,7 +214,7 @@ const UnlistedSharesPage = () => {
             transition={{ duration: 0.48, delay: 0.08 }}
             className="mt-5 text-4xl font-extrabold leading-tight text-slate-800 md:text-5xl lg:text-6xl"
           >
-            Invest in Unlisted &{" "}
+            Invest in Unlisted and{" "}
             <span
               className="bg-clip-text text-transparent"
               style={{
@@ -164,7 +231,7 @@ const UnlistedSharesPage = () => {
             transition={{ duration: 0.45, delay: 0.14 }}
             className="mx-auto mt-5 max-w-3xl text-lg leading-relaxed text-slate-600"
           >
-            Private Market Investment Assistance & Facilitation
+            Private Market Investment Assistance and Facilitation
           </motion.p>
 
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -181,6 +248,65 @@ const UnlistedSharesPage = () => {
             >
               Contact Now
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative px-5 pb-4 md:px-8">
+        <div className="mx-auto max-w-6xl overflow-hidden rounded-[30px] border border-[#CBE7E1] bg-white/90 shadow-[0_14px_38px_rgba(16,95,104,0.08)] backdrop-blur-sm">
+          <div className="border-b border-slate-100 px-6 py-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
+              Available Opportunities
+            </p>
+            <h2 className="mt-2 text-2xl font-bold text-slate-800">
+              {sheetMeta.title}
+            </h2>
+            {sheetMeta.sourceFileName ? (
+              <p className="mt-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
+                Source file: {sheetMeta.sourceFileName}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left">
+              <thead className="bg-[#F4FBF9] text-xs uppercase tracking-[0.16em] text-slate-500">
+                <tr>
+                  <th className="px-6 py-4 font-semibold">Company</th>
+                  <th className="px-6 py-4 font-semibold">Sector</th>
+                  <th className="px-6 py-4 font-semibold">Indicative Price*</th>
+                  <th className="px-6 py-4 font-semibold">Minimum Investment</th>
+                  <th className="px-6 py-4 font-semibold">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+                {opportunities.map((item) => (
+                  <tr key={`${item.company}-${item.sector}`} className="hover:bg-[#FBFEFD]">
+                    <td className="px-6 py-4 font-semibold text-slate-800">
+                      {item.company}
+                    </td>
+                    <td className="px-6 py-4">{item.sector}</td>
+                    <td className="px-6 py-4">{item.price}</td>
+                    <td className="px-6 py-4">{item.minimumInvestment}</td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          item.status === "Available"
+                            ? "bg-emerald-50 text-emerald-600"
+                            : "bg-amber-50 text-amber-700"
+                        }`}
+                      >
+                        {item.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="border-t border-slate-100 px-6 py-4 text-sm text-slate-500">
+            *Prices are indicative and will be updated from the backend upload.
           </div>
         </div>
       </section>
@@ -298,60 +424,6 @@ const UnlistedSharesPage = () => {
       </section>
 
       <section className="relative px-5 py-8 md:px-8">
-        <div className="mx-auto max-w-6xl overflow-hidden rounded-[30px] border border-[#CBE7E1] bg-white/90 shadow-[0_14px_38px_rgba(16,95,104,0.08)] backdrop-blur-sm">
-          <div className="border-b border-slate-100 px-6 py-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
-              Available Opportunities
-            </p>
-            <h2 className="mt-2 text-2xl font-bold text-slate-800">
-              Indicative Opportunities Snapshot
-            </h2>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left">
-              <thead className="bg-[#F4FBF9] text-xs uppercase tracking-[0.16em] text-slate-500">
-                <tr>
-                  <th className="px-6 py-4 font-semibold">Company</th>
-                  <th className="px-6 py-4 font-semibold">Sector</th>
-                  <th className="px-6 py-4 font-semibold">Indicative Price*</th>
-                  <th className="px-6 py-4 font-semibold">Minimum Investment</th>
-                  <th className="px-6 py-4 font-semibold">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
-                {opportunities.map((item) => (
-                  <tr key={item.company} className="hover:bg-[#FBFEFD]">
-                    <td className="px-6 py-4 font-semibold text-slate-800">
-                      {item.company}
-                    </td>
-                    <td className="px-6 py-4">{item.sector}</td>
-                    <td className="px-6 py-4">{item.price}</td>
-                    <td className="px-6 py-4">{item.minimumInvestment}</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                          item.status === "Available"
-                            ? "bg-emerald-50 text-emerald-600"
-                            : "bg-amber-50 text-amber-700"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="border-t border-slate-100 px-6 py-4 text-sm text-slate-500">
-            *Prices are indicative and subject to market availability.
-          </div>
-        </div>
-      </section>
-
-      <section className="relative px-5 py-8 md:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
@@ -384,10 +456,7 @@ const UnlistedSharesPage = () => {
         </div>
       </section>
 
-      <section
-        id="unlisted-inquiry-form"
-        className="relative px-5 py-8 md:px-8"
-      >
+      <section id="unlisted-inquiry-form" className="relative px-5 py-8 md:px-8">
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_320px]">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -406,6 +475,18 @@ const UnlistedSharesPage = () => {
               Share your requirement and our team will respond with available
               options, indicative pricing, and next steps.
             </p>
+
+            {submitStatus.text ? (
+              <div
+                className={`mt-5 rounded-2xl border px-4 py-3 text-sm ${
+                  submitStatus.kind === "success"
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                    : "border-amber-200 bg-amber-50 text-amber-700"
+                }`}
+              >
+                {submitStatus.text}
+              </div>
+            ) : null}
 
             <form onSubmit={handleSubmit} className="mt-7 space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
@@ -469,15 +550,16 @@ const UnlistedSharesPage = () => {
 
               <button
                 type="submit"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(58,146,149,0.22)]"
+                disabled={isSubmitting}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(58,146,149,0.22)] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 Submit Inquiry
                 <Send className="h-4 w-4" />
               </button>
 
               <p className="text-xs text-slate-500">
-                This opens your email app with the inquiry pre-filled, so we
-                keep the process lightweight and avoid extra backend load.
+                This inquiry is now saved separately in MongoDB for the Unlisted
+                Shares page.
               </p>
             </form>
           </motion.div>

@@ -8,6 +8,7 @@ import "./index.css";
 
 // Load persisted auth state from localStorage before app render
 useAuthStore.getState().loadFromStorage();
+useAuthStore.getState().refreshProfile();
 
 try {
   const rootEl = document.getElementById("root");

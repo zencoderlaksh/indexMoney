@@ -30,7 +30,12 @@ const createEnquiry = async (req, res, next) => {
 const listEnquiries = async (req, res, next) => {
   try {
     const enquiries = await Enquiry.find().sort({ createdAt: -1 });
-    res.json({ data: enquiries });
+    res.json({
+      data: enquiries,
+      meta: {
+        total: enquiries.length,
+      },
+    });
   } catch (err) {
     next(err);
   }

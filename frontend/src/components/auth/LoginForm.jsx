@@ -39,7 +39,7 @@ const LoginForm = ({ onSuccess }) => {
     try {
       const user = await login(data);
       if (onSuccess) onSuccess(user);
-      navigate("/dashboard", { replace: true });
+      navigate(user?.isAdmin ? "/dashboard" : "/", { replace: true });
     } catch {
       // error is handled in the store
     }

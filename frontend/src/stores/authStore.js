@@ -17,9 +17,53 @@ export const useAuthStore = create((set) => ({
     try {
       const user = JSON.parse(localStorage.getItem(STORAGE_USER_KEY) || "null");
       const token = localStorage.getItem(STORAGE_TOKEN_KEY);
+      if (!user || !token) {
+        localStorage.removeItem(STORAGE_USER_KEY);
+        localStorage.removeItem(STORAGE_TOKEN_KEY);
+        set({ user: null, token: null });
+        return;
+      }
+
       set({ user, token });
     } catch {
+      localStorage.removeItem(STORAGE_USER_KEY);
+      localStorage.removeItem(STORAGE_TOKEN_KEY);
       set({ user: null, token: null });
+    }
+  },
+
+  refreshProfile: async () => {
+    const token = localStorage.getItem(STORAGE_TOKEN_KEY);
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/users/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Unable to refresh session");
+      }
+
+      const json = await res.json().catch(() => ({}));
+      const user = json?.data;
+
+      if (!user) {
+        throw new Error("Missing user profile");
+      }
+
+      localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
+      set({ user, token });
+      return user;
+    } catch {
+      localStorage.removeItem(STORAGE_USER_KEY);
+      localStorage.removeItem(STORAGE_TOKEN_KEY);
+      set({ user: null, token: null });
+      return null;
     }
   },
 

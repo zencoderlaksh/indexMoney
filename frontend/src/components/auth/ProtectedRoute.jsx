@@ -7,9 +7,19 @@ import { useAuthStore } from "../../stores/authStore";
  * Wraps a component and redirects to /login if the user is not logged in.
  * Usage:  <ProtectedRoute><DashboardPage /></ProtectedRoute>
  */
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, adminOnly = false }) => {
   const user = useAuthStore((state) => state.user);
-  return user ? children : <Navigate to="/login" replace />;
+  const token = useAuthStore((state) => state.token);
+
+  if (!user || !token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (adminOnly && !user.isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;

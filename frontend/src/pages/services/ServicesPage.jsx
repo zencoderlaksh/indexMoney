@@ -39,7 +39,7 @@ const optionPlans = [
   ["Trade Management Guidance", true, true, true],
   ["Support During Market Hours", true, true, true],
   ["Communication Channel", "WhatsApp", "WhatsApp", "WhatsApp"],
-  ["Monthly Subscription Fee", "₹1,999", "₹1,999", "₹1,999"],
+  ["Monthly Subscription Fee", "Rs1,999", "Rs1,999", "Rs1,999"],
 ];
 
 const futurePlans = [
@@ -65,7 +65,7 @@ const futurePlans = [
   ["Trade Management Guidance", true, true, true],
   ["Support During Market Hours", true, true, true],
   ["Communication Channel", "WhatsApp", "WhatsApp", "WhatsApp"],
-  ["Monthly Subscription Fee", "₹3,999", "₹2,999", "₹4,999"],
+  ["Monthly Subscription Fee", "Rs3,999", "Rs2,999", "Rs4,999"],
 ];
 
 const trustPoints = [
@@ -125,16 +125,16 @@ const steps = [
 const renderCell = (value) => {
   if (value === true) {
     return (
-      <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#105F68]">
+      <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-300">
         <Check className="h-4 w-4" /> Yes
       </span>
     );
   }
 
-  return <span className="text-sm text-slate-700">{value}</span>;
+  return <span className="text-sm text-slate-100">{value}</span>;
 };
 
-const ServicesTable = ({ title, description, rows }) => (
+const ServicesTable = ({ title, description, rows, showPayNow }) => (
   <section className="pt-10">
     <div className="max-w-3xl">
       <h2 className="text-2xl font-extrabold text-slate-900 md:text-3xl">
@@ -145,29 +145,32 @@ const ServicesTable = ({ title, description, rows }) => (
       </p>
     </div>
 
-    <div className="mt-8 overflow-x-auto rounded-[28px] border border-[#CBE7E1] bg-white/90 shadow-[0_14px_38px_rgba(16,95,104,0.08)] backdrop-blur-sm">
-      <table className="min-w-full divide-y divide-slate-200">
-        <thead className="bg-[#F4FBF9]">
+    <div className="mt-8 overflow-hidden rounded-[30px] border border-[#123e46] bg-[linear-gradient(180deg,#11343b_0%,#0a1f24_100%)] shadow-[0_24px_60px_rgba(9,30,34,0.28)]">
+      <table className="min-w-full">
+        <thead className="bg-[linear-gradient(90deg,rgba(99,193,187,0.18)_0%,rgba(16,95,104,0.45)_100%)]">
           <tr>
             {tableHeaders.map((header) => (
               <th
                 key={header}
                 scope="col"
-                className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
+                className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-[#CBE7E1]"
               >
                 {header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 text-slate-700">
-          {rows.map(([feature, ...values]) => (
-            <tr key={feature} className="hover:bg-slate-50/80">
-              <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-slate-800">
+        <tbody className="divide-y divide-white/8">
+          {rows.map(([feature, ...values], rowIndex) => (
+            <tr
+              key={feature}
+              className={rowIndex % 2 === 0 ? "bg-white/[0.03]" : "bg-white/[0.06]"}
+            >
+              <td className="whitespace-nowrap px-5 py-4 text-sm font-semibold text-white">
                 {feature}
               </td>
               {values.map((value, idx) => (
-                <td key={`${feature}-${idx}`} className="px-4 py-4">
+                <td key={`${feature}-${idx}`} className="px-5 py-4">
                   {renderCell(value)}
                 </td>
               ))}
@@ -175,11 +178,35 @@ const ServicesTable = ({ title, description, rows }) => (
           ))}
         </tbody>
       </table>
+
+      {showPayNow ? (
+        <div className="border-t border-white/10 bg-white/[0.04] px-5 py-5">
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#9ED5D1]">
+                Ready to Subscribe
+              </p>
+              <p className="mt-2 text-sm text-slate-200">
+                Continue to the payment page to activate your futures advisory plan.
+              </p>
+            </div>
+            <Link
+              to="/pay-now"
+              className="inline-flex items-center gap-2 rounded-2xl bg-[#63C1BB] px-5 py-3 text-sm font-bold text-[#082127] transition-colors duration-200 hover:bg-[#79d1cb]"
+            >
+              Pay Now
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      ) : null}
     </div>
   </section>
 );
 
 const ServicesPage = () => {
+  const [activePlan, setActivePlan] = React.useState("options");
+
   return (
     <div className="relative overflow-hidden bg-transparent">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(200,230,226,0.42),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(158,213,209,0.20),transparent_32%)]" />
@@ -278,17 +305,57 @@ const ServicesPage = () => {
 
       <section className="relative px-5 py-8 md:px-8">
         <div className="mx-auto max-w-6xl">
-          <ServicesTable
-            title="Index Option Advisory Plans"
-            description="Professional option trading services for Nifty, Bank Nifty, and Sensex with a focus on disciplined risk management."
-            rows={optionPlans}
-          />
+          <div className="mb-8 flex flex-col items-center justify-between gap-4 md:flex-row">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
+                Plans
+              </p>
+              <h2 className="mt-3 text-3xl font-bold text-slate-800 md:text-4xl">
+                Choose between Options and Futures
+              </h2>
+            </div>
 
-          <ServicesTable
-            title="Professional Index Future Trading Services Plan"
-            description="Futures advisory for Nifty, Bank Nifty, and Sensex aiming for high-probability setups with strict risk controls."
-            rows={futurePlans}
-          />
+            <div className="inline-flex rounded-2xl border border-[#A7D8D2] bg-white p-1.5 shadow-sm">
+              <button
+                type="button"
+                onClick={() => setActivePlan("options")}
+                className={`rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${
+                  activePlan === "options"
+                    ? "bg-[#105F68] text-white shadow-md"
+                    : "text-[#105F68] hover:bg-[#EAF8F4]"
+                }`}
+              >
+                Options
+              </button>
+              <button
+                type="button"
+                onClick={() => setActivePlan("futures")}
+                className={`rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${
+                  activePlan === "futures"
+                    ? "bg-[#105F68] text-white shadow-md"
+                    : "text-[#105F68] hover:bg-[#EAF8F4]"
+                }`}
+              >
+                Futures
+              </button>
+            </div>
+          </div>
+
+          {activePlan === "options" ? (
+            <ServicesTable
+              title="Index Option Advisory Plans"
+              description="Professional option trading services for Nifty, Bank Nifty, and Sensex with a focus on disciplined risk management."
+              rows={optionPlans}
+              showPayNow={false}
+            />
+          ) : (
+            <ServicesTable
+              title="Professional Index Future Trading Services Plan"
+              description="Futures advisory for Nifty, Bank Nifty, and Sensex aiming for high-probability setups with strict risk controls."
+              rows={futurePlans}
+              showPayNow
+            />
+          )}
         </div>
       </section>
 
@@ -356,7 +423,7 @@ const ServicesPage = () => {
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
                 If you want help choosing between option and futures services,
-                reach out and we’ll guide you to the most suitable setup.
+                reach out and we&apos;ll guide you to the most suitable setup.
               </p>
             </div>
 

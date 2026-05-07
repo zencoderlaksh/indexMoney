@@ -7,10 +7,10 @@ import { motion } from "framer-motion";
 
 
 const videoTestimonials = [
-    { name: "Rajesh Kumar", city: "Bengaluru", plan: "Nifty Option Plan", bg: "from-[#105F68] to-[#3A9295]" },
-    { name: "Meera Nair", city: "Chennai", plan: "Bank Nifty Plan", bg: "from-[#3A9295] to-[#63C1BB]" },
-    { name: "Arjun Patel", city: "Surat", plan: "Sensex Futures", bg: "from-[#63C1BB] to-[#9ED5D1]" },
-    { name: "Divya Rao", city: "Kolkata", plan: "Nifty Futures", bg: "from-[#105F68] to-[#63C1BB]" },
+    { name: "Rajesh Kumar", city: "Bengaluru", plan: "Nifty Option Plan", bg: "from-[#105F68] to-[#3A9295]", videoUrl: "/dummy-videos/client-testimonial-sample-1.mp4" },
+    { name: "Meera Nair", city: "Chennai", plan: "Bank Nifty Plan", bg: "from-[#3A9295] to-[#63C1BB]", videoUrl: "/dummy-videos/client-testimonial-sample-2.mp4" },
+    { name: "Arjun Patel", city: "Surat", plan: "Sensex Futures", bg: "from-[#63C1BB] to-[#9ED5D1]", videoUrl: "/dummy-videos/client-testimonial-sample-3.mp4" },
+    { name: "Divya Rao", city: "Kolkata", plan: "Nifty Futures", bg: "from-[#105F68] to-[#63C1BB]", videoUrl: "/dummy-videos/client-testimonial-sample-1.mp4" },
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -80,14 +80,21 @@ const TestimonialsSection = () => {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                        {videoTestimonials.map(({ name, city, plan, bg }, i) => (
+                        {videoTestimonials.map(({ name, city, plan, bg, videoUrl }, i) => (
                             <motion.div
                                 key={i}
                                 whileHover={{ y: -5, scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                                className={`relative bg-gradient-to-br ${bg} rounded-2xl overflow-hidden cursor-pointer aspect-[3/4] flex flex-col items-center justify-center shadow-lg`}
+                                className={`relative bg-gradient-to-br ${bg} rounded-2xl overflow-hidden aspect-[3/4] flex flex-col items-center justify-center shadow-lg`}
                             >
+                                <a
+                                    href={videoUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="absolute inset-0 z-10"
+                                    aria-label={`Open sample video for ${name}`}
+                                />
                                 {/* Grid overlay */}
                                 <svg className="absolute inset-0 w-full h-full opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
                                     <defs><pattern id={`vg${i}`} width="24" height="24" patternUnits="userSpaceOnUse"><path d="M 24 0 L 0 0 0 24" fill="none" stroke="white" strokeWidth="0.8" /></pattern></defs>

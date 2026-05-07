@@ -15,8 +15,11 @@ import {
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
 import { enquirySchema } from "../../../schemas/enquirySchema";
 import { useEnquiryStore } from "../../../stores/enquiryStore";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 const inputBase =
   "w-full bg-white border rounded-xl px-4 py-3 pl-10 text-sm text-slate-800 placeholder-slate-400 outline-none transition-all duration-200";
@@ -64,7 +67,7 @@ const trustBadges = [
   { icon: ShieldCheck, text: "Risk Managed Strategy" },
 ];
 
-const todaysResults = [
+const fallbackTodaysResults = [
   { label: "NIFTY", points: "+45 pts", note: "+45 pts ↗" },
   { label: "BANKNIFTY", points: "+80 pts", note: "+80 pts ↗" },
   { label: "SENSEX", points: "+120 pts", note: "+120 pts ↗" },
@@ -81,7 +84,12 @@ const planOptions = [
   "Demat account",
 ];
 
+const WHATSAPP_LINK =
+  "https://wa.me/919876543210?text=Hi%20IndexMoney%2C%20I%20want%20today%27s%20free%20call.";
+
 const Hero = () => {
+  const navigate = useNavigate();
+  const [todaysResults, setTodaysResults] = React.useState(fallbackTodaysResults);
   const {
     register,
     handleSubmit,
@@ -97,16 +105,43 @@ const Hero = () => {
     reset();
   };
 
-  const scrollToPlans = () => {
-    document
-      .getElementById("plans-section")
-      ?.scrollIntoView({ behavior: "smooth" });
+  React.useEffect(() => {
+    const controller = new AbortController();
+
+    const loadHomepageContent = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/homepage`, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = await response.json();
+        const latestResults = payload?.data?.todaysResults;
+
+        if (Array.isArray(latestResults) && latestResults.length) {
+          setTodaysResults(latestResults);
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          setTodaysResults(fallbackTodaysResults);
+        }
+      }
+    };
+
+    loadHomepageContent();
+
+    return () => controller.abort();
+  }, []);
+
+  const openWhatsApp = () => {
+    window.open(WHATSAPP_LINK, "_blank", "noopener,noreferrer");
   };
 
-  const scrollToPerformance = () => {
-    document
-      .getElementById("performance-section")
-      ?.scrollIntoView({ behavior: "smooth" });
+  const goToPastPerformance = () => {
+    navigate("/past-performance");
   };
 
   return (
@@ -176,7 +211,7 @@ const Hero = () => {
             className="flex items-center gap-2 text-base font-medium text-amber-700"
           >
             <Clock className="h-4.5 w-4.5 text-amber-500" strokeWidth={2.2} />
-            <span>⏳ Today&apos;s Calls Already Running - Join Before Market Closes</span>
+            <span>Today&apos;s calls already running. Join before market closes.</span>
           </motion.div>
 
           <motion.div
@@ -203,7 +238,7 @@ const Hero = () => {
             className="flex flex-col gap-3 sm:flex-row"
           >
             <motion.button
-              onClick={scrollToPlans}
+              onClick={openWhatsApp}
               whileHover={{
                 scale: 1.03,
                 boxShadow: "0 12px 32px rgba(58,146,149,0.35)",
@@ -215,17 +250,17 @@ const Hero = () => {
               }}
             >
               <MessageCircle className="h-4 w-4" />
-              🚀 Get Free Call on WhatsApp
+              Get Free Call on WhatsApp
             </motion.button>
 
             <motion.button
-              onClick={scrollToPerformance}
+              onClick={goToPastPerformance}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className="flex items-center justify-center gap-2 rounded-xl border-2 border-[#9ED5D1] px-7 py-3.5 text-sm font-bold text-[#105F68] transition-all duration-200 hover:border-[#63C1BB] hover:bg-[#C8E6E2]/30"
             >
               <BarChart3 className="h-4 w-4" />
-              📊 View Today&apos;s Performance
+              View Today&apos;s Performance
             </motion.button>
           </motion.div>
 
@@ -279,7 +314,7 @@ const Hero = () => {
                 href="#performance-section"
                 onClick={(event) => {
                   event.preventDefault();
-                  scrollToPerformance();
+                  goToPastPerformance();
                 }}
                 className="inline-flex items-center gap-1 text-sm font-semibold text-[#105F68] transition-colors duration-200 hover:text-[#3A9295]"
               >
@@ -445,7 +480,7 @@ const Hero = () => {
                   </span>
                 ) : (
                   <>
-                    Get Free Call Now 🚀 <ArrowRight className="h-4 w-4" />
+                    Get Free Call Now <ArrowRight className="h-4 w-4" />
                   </>
                 )}
               </motion.button>

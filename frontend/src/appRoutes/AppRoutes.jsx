@@ -13,6 +13,7 @@ import TermsAndConditions from "../pages/legal/TermsAndConditions";
 import ContactPage from "../pages/contact/ContactPage";
 import UnlistedSharesPage from "../pages/unlistedShares/UnlistedSharesPage";
 import ServicesPage from "../pages/services/ServicesPage";
+import PastPerformancePage from "../pages/pastPerformance/PastPerformancePage";
 
 const AppRoutes = () => {
   return (
@@ -24,6 +25,7 @@ const AppRoutes = () => {
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/unlisted-shares" element={<UnlistedSharesPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/past-performance" element={<PastPerformancePage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
@@ -40,7 +42,7 @@ const AppRoutes = () => {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly>
             <DashboardPage />
           </ProtectedRoute>
         }

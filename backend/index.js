@@ -9,6 +9,17 @@ const routes = require("./routes");
 
 const app = express();
 const PORT = config.port;
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://indexmoney.netlify.app",
+  "https://indexmoney.in",
+  "https://www.indexmoney.in",
+  "https://indexmoney-api.onrender.com",
+  ...(process.env.CORS_ORIGINS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+];
 
 // MongoDB connection
 mongoose
@@ -23,8 +34,20 @@ mongoose
   });
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked origin: ${origin}`));
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 
 // Routes
