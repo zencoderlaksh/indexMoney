@@ -14,6 +14,7 @@ import ContactPage from "../pages/contact/ContactPage";
 import UnlistedSharesPage from "../pages/unlistedShares/UnlistedSharesPage";
 import ServicesPage from "../pages/services/ServicesPage";
 import PastPerformancePage from "../pages/pastPerformance/PastPerformancePage";
+import BlogsPage from "../pages/blogs/BlogsPage";
 
 const AppRoutes = () => {
   return (
@@ -26,6 +27,8 @@ const AppRoutes = () => {
         <Route path="/unlisted-shares" element={<UnlistedSharesPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/past-performance" element={<PastPerformancePage />} />
+        <Route path="/blogs" element={<BlogsPage />} />
+        <Route path="/blogs/:slug" element={<BlogsPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />

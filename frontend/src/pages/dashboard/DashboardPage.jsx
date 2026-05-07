@@ -18,6 +18,10 @@ import {
   Download,
   Users,
   ClipboardList,
+  BookOpen,
+  Eye,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
@@ -29,6 +33,19 @@ const defaultTodaysResults = [
   { label: "SENSEX", points: "+120 pts", note: "+120 pts up" },
 ];
 const emptyForm = { title: "", file: null };
+const emptyBlogForm = {
+  id: "",
+  title: "",
+  slug: "",
+  excerpt: "",
+  content: "",
+  coverImageUrl: "",
+  authorName: "Index Money",
+  metaTitle: "",
+  metaDescription: "",
+  keywords: "",
+  status: "draft",
+};
 
 const fmt = (value) => {
   if (!value) return "-";
@@ -240,6 +257,13 @@ const DashboardPage = () => {
   const [adminDataLoading, setAdminDataLoading] = React.useState(true);
   const [adminDataStatus, setAdminDataStatus] = React.useState({ kind: "", text: "" });
 
+  const [blogs, setBlogs] = React.useState([]);
+  const [blogStats, setBlogStats] = React.useState({ total: 0, published: 0, drafts: 0 });
+  const [blogForm, setBlogForm] = React.useState(emptyBlogForm);
+  const [blogsLoading, setBlogsLoading] = React.useState(true);
+  const [blogSaving, setBlogSaving] = React.useState(false);
+  const [blogStatus, setBlogStatus] = React.useState({ kind: "", text: "" });
+
   React.useEffect(() => {
     if (!user || !token) {
       logout();
@@ -328,13 +352,33 @@ const DashboardPage = () => {
     }
   }, [authHeaders, token]);
 
+  const loadBlogs = React.useCallback(async () => {
+    if (!token) return;
+    try {
+      setBlogsLoading(true);
+      setBlogStatus({ kind: "", text: "" });
+      const res = await fetch(`${API_BASE}/blogs/admin`, { headers: authHeaders });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.error || "Unable to load blogs");
+      setBlogs(Array.isArray(json?.data) ? json.data : []);
+      setBlogStats(json?.stats || { total: 0, published: 0, drafts: 0 });
+    } catch (error) {
+      setBlogs([]);
+      setBlogStats({ total: 0, published: 0, drafts: 0 });
+      setBlogStatus({ kind: "error", text: error.message || "Unable to load blogs" });
+    } finally {
+      setBlogsLoading(false);
+    }
+  }, [authHeaders, token]);
+
   React.useEffect(() => {
     if (!user?.isAdmin || !token) return;
     loadHomepage();
     loadPerformance();
     loadUnlisted();
     loadAdminData();
-  }, [user, token, loadHomepage, loadPerformance, loadUnlisted, loadAdminData]);
+    loadBlogs();
+  }, [user, token, loadHomepage, loadPerformance, loadUnlisted, loadAdminData, loadBlogs]);
 
   if (!user || !token || !user.isAdmin) return null;
 
@@ -415,6 +459,91 @@ const DashboardPage = () => {
     }
   };
 
+  const handleBlogChange = (event) => {
+    const { name, value } = event.target;
+    setBlogForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const editBlog = (blog) => {
+    setBlogForm({
+      id: blog.id || blog._id || "",
+      title: blog.title || "",
+      slug: blog.slug || "",
+      excerpt: blog.excerpt || "",
+      content: blog.content || "",
+      coverImageUrl: blog.coverImageUrl || "",
+      authorName: blog.authorName || "Index Money",
+      metaTitle: blog.metaTitle || "",
+      metaDescription: blog.metaDescription || "",
+      keywords: Array.isArray(blog.keywords) ? blog.keywords.join(", ") : "",
+      status: blog.status || "draft",
+    });
+    setBlogStatus({ kind: "", text: "" });
+  };
+
+  const resetBlogForm = () => {
+    setBlogForm(emptyBlogForm);
+    setBlogStatus({ kind: "", text: "" });
+  };
+
+  const saveBlog = async (statusOverride) => {
+    const nextStatus = statusOverride || blogForm.status;
+    setBlogStatus({ kind: "", text: "" });
+
+    if (!blogForm.title.trim() || !blogForm.excerpt.trim() || !blogForm.content.trim()) {
+      setBlogStatus({ kind: "error", text: "Title, excerpt, and content are required." });
+      return;
+    }
+
+    try {
+      setBlogSaving(true);
+      const payload = { ...blogForm, status: nextStatus };
+      const isEditing = Boolean(blogForm.id);
+      const res = await fetch(
+        isEditing ? `${API_BASE}/blogs/admin/${blogForm.id}` : `${API_BASE}/blogs/admin`,
+        {
+          method: isEditing ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json", ...authHeaders },
+          body: JSON.stringify(payload),
+        },
+      );
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.error || "Unable to save blog");
+      setBlogForm(emptyBlogForm);
+      setBlogStatus({
+        kind: "success",
+        text: nextStatus === "published" ? "Blog published successfully." : "Blog saved as draft.",
+      });
+      await loadBlogs();
+    } catch (error) {
+      setBlogStatus({ kind: "error", text: error.message || "Unable to save blog" });
+    } finally {
+      setBlogSaving(false);
+    }
+  };
+
+  const deleteBlog = async (blog) => {
+    const blogId = blog.id || blog._id;
+    if (!blogId) return;
+    const confirmed = window.confirm(`Delete "${blog.title}"? This cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+      setBlogStatus({ kind: "", text: "" });
+      const res = await fetch(`${API_BASE}/blogs/admin/${blogId}`, {
+        method: "DELETE",
+        headers: authHeaders,
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.error || "Unable to delete blog");
+      if (blogForm.id === blogId) setBlogForm(emptyBlogForm);
+      setBlogStatus({ kind: "success", text: "Blog deleted successfully." });
+      await loadBlogs();
+    } catch (error) {
+      setBlogStatus({ kind: "error", text: error.message || "Unable to delete blog" });
+    }
+  };
+
   const userRows = usersData.map((entry) => ({
     ...entry,
     id: entry.id || entry._id || entry.email,
@@ -474,9 +603,10 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6">
           <StatCard icon={Users} label="Registered Users" value={adminDataLoading ? "..." : usersData.length} sub="Accounts in the system" />
           <StatCard icon={ClipboardList} label="Enquiries" value={adminDataLoading ? "..." : enquiryData.length} sub="Leads received" color="#3A9295" />
+          <StatCard icon={BookOpen} label="Active Blogs" value={blogsLoading ? "..." : blogStats.published} sub={`${blogStats.drafts} drafts`} color="#1f7a6d" />
           <StatCard icon={BarChart2} label="Today's Results" value={`${todaysResults.length} Rows`} sub="Daily update block" color="#63C1BB" />
           <StatCard icon={FileSpreadsheet} label="Performance Sheet" value={performanceMeta.totalTrades || "0"} sub="Uploaded trades" color="#2f7d80" />
           <StatCard icon={Database} label="Unlisted Sheet" value={unlistedMeta.totalRows || "0"} sub="Opportunity rows" color="#205d63" />
@@ -591,6 +721,228 @@ const DashboardPage = () => {
               { key: "createdAt", label: "Received", render: (row) => fmt(row.createdAt) },
             ]}
           />
+        </div>
+
+        <div className="mt-8">
+          <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <SectionHeader
+              icon={BookOpen}
+              eyebrow="Blog CMS"
+              title="Create, Draft, and Publish Blogs"
+              description="Write SEO-ready blogs with slug, meta title, meta description, keywords, and a public cover image URL."
+              action={
+                <button
+                  type="button"
+                  onClick={() => navigate("/blogs")}
+                  className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  <Eye className="h-4 w-4" />
+                  View Blogs
+                </button>
+              }
+            />
+            <StatusBanner kind={blogStatus.kind} text={blogStatus.text} />
+
+            <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+              <div className="space-y-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <input
+                    name="title"
+                    type="text"
+                    value={blogForm.title}
+                    onChange={handleBlogChange}
+                    placeholder="Blog title"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                  <input
+                    name="slug"
+                    type="text"
+                    value={blogForm.slug}
+                    onChange={handleBlogChange}
+                    placeholder="SEO slug, auto-created if empty"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+
+                <textarea
+                  name="excerpt"
+                  rows={3}
+                  value={blogForm.excerpt}
+                  onChange={handleBlogChange}
+                  placeholder="Short SEO excerpt"
+                  className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                />
+
+                <textarea
+                  name="content"
+                  rows={10}
+                  value={blogForm.content}
+                  onChange={handleBlogChange}
+                  placeholder="Write the blog content. Use ## headings, ### subheadings, blank lines for paragraphs, and - bullets."
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                />
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <input
+                    name="coverImageUrl"
+                    type="url"
+                    value={blogForm.coverImageUrl}
+                    onChange={handleBlogChange}
+                    placeholder="Cover image URL"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                  <input
+                    name="authorName"
+                    type="text"
+                    value={blogForm.authorName}
+                    onChange={handleBlogChange}
+                    placeholder="Author name"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <input
+                    name="metaTitle"
+                    type="text"
+                    value={blogForm.metaTitle}
+                    onChange={handleBlogChange}
+                    placeholder="Meta title"
+                    maxLength={70}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                  <input
+                    name="keywords"
+                    type="text"
+                    value={blogForm.keywords}
+                    onChange={handleBlogChange}
+                    placeholder="Keywords, comma separated"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+
+                <textarea
+                  name="metaDescription"
+                  rows={2}
+                  value={blogForm.metaDescription}
+                  onChange={handleBlogChange}
+                  placeholder="Meta description"
+                  maxLength={170}
+                  className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                />
+
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={() => saveBlog("draft")}
+                    disabled={blogSaving}
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <Save className="h-4 w-4" />
+                    {blogSaving ? "Saving..." : "Save Draft"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => saveBlog("published")}
+                    disabled={blogSaving}
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#105F68] px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    {blogSaving ? "Publishing..." : "Publish Blog"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={resetBlogForm}
+                    className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-white"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-100 bg-white">
+                <div className="border-b border-slate-100 p-4">
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="rounded-2xl bg-slate-50 p-3 text-center">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Total</p>
+                      <p className="mt-1 text-xl font-bold text-slate-800">{blogStats.total}</p>
+                    </div>
+                    <div className="rounded-2xl bg-emerald-50 p-3 text-center">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">Active</p>
+                      <p className="mt-1 text-xl font-bold text-emerald-700">{blogStats.published}</p>
+                    </div>
+                    <div className="rounded-2xl bg-amber-50 p-3 text-center">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">Drafts</p>
+                      <p className="mt-1 text-xl font-bold text-amber-700">{blogStats.drafts}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="max-h-[650px] divide-y divide-slate-100 overflow-y-auto">
+                  {blogs.length ? (
+                    blogs.map((blog) => (
+                      <div key={blog.id || blog._id} className="p-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3 className="font-bold text-slate-900">{blog.title}</h3>
+                              <span
+                                className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                                  blog.status === "published"
+                                    ? "bg-emerald-50 text-emerald-700"
+                                    : "bg-amber-50 text-amber-700"
+                                }`}
+                              >
+                                {blog.status === "published" ? "Active" : "Draft"}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-xs text-slate-400">/{blog.slug}</p>
+                            <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">
+                              {blog.excerpt}
+                            </p>
+                            <p className="mt-2 text-xs text-slate-400">
+                              Updated {fmt(blog.updatedAt)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => editBlog(blog)}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                            Edit
+                          </button>
+                          {blog.status === "published" ? (
+                            <button
+                              type="button"
+                              onClick={() => navigate(`/blogs/${blog.slug}`)}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                            >
+                              <Eye className="h-3.5 w-3.5" />
+                              View
+                            </button>
+                          ) : null}
+                          <button
+                            type="button"
+                            onClick={() => deleteBlog(blog)}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-red-100 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center text-sm text-slate-400">
+                      {blogsLoading ? "Loading blogs..." : "No blogs yet. Write the first one on the left."}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
 
         <div className="mt-8 grid gap-8 xl:grid-cols-[1.15fr_1fr]">

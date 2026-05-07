@@ -1,0 +1,6 @@
+
+> backend@1.0.0 dev
+> node index.js
+
+Server is running on http://localhost:3000
+Connected to MongoDB
