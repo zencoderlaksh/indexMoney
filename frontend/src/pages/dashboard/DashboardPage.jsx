@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  TrendingUp,
   LogOut,
   User,
   Mail,
@@ -25,6 +24,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
+import { IMAGES } from "../../constants/images";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 const defaultTodaysResults = [
@@ -558,10 +558,11 @@ const DashboardPage = () => {
       <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/80 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-5">
           <button onClick={() => navigate("/")} className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#105F68] to-[#3A9295]">
-              <TrendingUp className="h-4 w-4 text-white" />
-            </span>
-            <span className="text-sm font-bold tracking-tight text-slate-800">Index Money</span>
+            <img
+              src={IMAGES.logo}
+              alt="Index Money"
+              className="h-11 w-32 object-contain object-left"
+            />
           </button>
           <div className="flex items-center gap-3">
             <span className="hidden items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs text-slate-500 sm:flex">

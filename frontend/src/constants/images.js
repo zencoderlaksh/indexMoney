@@ -1,7 +1,7 @@
 // src/constants/images.js
 
-import logo from "@/assets/images/logo.png";
-import logoIcon from "@/assets/images/logo-icon.png";
+import logo from "@/assets/IndxMoneyLogo-wide.jpeg";
+import logoIcon from "@/assets/IndxMoneyLogo-cropped.jpeg";
 
 export const IMAGES = {
   logo,

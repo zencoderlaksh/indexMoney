@@ -4,3 +4,34 @@
 
 Server is running on http://localhost:3000
 Connected to MongoDB
+[2026-05-07T12:40:55.776Z] GET /api/homepage
+[2026-05-07T12:40:55.845Z] GET /api/performance
+[2026-05-07T18:29:34.262Z] GET /api/homepage
+[2026-05-07T18:29:34.283Z] GET /api/performance
+[2026-05-07T18:29:34.408Z] GET /api/homepage
+[2026-05-07T18:29:34.443Z] GET /api/performance
+[2026-05-07T18:30:06.287Z] POST /api/auth/login
+[2026-05-07T18:30:07.474Z] GET /api/unlisted/opportunities
+[2026-05-07T18:30:07.521Z] GET /api/users
+[2026-05-07T18:30:07.562Z] GET /api/enquiries
+[2026-05-07T18:30:07.591Z] GET /api/blogs/admin
+[2026-05-07T18:30:07.636Z] GET /api/homepage
+[2026-05-07T18:30:07.675Z] GET /api/performance
+[2026-05-07T18:30:08.045Z] GET /api/unlisted/opportunities
+[2026-05-07T18:30:08.586Z] GET /api/users
+[2026-05-07T18:30:08.592Z] GET /api/enquiries
+[2026-05-07T18:30:08.932Z] GET /api/blogs/admin
+[2026-05-07T18:30:09.094Z] GET /api/performance
+[2026-05-07T18:30:09.167Z] GET /api/homepage
+[2026-05-07T18:31:31.826Z] POST /api/blogs/admin
+[2026-05-07T18:31:31.993Z] GET /api/blogs/admin
+[2026-05-07T18:31:40.763Z] PUT /api/blogs/admin/69fcda8336ba922041ed7702
+[2026-05-07T18:31:41.162Z] GET /api/blogs/admin
+[2026-05-07T18:31:49.939Z] GET /api/users/profile
+[2026-05-07T18:31:50.578Z] GET /api/homepage
+[2026-05-07T18:31:50.583Z] GET /api/performance
+[2026-05-07T18:31:50.671Z] GET /api/performance
+[2026-05-07T18:31:50.691Z] GET /api/homepage
+[2026-05-07T18:31:53.796Z] GET /api/blogs
+[2026-05-07T18:32:01.332Z] GET /api/blogs/tech
+[2026-05-07T18:32:08.786Z] GET /api/blogs

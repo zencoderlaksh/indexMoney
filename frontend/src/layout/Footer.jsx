@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Linkedin } from "lucide-react";
+import { IMAGES } from "../constants/images";
 
 const Footer = () => {
   return (
@@ -9,7 +10,13 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo & About */}
           <div>
-            <h2 className="text-xl font-bold text-primary mb-3">Index Money</h2>
+            <Link to="/" className="mb-3 block w-fit">
+              <img
+                src={IMAGES.logo}
+                alt="Index Money"
+                className="h-16 w-40 object-contain object-left"
+              />
+            </Link>
             <p className="text-sm text-muted-foreground">
               Professional Index & F&O advisory platform focused on structured,
               technical and risk-managed trading strategies.

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, Menu, X, ChevronDown, ArrowRight } from "lucide-react";
+import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
+import { IMAGES } from "../constants/images";
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -77,18 +78,15 @@ const Header = () => {
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 group flex-shrink-0"
+            className="flex items-center group flex-shrink-0"
           >
-            <motion.span
-              whileHover={{ rotate: 12, scale: 1.1 }}
+            <motion.img
+              src={IMAGES.logo}
+              alt="Index Money"
+              className="h-12 w-36 object-contain object-left"
+              whileHover={{ scale: 1.03 }}
               transition={{ type: "spring", stiffness: 380, damping: 22 }}
-              className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-[#105F68] to-[#3A9295] shadow-md"
-            >
-              <TrendingUp className="w-5 h-5 text-white" strokeWidth={2.5} />
-            </motion.span>
-            <span className="font-bold text-lg tracking-tight text-slate-800">
-              Index<span className="text-[#3A9295]">Money</span>
-            </span>
+            />
           </Link>
 
           {/* Desktop nav */}
@@ -220,9 +218,11 @@ const Header = () => {
               className="fixed right-0 top-0 bottom-0 z-50 w-72 bg-white shadow-xl flex flex-col"
             >
               <div className="flex items-center justify-between px-5 h-16 border-b border-slate-100">
-                <span className="font-bold text-slate-800">
-                  Index<span className="text-[#3A9295]">Money</span>
-                </span>
+                <img
+                  src={IMAGES.logo}
+                  alt="Index Money"
+                  className="h-11 w-32 object-contain object-left"
+                />
                 <button
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"

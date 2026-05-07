@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, TrendingUp, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, CheckCircle2 } from "lucide-react";
 import LoginForm from "../../components/auth/LoginForm";
 import SignupForm from "../../components/auth/SignupForm";
 import { useNavigate } from "react-router-dom";
+import { IMAGES } from "../../constants/images";
 
 /* ── Background decoration ───────────────────────────────────────────────────── */
 const BackgroundDecor = () => (
@@ -113,14 +114,13 @@ const AuthPage = () => {
                 <div className="bg-gradient-to-r from-[#105F68] to-[#3A9295] px-8 py-6 text-center">
                     <button
                         onClick={() => navigate("/")}
-                        className="inline-flex items-center justify-center gap-2 group"
+                        className="inline-flex items-center justify-center group"
                     >
-                        <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/15 border border-white/25">
-                            <TrendingUp className="w-5 h-5 text-white" strokeWidth={2.5} />
-                        </span>
-                        <span className="text-white font-bold text-xl tracking-tight group-hover:opacity-90 transition-opacity">
-                            Index Money
-                        </span>
+                        <img
+                            src={IMAGES.logo}
+                            alt="Index Money"
+                            className="h-20 w-44 object-contain"
+                        />
                     </button>
                     <p className="text-white/65 text-xs mt-2">
                         {activeTab === "login"
