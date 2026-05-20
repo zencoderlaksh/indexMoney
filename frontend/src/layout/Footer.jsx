@@ -52,8 +52,10 @@ const Footer = () => {
             <div className="text-sm text-muted-foreground space-y-2">
               <p>Support Hours:</p>
               <p>9:00 AM – 6:00 PM</p>
-              <p>Email: support@indexmoney.com</p>
-              <p>Phone: +91-XXXXXXXXXX</p>
+              <p>Email: Support@indexmoney.in</p>
+              <p>Phone: +91-92161-80043</p>
+              <p>WhatsApp: +91-92161-80043</p>
+              <p>Address: 142, Dhule Maharashtra 424001</p>
 
               {/* Social Icons */}
               <div className="flex gap-3 pt-3">

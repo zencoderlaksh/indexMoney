@@ -19,15 +19,15 @@ const contactCards = [
     title: "Office Address",
     lines: [
       "Index Money Advisory Services",
-      "Business Bay, Sector 62",
-      "Noida, Uttar Pradesh - 201309",
+      "142, Dhule",
+      "Maharashtra - 424001",
     ],
   },
   {
     icon: Phone,
     title: "Phone / WhatsApp",
     lines: [
-      "+91-98765-43210",
+      "+91-92161-80043",
       "Support Hours:",
       "9:00 AM - 6:00 PM (Market Days)",
     ],
@@ -36,8 +36,7 @@ const contactCards = [
     icon: Mail,
     title: "Email Address",
     lines: [
-      "support@indexmoney.com",
-      "ceo@indexmoney.com",
+      "Support@indexmoney.in",
       "Priority support for active subscribers",
     ],
   },
@@ -68,7 +67,7 @@ const ContactPage = () => {
     message: "",
   });
 
-  const whatsappLink = "https://wa.me/919876543210";
+  const whatsappLink = "https://wa.me/919216180043";
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -93,7 +92,7 @@ const ContactPage = () => {
       ].join("\n"),
     );
 
-    window.location.href = `mailto:support@indexmoney.com?subject=${mailSubject}&body=${mailBody}`;
+    window.location.href = `mailto:support@indexmoney.in?subject=${mailSubject}&body=${mailBody}`;
   };
 
   return (
@@ -223,7 +222,7 @@ const ContactPage = () => {
                   value={form.mobileNumber}
                   onChange={handleChange}
                   className={inputBase}
-                  placeholder="+91 98765 43210"
+                  placeholder="Enter mobile number"
                 />
               </div>
             </div>

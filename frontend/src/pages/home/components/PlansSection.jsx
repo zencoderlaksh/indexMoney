@@ -19,8 +19,8 @@ const plans = [
     subtitle: "Best for Nifty traders",
     icon: TrendingUp,
     iconName: "TrendingUp",
-    oldPrice: "\u20B94,499",
-    price: "\u20B91,999",
+    oldPrice: "\u20B914,999",
+    price: "\u20B911,999",
     popular: false,
   },
   {
@@ -28,8 +28,8 @@ const plans = [
     subtitle: "Our most requested service",
     icon: BarChart2,
     iconName: "BarChart2",
-    oldPrice: "\u20B94,999",
-    price: "\u20B92,499",
+    oldPrice: "\u20B912,999",
+    price: "\u20B99,999",
     popular: true,
   },
   {
@@ -37,8 +37,8 @@ const plans = [
     subtitle: "Fast-moving intraday opportunities",
     icon: Activity,
     iconName: "Activity",
-    oldPrice: "\u20B94,499",
-    price: "\u20B91,999",
+    oldPrice: "\u20B917,999",
+    price: "\u20B914,999",
     popular: false,
   },
   {
@@ -46,8 +46,8 @@ const plans = [
     subtitle: "High-conviction futures calls",
     icon: TrendingUp,
     iconName: "TrendingUp",
-    oldPrice: "\u20B96,999",
-    price: "\u20B93,499",
+    oldPrice: "\u20B912,999",
+    price: "\u20B99,999",
     popular: false,
   },
   {
@@ -55,8 +55,8 @@ const plans = [
     subtitle: "Premium futures advisory",
     icon: BarChart2,
     iconName: "BarChart2",
-    oldPrice: "\u20B97,499",
-    price: "\u20B93,999",
+    oldPrice: "\u20B99,999",
+    price: "\u20B97,999",
     popular: false,
   },
   {
@@ -64,8 +64,8 @@ const plans = [
     subtitle: "Sensex F&O edge",
     icon: Activity,
     iconName: "Activity",
-    oldPrice: "\u20B96,999",
-    price: "\u20B93,499",
+    oldPrice: "\u20B915,999",
+    price: "\u20B912,999",
     popular: false,
   },
 ];
@@ -253,7 +253,7 @@ const PlanCard = ({
             }
         }
       >
-        🚀 Get Instant Access
+        Pay Now
       </motion.button>
 
       <div

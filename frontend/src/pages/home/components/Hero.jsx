@@ -85,7 +85,7 @@ const planOptions = [
 ];
 
 const WHATSAPP_LINK =
-  "https://wa.me/919876543210?text=Hi%20IndexMoney%2C%20I%20want%20today%27s%20free%20call.";
+  "https://wa.me/919216180043?text=Hi%20IndexMoney%2C%20I%20want%20today%27s%20free%20call.";
 
 const Hero = () => {
   const navigate = useNavigate();

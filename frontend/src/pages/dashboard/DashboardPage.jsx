@@ -254,6 +254,7 @@ const DashboardPage = () => {
 
   const [usersData, setUsersData] = React.useState([]);
   const [enquiryData, setEnquiryData] = React.useState([]);
+  const [dematAccountData, setDematAccountData] = React.useState([]);
   const [adminDataLoading, setAdminDataLoading] = React.useState(true);
   const [adminDataStatus, setAdminDataStatus] = React.useState({ kind: "", text: "" });
 
@@ -330,22 +331,31 @@ const DashboardPage = () => {
     try {
       setAdminDataLoading(true);
       setAdminDataStatus({ kind: "", text: "" });
-      const [usersRes, enquiriesRes] = await Promise.all([
+      const [usersRes, enquiriesRes, dematAccountsRes] = await Promise.all([
         fetch(`${API_BASE}/users`, { headers: authHeaders }),
         fetch(`${API_BASE}/enquiries`, { headers: authHeaders }),
+        fetch(`${API_BASE}/demat-accounts`, { headers: authHeaders }),
       ]);
-      const [usersJson, enquiriesJson] = await Promise.all([
+      const [usersJson, enquiriesJson, dematAccountsJson] = await Promise.all([
         usersRes.json().catch(() => ({})),
         enquiriesRes.json().catch(() => ({})),
+        dematAccountsRes.json().catch(() => ({})),
       ]);
-      if (!usersRes.ok || !enquiriesRes.ok) {
-        throw new Error(usersJson?.error || enquiriesJson?.error || "Unable to load admin data");
+      if (!usersRes.ok || !enquiriesRes.ok || !dematAccountsRes.ok) {
+        throw new Error(
+          usersJson?.error ||
+            enquiriesJson?.error ||
+            dematAccountsJson?.error ||
+            "Unable to load admin data",
+        );
       }
       setUsersData(Array.isArray(usersJson?.data) ? usersJson.data : []);
       setEnquiryData(Array.isArray(enquiriesJson?.data) ? enquiriesJson.data : []);
+      setDematAccountData(Array.isArray(dematAccountsJson?.data) ? dematAccountsJson.data : []);
     } catch (error) {
       setUsersData([]);
       setEnquiryData([]);
+      setDematAccountData([]);
       setAdminDataStatus({ kind: "error", text: error.message || "Unable to load admin data" });
     } finally {
       setAdminDataLoading(false);
@@ -552,6 +562,10 @@ const DashboardPage = () => {
     ...entry,
     id: entry._id || `${entry.email}-${entry.createdAt}`,
   }));
+  const dematAccountRows = dematAccountData.map((entry) => ({
+    ...entry,
+    id: entry._id || `${entry.email}-${entry.createdAt}`,
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#C8E6E2]/20 via-white to-[#9ED5D1]/15">
@@ -604,9 +618,10 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6">
+        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[repeat(7,minmax(0,1fr))]">
           <StatCard icon={Users} label="Registered Users" value={adminDataLoading ? "..." : usersData.length} sub="Accounts in the system" />
           <StatCard icon={ClipboardList} label="Enquiries" value={adminDataLoading ? "..." : enquiryData.length} sub="Leads received" color="#3A9295" />
+          <StatCard icon={FileSpreadsheet} label="Demat Leads" value={adminDataLoading ? "..." : dematAccountData.length} sub="Account requests" color="#1f8a70" />
           <StatCard icon={BookOpen} label="Active Blogs" value={blogsLoading ? "..." : blogStats.published} sub={`${blogStats.drafts} drafts`} color="#1f7a6d" />
           <StatCard icon={BarChart2} label="Today's Results" value={`${todaysResults.length} Rows`} sub="Daily update block" color="#63C1BB" />
           <StatCard icon={FileSpreadsheet} label="Performance Sheet" value={performanceMeta.totalTrades || "0"} sub="Uploaded trades" color="#2f7d80" />
@@ -719,6 +734,34 @@ const DashboardPage = () => {
               { key: "email", label: "Email" },
               { key: "phone", label: "Phone" },
               { key: "planType", label: "Plan" },
+              { key: "createdAt", label: "Received", render: (row) => fmt(row.createdAt) },
+            ]}
+          />
+        </div>
+
+        <div className="mt-8">
+          <TableCard
+            title="Demat Account Requests"
+            count={dematAccountData.length}
+            description="Demat account form submissions appear here separately from general enquiries."
+            rows={dematAccountRows}
+            loading={adminDataLoading}
+            onExport={() =>
+              downloadCsv(
+                "indexmoney-demat-account-requests.csv",
+                ["Full Name", "Mobile Number", "Email", "Created At"],
+                dematAccountData.map((entry) => [
+                  entry.fullName,
+                  entry.mobileNumber,
+                  entry.email,
+                  fmt(entry.createdAt),
+                ]),
+              )
+            }
+            columns={[
+              { key: "fullName", label: "Full Name" },
+              { key: "mobileNumber", label: "Mobile" },
+              { key: "email", label: "Email" },
               { key: "createdAt", label: "Received", render: (row) => fmt(row.createdAt) },
             ]}
           />

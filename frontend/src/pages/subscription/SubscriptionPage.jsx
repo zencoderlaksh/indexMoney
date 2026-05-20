@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   TrendingUp,
@@ -22,37 +22,37 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 const PLAN_OPTIONS = [
   {
     title: "Nifty Option Plan",
-    price: "Rs1,999",
+    price: "Rs11,999",
     iconName: "TrendingUp",
     description: "Intraday option setups for Nifty with defined risk levels.",
   },
   {
     title: "Bank Nifty Option Plan",
-    price: "Rs1,999",
+    price: "Rs9,999",
     iconName: "BarChart2",
     description: "Fast-moving Bank Nifty options plan with market-hour updates.",
   },
   {
     title: "Sensex Option Plan",
-    price: "Rs1,999",
+    price: "Rs14,999",
     iconName: "Activity",
     description: "Sensex option setups with disciplined trade structure.",
   },
   {
     title: "Nifty Futures Plan",
-    price: "Rs3,999",
+    price: "Rs9,999",
     iconName: "TrendingUp",
     description: "Nifty futures plan for structured intraday opportunities.",
   },
   {
     title: "Bank Nifty Futures Plan",
-    price: "Rs2,999",
+    price: "Rs7,999",
     iconName: "BarChart2",
     description: "Bank Nifty futures advisory with live trade management.",
   },
   {
     title: "Sensex Futures Plan",
-    price: "Rs4,999",
+    price: "Rs12,999",
     iconName: "Activity",
     description: "Sensex futures setups focused on clarity and execution discipline.",
   },
@@ -268,12 +268,14 @@ const SuccessModal = ({ plan, onClose }) => {
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useAuthStore((state) => state.user);
+  const initialPlanName = location.state?.plan?.title || "";
 
   const [form, setForm] = useState({
     fullName: user?.fullName || "",
     mobile: user?.mobileNumber || "",
-    planName: "",
+    planName: initialPlanName,
     txnId: "",
     screenshot: null,
   });
@@ -349,7 +351,7 @@ const SubscriptionPage = () => {
   const labelBase =
     "mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600";
 
-  const whatsappLink = "https://wa.me/911234567890";
+  const whatsappLink = "https://wa.me/919216180043";
 
   return (
     <>
@@ -447,23 +449,23 @@ const SubscriptionPage = () => {
                     <dl className="space-y-2 text-sm text-slate-600">
                       <div>
                         <dt className="font-semibold text-slate-800">Account Name</dt>
-                        <dd>INDEX MONEY</dd>
+                        <dd>Neha Soni Parwal</dd>
                       </div>
                       <div>
                         <dt className="font-semibold text-slate-800">Bank Name</dt>
-                        <dd>XXXXX Bank</dd>
+                        <dd>Kotak Mahindra Bank</dd>
                       </div>
                       <div>
                         <dt className="font-semibold text-slate-800">Account Number</dt>
-                        <dd>XXXXXXXX</dd>
+                        <dd>0547365150</dd>
                       </div>
                       <div>
                         <dt className="font-semibold text-slate-800">IFSC Code</dt>
-                        <dd>XXXXXXXX</dd>
+                        <dd>KKBK0002049</dd>
                       </div>
                       <div>
-                        <dt className="font-semibold text-slate-800">Account Type</dt>
-                        <dd>Current</dd>
+                        <dt className="font-semibold text-slate-800">Home Branch</dt>
+                        <dd>DHULE</dd>
                       </div>
                     </dl>
                   </div>
@@ -474,7 +476,7 @@ const SubscriptionPage = () => {
                     </h3>
                     <p className="text-sm text-slate-600">
                       UPI ID:{" "}
-                      <span className="font-semibold text-slate-800">indexmoney@upi</span>
+                      <span className="font-semibold text-slate-800">9270069221@kotakbank</span>
                     </p>
 
                     <div className="mt-4 flex items-center justify-center">
@@ -530,7 +532,7 @@ const SubscriptionPage = () => {
                       <input
                         name="mobile"
                         type="tel"
-                        placeholder="+91 98765 43210"
+                        placeholder="Enter mobile number"
                         value={form.mobile}
                         onChange={handleChange}
                         className={`${inputBase} ${

@@ -39,7 +39,7 @@ const optionPlans = [
   ["Trade Management Guidance", true, true, true],
   ["Support During Market Hours", true, true, true],
   ["Communication Channel", "WhatsApp", "WhatsApp", "WhatsApp"],
-  ["Monthly Subscription Fee", "Rs1,999", "Rs1,999", "Rs1,999"],
+  ["Monthly Subscription Fee", "Rs11,999", "Rs9,999", "Rs14,999"],
 ];
 
 const futurePlans = [
@@ -65,7 +65,7 @@ const futurePlans = [
   ["Trade Management Guidance", true, true, true],
   ["Support During Market Hours", true, true, true],
   ["Communication Channel", "WhatsApp", "WhatsApp", "WhatsApp"],
-  ["Monthly Subscription Fee", "Rs3,999", "Rs2,999", "Rs4,999"],
+  ["Monthly Subscription Fee", "Rs9,999", "Rs7,999", "Rs12,999"],
 ];
 
 const trustPoints = [
@@ -346,7 +346,7 @@ const ServicesPage = () => {
               title="Index Option Advisory Plans"
               description="Professional option trading services for Nifty, Bank Nifty, and Sensex with a focus on disciplined risk management."
               rows={optionPlans}
-              showPayNow={false}
+              showPayNow
             />
           ) : (
             <ServicesTable

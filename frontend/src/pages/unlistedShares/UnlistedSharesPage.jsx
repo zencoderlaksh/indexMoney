@@ -106,7 +106,7 @@ const UnlistedSharesPage = () => {
     text: "",
   });
 
-  const whatsappLink = "https://wa.me/919876543210";
+  const whatsappLink = "https://wa.me/919216180043";
 
   useEffect(() => {
     const controller = new AbortController();
