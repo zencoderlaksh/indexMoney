@@ -1,8 +1,6 @@
 import { create } from "zustand";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
-const isRelativeApiBase = API_BASE.startsWith("/");
-const PRODUCTION_API_BASE = "https://indexmoney-api.onrender.com/api";
 
 const postDematAccount = async (apiBase, payload) => {
   const res = await fetch(`${apiBase}/demat-accounts`, {
@@ -29,20 +27,7 @@ export const useDematAccountStore = create((set) => ({
     set({ isSubmitting: true, serverError: "", successMessage: "" });
 
     try {
-      let json;
-
-      try {
-        json = await postDematAccount(API_BASE, payload);
-      } catch (error) {
-        const canTryProduction =
-          isRelativeApiBase && import.meta.env.DEV && /Failed to fetch|Unable to submit/i.test(error.message);
-
-        if (!canTryProduction) {
-          throw error;
-        }
-
-        json = await postDematAccount(PRODUCTION_API_BASE, payload);
-      }
+      const json = await postDematAccount(API_BASE, payload);
 
       set({
         successMessage:

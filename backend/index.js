@@ -17,6 +17,7 @@ const allowedOrigins = [
   "https://indexmoney.netlify.app",
   "https://indexmoney.in",
   "https://www.indexmoney.in",
+  "https://indexmoney.onrender.com",
   "https://indexmoney-api.onrender.com",
   ...(process.env.CORS_ORIGINS || "")
     .split(",")

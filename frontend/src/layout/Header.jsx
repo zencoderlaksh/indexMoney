@@ -179,17 +179,6 @@ const Header = () => {
                 >
                   Open Free Demat
                 </motion.button>
-                <motion.button
-                  onClick={() => navigate("/partner-with-us")}
-                  whileHover={{
-                    scale: 1.04,
-                    boxShadow: "0 6px 20px rgba(58,146,149,0.35)",
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                  className="flex items-center gap-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#3A9295] to-[#105F68] px-4 py-2 rounded-xl shadow-sm transition-all duration-200"
-                >
-                  Partner with us <ArrowRight className="w-3.5 h-3.5" />
-                </motion.button>
               </>
             )}
           </div>
@@ -282,15 +271,6 @@ const Header = () => {
                       className="w-full py-2.5 text-sm font-semibold text-[#105F68] border border-[#9ED5D1] rounded-xl hover:bg-[#C8E6E2]/30 transition-colors duration-200"
                     >
                       Open Free Demat
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate("/partner-with-us");
-                        setMobileOpen(false);
-                      }}
-                      className="w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#3A9295] to-[#105F68] rounded-xl"
-                    >
-                      Partner with us
                     </button>
                   </>
                 )}

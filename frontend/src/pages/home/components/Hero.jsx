@@ -145,7 +145,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden py-16 lg:min-h-[92vh] lg:py-20">
+    <section className="relative flex min-h-screen items-start overflow-hidden py-16 lg:min-h-[92vh] lg:py-20">
       <GridBg />
 
       <div
@@ -161,7 +161,7 @@ const Hero = () => {
         }}
       />
 
-      <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 px-5 md:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+      <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-start gap-10 px-5 md:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
         <div className="flex flex-col gap-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
