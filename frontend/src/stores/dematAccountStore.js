@@ -1,6 +1,24 @@
 import { create } from "zustand";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
+const isRelativeApiBase = API_BASE.startsWith("/");
+const PRODUCTION_API_BASE = "https://indexmoney-api.onrender.com/api";
+
+const postDematAccount = async (apiBase, payload) => {
+  const res = await fetch(`${apiBase}/demat-accounts`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const json = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(json?.error || "Unable to submit demat account request");
+  }
+
+  return json;
+};
 
 export const useDematAccountStore = create((set) => ({
   isSubmitting: false,
@@ -11,16 +29,19 @@ export const useDematAccountStore = create((set) => ({
     set({ isSubmitting: true, serverError: "", successMessage: "" });
 
     try {
-      const res = await fetch(`${API_BASE}/demat-accounts`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      let json;
 
-      const json = await res.json().catch(() => ({}));
+      try {
+        json = await postDematAccount(API_BASE, payload);
+      } catch (error) {
+        const canTryProduction =
+          isRelativeApiBase && import.meta.env.DEV && /Failed to fetch|Unable to submit/i.test(error.message);
 
-      if (!res.ok) {
-        throw new Error(json?.error || "Unable to submit demat account request");
+        if (!canTryProduction) {
+          throw error;
+        }
+
+        json = await postDematAccount(PRODUCTION_API_BASE, payload);
       }
 
       set({

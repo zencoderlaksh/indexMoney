@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import Hero from "./components/Hero";
 import Trust from "./components/Trust";
 import PlansSection from "./components/PlansSection";
@@ -49,6 +50,19 @@ const Blob = ({
 );
 
 const Home = () => {
+  const location = useLocation();
+
+  React.useEffect(() => {
+    if (!location.hash) return;
+    const targetId = location.hash.slice(1);
+    window.setTimeout(() => {
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 120);
+  }, [location.hash]);
+
   return (
     <div className="relative min-h-screen overflow-x-hidden">
       <div className="fixed inset-0 -z-10 bg-white">

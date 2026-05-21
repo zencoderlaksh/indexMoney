@@ -62,6 +62,17 @@ const Header = () => {
     navigate("/", { replace: true });
   };
 
+  const openDematForm = () => {
+    setMobileOpen(false);
+    navigate("/#demat-account");
+    window.setTimeout(() => {
+      document.getElementById("demat-account")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 80);
+  };
+
   return (
     <>
       <motion.header
@@ -161,6 +172,7 @@ const Header = () => {
             ) : (
               <>
                 <motion.button
+                  onClick={openDematForm}
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.97 }}
                   className="text-sm font-semibold text-[#105F68] border border-[#9ED5D1] hover:border-[#63C1BB] hover:bg-[#C8E6E2]/30 px-4 py-2 rounded-xl transition-colors duration-200"
@@ -265,7 +277,10 @@ const Header = () => {
                   </>
                 ) : (
                   <>
-                    <button className="w-full py-2.5 text-sm font-semibold text-[#105F68] border border-[#9ED5D1] rounded-xl hover:bg-[#C8E6E2]/30 transition-colors duration-200">
+                    <button
+                      onClick={openDematForm}
+                      className="w-full py-2.5 text-sm font-semibold text-[#105F68] border border-[#9ED5D1] rounded-xl hover:bg-[#C8E6E2]/30 transition-colors duration-200"
+                    >
                       Open Free Demat
                     </button>
                     <button

@@ -20,6 +20,7 @@ router.use("/subscriptions", subscriptionRoutes);
 router.use("/unlisted", unlistedRoutes);
 router.use("/blogs", blogRoutes);
 router.use("/demat-accounts", dematAccountRoutes);
+router.use("/demat-account", dematAccountRoutes);
 
 router.get("/health", (req, res) => {
   res.json({ status: "ok" });

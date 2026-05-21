@@ -73,7 +73,7 @@ const DematPromoSection = () => {
   };
 
   return (
-    <section className="overflow-hidden bg-transparent py-16 md:py-20">
+    <section id="demat-account" className="scroll-mt-24 overflow-hidden bg-transparent py-16 md:py-20">
       <div className="mx-auto max-w-6xl px-5 md:px-6">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
           <motion.div
@@ -227,8 +227,8 @@ const DematPromoSection = () => {
 
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 {[
-                  "Users are redirected straight to the demat account creation page when they click the CTA.",
-                  "The chart visual has been removed and replaced with a clean screenshot-style reference.",
+                  "Submit basic details and our team will contact the user for account opening assistance.",
+                  "Full name, mobile number, and email are validated before the request is saved.",
                 ].map((item) => (
                   <div
                     key={item}
