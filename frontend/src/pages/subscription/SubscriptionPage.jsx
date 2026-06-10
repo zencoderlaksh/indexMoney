@@ -482,10 +482,6 @@ const SubscriptionPage = () => {
                     <h3 className="mb-3 text-sm font-semibold text-slate-900">
                       UPI / QR Code
                     </h3>
-                    <p className="text-sm text-slate-600">
-                      UPI ID:{" "}
-                      <span className="font-semibold text-slate-800">{PAYMENT_UPI_ID}</span>
-                    </p>
 
                     <div className="mt-4 flex items-center justify-center">
                       <div className="w-full max-w-[230px] rounded-[24px] bg-black p-3 shadow-xl">
@@ -513,9 +509,6 @@ const SubscriptionPage = () => {
 
                           <p className="mt-3 text-xs font-semibold uppercase">
                             {PAYMENT_PAYEE}
-                          </p>
-                          <p className="mt-3 text-[9px] font-medium">
-                            UPI ID: {PAYMENT_UPI_ID}
                           </p>
                         </div>
                         <div className="-mt-3 mx-auto flex w-[72%] items-center justify-center gap-1 rounded-b-xl bg-black/85 pb-2 pt-4 text-[7px] font-semibold text-white">
