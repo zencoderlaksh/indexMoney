@@ -18,6 +18,14 @@ import {
 import { useAuthStore } from "../../stores/authStore";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
+const PAYMENT_UPI_ID = "9270069221@kotakbank";
+const PAYMENT_PAYEE = "NEHA SONI PARWAL";
+const PAYMENT_UPI_LINK = `upi://pay?pa=${PAYMENT_UPI_ID}&pn=${encodeURIComponent(
+  PAYMENT_PAYEE
+)}&cu=INR`;
+const PAYMENT_QR_SRC = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(
+  PAYMENT_UPI_LINK
+)}`;
 
 const PLAN_OPTIONS = [
   {
@@ -476,15 +484,47 @@ const SubscriptionPage = () => {
                     </h3>
                     <p className="text-sm text-slate-600">
                       UPI ID:{" "}
-                      <span className="font-semibold text-slate-800">9270069221@kotakbank</span>
+                      <span className="font-semibold text-slate-800">{PAYMENT_UPI_ID}</span>
                     </p>
 
                     <div className="mt-4 flex items-center justify-center">
-                      <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-100 bg-white p-5 shadow-inner">
-                        <div className="flex h-40 w-40 items-center justify-center rounded-xl bg-gradient-to-br from-[#C8E6E2] to-[#9ED5D1] text-sm font-semibold text-slate-600">
-                          QR Code
+                      <div className="w-full max-w-[230px] rounded-[24px] bg-black p-3 shadow-xl">
+                        <div className="overflow-hidden rounded-[20px] bg-[linear-gradient(135deg,#d6003d_0%,#c3154f_28%,#1a1630_68%,#0c1025_100%)] px-3.5 pb-4 pt-5 text-white">
+                          <div className="flex items-center justify-center gap-1.5 text-lg font-extrabold tracking-tight">
+                            <span>kotak</span>
+                            <span className="flex gap-0.5">
+                              <span className="h-5 w-1.5 rounded-full bg-white"></span>
+                              <span className="h-5 w-1.5 rounded-full bg-white"></span>
+                              <span className="h-5 w-1.5 rounded-full bg-white"></span>
+                            </span>
+                          </div>
+                          <p className="mt-7 text-center text-[10px] font-medium">
+                            Scan to pay with any UPI app
+                          </p>
+
+                          <div className="mt-9 rounded-[14px] bg-white p-2.5 shadow-md">
+                            <img
+                              src={PAYMENT_QR_SRC}
+                              alt={`UPI QR code for ${PAYMENT_PAYEE}`}
+                              className="aspect-square w-full rounded-md object-contain"
+                              loading="lazy"
+                            />
+                          </div>
+
+                          <p className="mt-3 text-xs font-semibold uppercase">
+                            {PAYMENT_PAYEE}
+                          </p>
+                          <p className="mt-3 text-[9px] font-medium">
+                            UPI ID: {PAYMENT_UPI_ID}
+                          </p>
                         </div>
-                        <p className="text-center text-xs text-slate-500">
+                        <div className="-mt-3 mx-auto flex w-[72%] items-center justify-center gap-1 rounded-b-xl bg-black/85 pb-2 pt-4 text-[7px] font-semibold text-white">
+                          <span className="grid h-4 w-4 place-items-center rounded-full border border-white/50 text-[6px]">
+                            811
+                          </span>
+                          <span>811 Super</span>
+                        </div>
+                        <p className="mt-3 text-center text-xs text-slate-100">
                           Scan and pay using any UPI app.
                         </p>
                       </div>
