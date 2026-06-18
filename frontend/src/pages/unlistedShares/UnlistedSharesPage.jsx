@@ -261,11 +261,11 @@ const UnlistedSharesPage = () => {
             <h2 className="mt-2 text-2xl font-bold text-slate-800">
               {sheetMeta.title}
             </h2>
-            {sheetMeta.sourceFileName ? (
+            {sheetMeta.sourceFileName ?
               <p className="mt-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
                 Source file: {sheetMeta.sourceFileName}
               </p>
-            ) : null}
+            : null}
           </div>
 
           <div className="overflow-x-auto">
@@ -275,32 +275,55 @@ const UnlistedSharesPage = () => {
                   <th className="px-6 py-4 font-semibold">Company</th>
                   <th className="px-6 py-4 font-semibold">Sector</th>
                   <th className="px-6 py-4 font-semibold">Indicative Price*</th>
-                  <th className="px-6 py-4 font-semibold">Minimum Investment</th>
+                  <th className="px-6 py-4 font-semibold">
+                    Minimum Investment
+                  </th>
                   <th className="px-6 py-4 font-semibold">Status</th>
+                  <th className="px-6 py-4 font-semibold">Connect</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
-                {opportunities.map((item) => (
-                  <tr key={`${item.company}-${item.sector}`} className="hover:bg-[#FBFEFD]">
-                    <td className="px-6 py-4 font-semibold text-slate-800">
-                      {item.company}
-                    </td>
-                    <td className="px-6 py-4">{item.sector}</td>
-                    <td className="px-6 py-4">{item.price}</td>
-                    <td className="px-6 py-4">{item.minimumInvestment}</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                          item.status === "Available"
-                            ? "bg-emerald-50 text-emerald-600"
+                {opportunities.map((item) => {
+                  const whatsappText = encodeURIComponent(
+                    `Hi Index Money, I want to buy shares in ${item.company}. Please connect me.`,
+                  );
+                  const whatsappRowLink = `${whatsappLink}?text=${whatsappText}`;
+
+                  return (
+                    <tr
+                      key={`${item.company}-${item.sector}`}
+                      className="hover:bg-[#FBFEFD]"
+                    >
+                      <td className="px-6 py-4 font-semibold text-slate-800">
+                        {item.company}
+                      </td>
+                      <td className="px-6 py-4">{item.sector}</td>
+                      <td className="px-6 py-4">{item.price}</td>
+                      <td className="px-6 py-4">{item.minimumInvestment}</td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                            item.status === "Available" ?
+                              "bg-emerald-50 text-emerald-600"
                             : "bg-amber-50 text-amber-700"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <a
+                          href={whatsappRowLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center justify-center rounded-full border border-[#63C1BB] bg-[#EAF8F4] px-3 py-2 text-xs font-semibold text-[#105F68] transition-colors duration-200 hover:bg-[#d4f0ea]"
+                        >
+                          Chat on WhatsApp
+                        </a>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -371,8 +394,8 @@ const UnlistedSharesPage = () => {
               Unlisted shares are equity shares of companies that are not traded
               on public stock exchanges. These may include pre-IPO businesses,
               private companies, and growth-stage firms where transactions
-              typically happen through private market facilitation and off-market
-              transfer processes.
+              typically happen through private market facilitation and
+              off-market transfer processes.
             </p>
 
             <div className="mt-6 space-y-3">
@@ -456,7 +479,10 @@ const UnlistedSharesPage = () => {
         </div>
       </section>
 
-      <section id="unlisted-inquiry-form" className="relative px-5 py-8 md:px-8">
+      <section
+        id="unlisted-inquiry-form"
+        className="relative px-5 py-8 md:px-8"
+      >
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_320px]">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -476,17 +502,17 @@ const UnlistedSharesPage = () => {
               options, indicative pricing, and next steps.
             </p>
 
-            {submitStatus.text ? (
+            {submitStatus.text ?
               <div
                 className={`mt-5 rounded-2xl border px-4 py-3 text-sm ${
-                  submitStatus.kind === "success"
-                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                    : "border-amber-200 bg-amber-50 text-amber-700"
+                  submitStatus.kind === "success" ?
+                    "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  : "border-amber-200 bg-amber-50 text-amber-700"
                 }`}
               >
                 {submitStatus.text}
               </div>
-            ) : null}
+            : null}
 
             <form onSubmit={handleSubmit} className="mt-7 space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
