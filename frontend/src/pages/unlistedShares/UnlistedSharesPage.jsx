@@ -316,9 +316,10 @@ const UnlistedSharesPage = () => {
                           href={whatsappRowLink}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center justify-center rounded-full border border-[#63C1BB] bg-[#EAF8F4] px-3 py-2 text-xs font-semibold text-[#105F68] transition-colors duration-200 hover:bg-[#d4f0ea]"
+                          aria-label={`Chat with Index Money about ${item.company} on WhatsApp`}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#63C1BB] bg-[#EAF8F4] text-[#105F68] transition-colors duration-200 hover:bg-[#d4f0ea]"
                         >
-                          Chat on WhatsApp
+                          <Phone className="h-4 w-4" />
                         </a>
                       </td>
                     </tr>
