@@ -4,10 +4,27 @@ const UnlistedInquiry = require("../models/unlistedInquiryModel");
 
 const HEADER_ALIASES = {
   company: ["company", "company name", "name"],
+  code: ["code", "symbol", "company code", "share code"],
+  slug: ["slug", "url slug", "page slug"],
+  logoUrl: ["logo", "logo url", "logo image", "image", "image url"],
   sector: ["sector", "industry"],
   price: ["price", "indicative price", "rate"],
   minimumInvestment: ["minimuminvestment", "minimum investment", "minimum shares"],
   status: ["status", "availability"],
+  badge: ["badge", "tag", "label"],
+  description: ["description", "short description", "summary"],
+  marketCap: ["market cap", "market capitalization"],
+  isin: ["isin"],
+  faceValue: ["face value"],
+  eps: ["eps"],
+  pbRatio: ["p/b ratio", "pb ratio", "price to book"],
+  bookValue: ["book value"],
+  debtEquityRatio: ["debt / equity ratio", "debt equity ratio", "debt to equity"],
+  settlementPeriod: ["settlement period", "settlement"],
+  minUnits: ["min units", "minimum units", "minimum quantity"],
+  aboutCompany: ["about company", "about", "company overview"],
+  strengths: ["strengths", "key strengths"],
+  weaknesses: ["weaknesses", "key weaknesses"],
 };
 
 const normalizeHeader = (value) =>
@@ -45,12 +62,33 @@ const parseRows = (buffer) => {
   return rows.map((row, index) => {
     const opportunity = {
       company: String(findValue(row, HEADER_ALIASES.company)).trim(),
+      code: String(findValue(row, HEADER_ALIASES.code)).trim(),
+      slug: String(findValue(row, HEADER_ALIASES.slug)).trim(),
+      logoUrl: String(findValue(row, HEADER_ALIASES.logoUrl)).trim(),
       sector: String(findValue(row, HEADER_ALIASES.sector)).trim(),
       price: String(findValue(row, HEADER_ALIASES.price)).trim(),
       minimumInvestment: String(
         findValue(row, HEADER_ALIASES.minimumInvestment),
       ).trim(),
       status: String(findValue(row, HEADER_ALIASES.status)).trim(),
+      badge: String(findValue(row, HEADER_ALIASES.badge)).trim(),
+      description: String(findValue(row, HEADER_ALIASES.description)).trim(),
+      marketCap: String(findValue(row, HEADER_ALIASES.marketCap)).trim(),
+      isin: String(findValue(row, HEADER_ALIASES.isin)).trim(),
+      faceValue: String(findValue(row, HEADER_ALIASES.faceValue)).trim(),
+      eps: String(findValue(row, HEADER_ALIASES.eps)).trim(),
+      pbRatio: String(findValue(row, HEADER_ALIASES.pbRatio)).trim(),
+      bookValue: String(findValue(row, HEADER_ALIASES.bookValue)).trim(),
+      debtEquityRatio: String(
+        findValue(row, HEADER_ALIASES.debtEquityRatio),
+      ).trim(),
+      settlementPeriod: String(
+        findValue(row, HEADER_ALIASES.settlementPeriod),
+      ).trim(),
+      minUnits: String(findValue(row, HEADER_ALIASES.minUnits)).trim(),
+      aboutCompany: String(findValue(row, HEADER_ALIASES.aboutCompany)).trim(),
+      strengths: String(findValue(row, HEADER_ALIASES.strengths)).trim(),
+      weaknesses: String(findValue(row, HEADER_ALIASES.weaknesses)).trim(),
     };
 
     if (
@@ -61,7 +99,7 @@ const parseRows = (buffer) => {
       !opportunity.status
     ) {
       throw new Error(
-        `Row ${index + 2} is invalid. Required columns: company, sector, price, minimumInvestment, status`,
+        `Row ${index + 2} is invalid. Required columns: company, sector, price, minimumInvestment, status. Optional columns such as code, slug, logoUrl, marketCap, isin, faceValue, eps, pbRatio, bookValue, debtEquityRatio, aboutCompany, strengths, and weaknesses will be imported when present.`,
       );
     }
 

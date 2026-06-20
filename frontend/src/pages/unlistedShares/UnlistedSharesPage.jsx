@@ -10,7 +10,6 @@ import {
   FileCheck2,
   Landmark,
   MessageCircle,
-  Phone,
   Send,
   ShieldAlert,
   Sparkles,
@@ -18,6 +17,18 @@ import {
 } from "lucide-react";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
+
+const WhatsAppIcon = ({ className = "" }) => (
+  <svg
+    viewBox="0 0 32 32"
+    aria-hidden="true"
+    focusable="false"
+    className={className}
+    fill="currentColor"
+  >
+    <path d="M16.01 3.2c-7.05 0-12.78 5.72-12.78 12.77 0 2.25.59 4.45 1.72 6.38L3.13 29l6.8-1.78a12.75 12.75 0 0 0 6.08 1.55h.01c7.05 0 12.78-5.72 12.78-12.77S23.07 3.2 16.01 3.2Zm0 23.4a10.6 10.6 0 0 1-5.4-1.48l-.39-.23-4.03 1.06 1.08-3.93-.25-.4a10.55 10.55 0 0 1-1.63-5.65c0-5.85 4.76-10.6 10.62-10.6 2.83 0 5.5 1.1 7.5 3.1a10.52 10.52 0 0 1 3.11 7.5c0 5.85-4.76 10.62-10.61 10.62Zm5.82-7.94c-.32-.16-1.88-.93-2.17-1.03-.29-.1-.5-.16-.72.16-.21.32-.82 1.03-1.01 1.24-.19.21-.37.24-.69.08-.32-.16-1.35-.5-2.57-1.59-.95-.85-1.59-1.9-1.78-2.22-.19-.32-.02-.49.14-.65.15-.15.32-.37.48-.56.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.72-1.73-.98-2.37-.26-.62-.52-.54-.72-.55h-.61c-.21 0-.56.08-.85.4-.29.32-1.11 1.09-1.11 2.65s1.14 3.07 1.3 3.28c.16.21 2.24 3.42 5.43 4.79.76.33 1.35.52 1.81.67.76.24 1.45.21 2 .13.61-.09 1.88-.77 2.14-1.51.27-.74.27-1.38.19-1.51-.08-.13-.29-.21-.61-.37Z" />
+  </svg>
+);
 
 const bulletPoints = [
   "Pre-IPO Companies",
@@ -55,24 +66,42 @@ const serviceCards = [
 const fallbackOpportunities = [
   {
     company: "ABC Ltd",
+    code: "ABC",
+    slug: "abc-ltd",
     sector: "Fintech",
     price: "Rs850",
     minimumInvestment: "100 Shares",
     status: "Available",
+    badge: "Available",
+    marketCap: "Upload market cap",
+    isin: "Upload ISIN",
+    faceValue: "Upload face value",
   },
   {
     company: "XYZ Pvt Ltd",
+    code: "XYZ",
+    slug: "xyz-pvt-ltd",
     sector: "Technology",
     price: "Rs1200",
     minimumInvestment: "50 Shares",
     status: "Limited",
+    badge: "Limited",
+    marketCap: "Upload market cap",
+    isin: "Upload ISIN",
+    faceValue: "Upload face value",
   },
   {
     company: "Prime Infra Tech",
+    code: "PIT",
+    slug: "prime-infra-tech",
     sector: "Infrastructure",
     price: "Rs640",
     minimumInvestment: "150 Shares",
     status: "Available",
+    badge: "Available",
+    marketCap: "Upload market cap",
+    isin: "Upload ISIN",
+    faceValue: "Upload face value",
   },
 ];
 
@@ -85,6 +114,34 @@ const steps = [
 
 const inputBase =
   "w-full rounded-2xl border border-[#D7ECE7] bg-white px-4 py-3 text-sm text-slate-700 outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/25";
+
+const createSlug = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const getInitials = (value) =>
+  String(value || "IM")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase())
+    .join("") || "IM";
+
+const getDetailPath = (item) => {
+  const code = createSlug(item.code || item.company);
+  const slug = createSlug(item.slug || item.company);
+  return `/unlisted-shares/${code}/${slug}`;
+};
+
+const getFundamentalPreview = (item) =>
+  [
+    { label: "Market Cap", value: item.marketCap },
+    { label: "ISIN", value: item.isin },
+    { label: "Face Value", value: item.faceValue },
+  ].filter((detail) => detail.value);
 
 const UnlistedSharesPage = () => {
   const [form, setForm] = useState({
@@ -268,69 +325,133 @@ const UnlistedSharesPage = () => {
             : null}
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left">
-              <thead className="bg-[#F4FBF9] text-xs uppercase tracking-[0.16em] text-slate-500">
-                <tr>
-                  <th className="px-6 py-4 font-semibold">Company</th>
-                  <th className="px-6 py-4 font-semibold">Sector</th>
-                  <th className="px-6 py-4 font-semibold">Indicative Price*</th>
-                  <th className="px-6 py-4 font-semibold">
-                    Minimum Investment
-                  </th>
-                  <th className="px-6 py-4 font-semibold">Status</th>
-                  <th className="px-6 py-4 font-semibold">Connect</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
-                {opportunities.map((item) => {
-                  const whatsappText = encodeURIComponent(
-                    `Hi Index Money, I want to buy shares in ${item.company}. Please connect me.`,
-                  );
-                  const whatsappRowLink = `${whatsappLink}?text=${whatsappText}`;
+          <div className="grid gap-5 p-5 md:grid-cols-2 xl:grid-cols-3">
+            {opportunities.map((item, index) => {
+              const whatsappText = encodeURIComponent(
+                `Hi Index Money, I want to buy shares in ${item.company}. Please connect me.`,
+              );
+              const whatsappRowLink = `${whatsappLink}?text=${whatsappText}`;
+              const fundamentals = getFundamentalPreview(item);
 
-                  return (
-                    <tr
-                      key={`${item.company}-${item.sector}`}
-                      className="hover:bg-[#FBFEFD]"
+              return (
+                <motion.article
+                  key={`${item.company}-${item.sector}`}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.35, delay: index * 0.04 }}
+                  className="group flex min-h-[360px] flex-col rounded-[28px] border border-[#D7ECE7] bg-gradient-to-br from-white via-[#FBFEFD] to-[#EFFAF7] p-5 shadow-[0_14px_34px_rgba(16,95,104,0.08)] transition duration-300 hover:-translate-y-1 hover:border-[#91D8CD] hover:shadow-[0_20px_44px_rgba(16,95,104,0.14)]"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-[#CBE7E1] bg-white text-lg font-black text-[#105F68] shadow-sm">
+                        {item.logoUrl ?
+                          <img
+                            src={item.logoUrl}
+                            alt={`${item.company} logo`}
+                            className="h-full w-full object-cover"
+                          />
+                        : getInitials(item.company)}
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#3A9295]">
+                          {item.sector}
+                        </p>
+                        <h3 className="mt-1 line-clamp-2 text-lg font-bold leading-snug text-slate-800">
+                          {item.company}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <span
+                      className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${
+                        item.status === "Available" ?
+                          "bg-emerald-50 text-emerald-700"
+                        : "bg-amber-50 text-amber-700"
+                      }`}
                     >
-                      <td className="px-6 py-4 font-semibold text-slate-800">
-                        {item.company}
-                      </td>
-                      <td className="px-6 py-4">{item.sector}</td>
-                      <td className="px-6 py-4">{item.price}</td>
-                      <td className="px-6 py-4">{item.minimumInvestment}</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                            item.status === "Available" ?
-                              "bg-emerald-50 text-emerald-600"
-                            : "bg-amber-50 text-amber-700"
-                          }`}
-                        >
-                          {item.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <a
-                          href={whatsappRowLink}
-                          target="_blank"
-                          rel="noreferrer"
-                          aria-label={`Chat with Index Money about ${item.company} on WhatsApp`}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#63C1BB] bg-[#EAF8F4] text-[#105F68] transition-colors duration-200 hover:bg-[#d4f0ea]"
-                        >
-                          <Phone className="h-4 w-4" />
-                        </a>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      {item.badge || item.status}
+                    </span>
+                  </div>
+
+                  {item.description ?
+                    <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-slate-500">
+                      {item.description}
+                    </p>
+                  : null}
+
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl border border-[#E1F1EE] bg-white p-4">
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                        Indicative Price
+                      </p>
+                      <p className="mt-2 text-xl font-black text-[#105F68]">
+                        {item.price}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-[#E1F1EE] bg-white p-4">
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                        Minimum
+                      </p>
+                      <p className="mt-2 text-sm font-bold text-slate-800">
+                        {item.minimumInvestment}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 min-h-[92px] rounded-2xl bg-[#F4FBF9] p-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#3A9295]">
+                      Fundamentals
+                    </p>
+                    {fundamentals.length ?
+                      <div className="mt-3 space-y-2">
+                        {fundamentals.map((detail) => (
+                          <div
+                            key={detail.label}
+                            className="flex items-center justify-between gap-3 text-xs"
+                          >
+                            <span className="text-slate-500">
+                              {detail.label}
+                            </span>
+                            <span className="max-w-[58%] truncate font-bold text-slate-800">
+                              {detail.value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    : <p className="mt-3 text-sm leading-relaxed text-slate-500">
+                        Upload fundamentals columns to show market cap, ISIN,
+                        face value and more.
+                      </p>
+                    }
+                  </div>
+
+                  <div className="mt-auto flex items-center gap-3 pt-5">
+                    <Link
+                      to={getDetailPath(item)}
+                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(58,146,149,0.18)] transition duration-200 hover:-translate-y-0.5"
+                    >
+                      View details
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                    <a
+                      href={whatsappRowLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Chat with Index Money about ${item.company} on WhatsApp`}
+                      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#63C1BB] bg-[#EAF8F4] text-[#105F68] transition-colors duration-200 hover:bg-[#d4f0ea]"
+                    >
+                      <WhatsAppIcon className="h-5 w-5" />
+                    </a>
+                  </div>
+                </motion.article>
+              );
+            })}
           </div>
 
           <div className="border-t border-slate-100 px-6 py-4 text-sm text-slate-500">
-            *Prices are indicative and will be updated from the backend upload.
+            *Prices and fundamentals are indicative and will be updated from the
+            backend upload.
           </div>
         </div>
       </section>
@@ -613,7 +734,7 @@ const UnlistedSharesPage = () => {
               rel="noreferrer"
               className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-[#107D52]"
             >
-              <Phone className="h-4 w-4" />
+              <WhatsAppIcon className="h-4 w-4" />
               Chat on WhatsApp
             </a>
 

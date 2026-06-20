@@ -1136,7 +1136,7 @@ const DashboardPage = () => {
               icon={FileSpreadsheet}
               eyebrow="Unlisted Module"
               title="Unlisted Opportunities Sheet Upload"
-              description="Upload the unlisted shares table sheet here. The public page fetches the latest uploaded data automatically."
+              description="Upload the unlisted shares Excel sheet here. The public cards and detail pages fetch the latest uploaded data automatically."
             />
             <StatusBanner kind={unlistedStatus.kind} text={unlistedStatus.text} />
             {unlistedStatus.kind === "success" ? (
@@ -1154,6 +1154,15 @@ const DashboardPage = () => {
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm text-slate-600">
                   <p className="font-semibold text-slate-700">Required Excel columns</p>
                   <p className="mt-2">`company`, `sector`, `price`, `minimumInvestment`, `status`</p>
+                  <p className="mt-4 font-semibold text-slate-700">Optional card/detail columns</p>
+                  <p className="mt-2 leading-6">
+                    `code`, `slug`, `logoUrl`, `badge`, `description`, `marketCap`, `isin`, `faceValue`,
+                    `eps`, `pbRatio`, `bookValue`, `debtEquityRatio`, `settlementPeriod`, `minUnits`,
+                    `aboutCompany`, `strengths`, `weaknesses`
+                  </p>
+                  <p className="mt-3 text-xs leading-5 text-slate-500">
+                    Use `strengths` and `weaknesses` with values separated by `|` to show bullet points on each share detail page.
+                  </p>
                 </div>
                 <input
                   type="text"

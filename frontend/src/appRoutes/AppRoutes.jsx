@@ -12,6 +12,7 @@ import Disclaimer from "../pages/legal/Disclaimer";
 import TermsAndConditions from "../pages/legal/TermsAndConditions";
 import ContactPage from "../pages/contact/ContactPage";
 import UnlistedSharesPage from "../pages/unlistedShares/UnlistedSharesPage";
+import UnlistedShareDetailPage from "../pages/unlistedShares/UnlistedShareDetailPage";
 import ServicesPage from "../pages/services/ServicesPage";
 import PastPerformancePage from "../pages/pastPerformance/PastPerformancePage";
 import BlogsPage from "../pages/blogs/BlogsPage";
@@ -25,6 +26,7 @@ const AppRoutes = () => {
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/unlisted-shares" element={<UnlistedSharesPage />} />
+        <Route path="/unlisted-shares/:code/:slug" element={<UnlistedShareDetailPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/past-performance" element={<PastPerformancePage />} />
         <Route path="/blogs" element={<BlogsPage />} />
