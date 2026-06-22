@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { createChart, LineSeries } from "lightweight-charts";
 import {
   ArrowLeft,
   BadgeIndianRupee,
   Building2,
   CheckCircle2,
   FileText,
+  Info,
   Landmark,
+  Minus,
+  Plus,
   ShieldAlert,
 } from "lucide-react";
 
@@ -72,10 +76,269 @@ const splitList = (value) =>
     .map((item) => item.trim())
     .filter(Boolean);
 
+const chartRanges = ["1 M", "3 M", "1 Y", "2 Y", "3 Y", "All"];
+
+const dummyPriceDataByRange = {
+  "1 M": [250, 250, 251, 251, 252, 254, 253, 255, 256, 258, 257, 260],
+  "3 M": [218, 218, 220, 220, 224, 224, 229, 229, 235, 241, 238, 246, 250, 250],
+  "1 Y": [
+    189, 189, 189, 189, 189, 189, 189, 189, 189, 189, 196, 196, 210, 210, 210,
+    210, 218, 218, 226, 242, 235, 235, 240, 240, 232, 249, 277, 258, 255, 242,
+    236, 248, 250, 253, 247, 251, 251, 251, 239, 239, 247, 247,
+  ],
+  "2 Y": [164, 164, 169, 172, 172, 181, 178, 190, 186, 198, 206, 203, 219, 211, 235, 227, 251, 247, 265],
+  "3 Y": [132, 135, 137, 145, 142, 154, 160, 158, 172, 169, 184, 190, 188, 205, 218, 214, 236, 249, 265],
+  All: [76, 82, 81, 92, 96, 104, 116, 111, 128, 141, 138, 156, 174, 168, 191, 207, 224, 219, 241, 265],
+};
+
+const rangeStepDays = {
+  "1 M": 3,
+  "3 M": 7,
+  "1 Y": 9,
+  "2 Y": 38,
+  "3 Y": 58,
+  All: 110,
+};
+
+const parseCurrencyValue = (value) => {
+  const parsed = Number(String(value || "").replace(/[^0-9.]/g, ""));
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 277;
+};
+
+const parseUnits = (value) => {
+  const parsed = Number(String(value || "").match(/\d+/)?.[0]);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+};
+
+const formatCurrency = (value) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(value);
+
+const formatChartDate = (date) => date.toISOString().slice(0, 10);
+
+const createChartData = (range) => {
+  const values = dummyPriceDataByRange[range] || dummyPriceDataByRange["1 Y"];
+  const step = rangeStepDays[range] || 9;
+  const endDate = new Date(Date.UTC(2026, 5, 22));
+  const startDate = new Date(endDate);
+
+  startDate.setUTCDate(endDate.getUTCDate() - step * (values.length - 1));
+
+  return values.map((value, index) => {
+    const date = new Date(startDate);
+    date.setUTCDate(startDate.getUTCDate() + index * step);
+
+    return {
+      time: formatChartDate(date),
+      value,
+    };
+  });
+};
+
+const formatDisplayDate = (value) =>
+  new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(`${value}T00:00:00Z`));
+
+const PriceHistoryChart = ({ price }) => {
+  const [activeRange, setActiveRange] = useState("1 Y");
+  const chartRef = useRef(null);
+  const wrapperRef = useRef(null);
+  const seriesRef = useRef(null);
+  const [hoverPoint, setHoverPoint] = useState(null);
+  const data = useMemo(() => createChartData(activeRange), [activeRange]);
+  const firstValue = data[0]?.value || parseCurrencyValue(price);
+  const latestValue = parseCurrencyValue(price);
+  const gain = Math.max(1, Math.round(((latestValue - firstValue) / firstValue) * 1000) / 10);
+
+  useEffect(() => {
+    if (!chartRef.current) return undefined;
+
+    const chart = createChart(chartRef.current, {
+      height: 270,
+      layout: {
+        background: { color: "transparent" },
+        textColor: "#64748B",
+        fontFamily: "DM Sans, sans-serif",
+      },
+      rightPriceScale: {
+        visible: false,
+        borderVisible: false,
+      },
+      leftPriceScale: {
+        visible: false,
+      },
+      timeScale: {
+        borderVisible: false,
+        visible: false,
+        fixLeftEdge: true,
+        fixRightEdge: true,
+      },
+      grid: {
+        vertLines: { visible: false },
+        horzLines: { color: "rgba(203, 231, 225, 0.55)" },
+      },
+      crosshair: {
+        mode: 0,
+        vertLine: {
+          color: "#3A9295",
+          width: 1,
+          style: 3,
+          labelVisible: false,
+        },
+        horzLine: {
+          color: "rgba(58, 146, 149, 0.28)",
+          width: 1,
+          style: 3,
+          labelVisible: false,
+        },
+      },
+      handleScroll: false,
+      handleScale: false,
+    });
+
+    const series = chart.addSeries(LineSeries, {
+      color: "#105F68",
+      lineWidth: 3,
+      lastValueVisible: false,
+      priceLineVisible: false,
+      crosshairMarkerVisible: true,
+      crosshairMarkerRadius: 6,
+      crosshairMarkerBorderColor: "#ffffff",
+      crosshairMarkerBackgroundColor: "#105F68",
+      crosshairMarkerBorderWidth: 3,
+    });
+
+    seriesRef.current = series;
+    series.setData(data);
+    chart.timeScale().fitContent();
+
+    const handleCrosshairMove = (param) => {
+      if (!param.point || !param.time || !seriesRef.current) {
+        setHoverPoint(null);
+        return;
+      }
+
+      const pointData = param.seriesData.get(seriesRef.current);
+      const value = pointData?.value;
+      const y = seriesRef.current.priceToCoordinate(value);
+
+      if (!value || y === null) {
+        setHoverPoint(null);
+        return;
+      }
+
+      setHoverPoint({
+        x: param.point.x,
+        y,
+        value,
+        date: String(param.time),
+      });
+    };
+
+    chart.subscribeCrosshairMove(handleCrosshairMove);
+
+    const resizeObserver = new ResizeObserver(([entry]) => {
+      if (!entry) return;
+
+      chart.applyOptions({
+        width: Math.floor(entry.contentRect.width),
+      });
+      chart.timeScale().fitContent();
+    });
+
+    resizeObserver.observe(chartRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+      chart.unsubscribeCrosshairMove(handleCrosshairMove);
+      chart.remove();
+      seriesRef.current = null;
+    };
+  }, [data]);
+
+  return (
+    <div className="rounded-[30px] border border-[#D7ECE7] bg-white/95 p-5 shadow-[0_14px_38px_rgba(16,95,104,0.08)] md:p-7">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-3xl font-black text-slate-950 md:text-4xl">
+              {formatCurrency(latestValue)}
+            </p>
+            <p className="text-sm font-bold text-emerald-600 md:text-base">
+              +{formatCurrency(Math.max(1, latestValue - firstValue))} ({gain}%)
+            </p>
+            <span className="text-sm font-semibold text-slate-500">
+              {activeRange}
+            </span>
+            <Info className="h-4 w-4 text-slate-400" />
+          </div>
+        </div>
+
+        <span className="rounded-md bg-[#EAF8F4] px-3 py-2 text-xs font-bold text-[#105F68]">
+          Hot Right Now
+        </span>
+      </div>
+
+      <div ref={wrapperRef} className="relative mt-5 h-[270px] overflow-hidden">
+        <div
+          ref={chartRef}
+          aria-label="Indicative dummy price history chart"
+          className="h-full w-full"
+        />
+        {hoverPoint ? (
+          <>
+            <div
+              className="pointer-events-none absolute h-4 w-4 rounded-full border-[3px] border-white bg-[#105F68] shadow-[0_6px_16px_rgba(16,95,104,0.28)]"
+              style={{
+                left: hoverPoint.x,
+                top: hoverPoint.y,
+                transform: "translate(-50%, -50%)",
+              }}
+            />
+            <div
+              className="pointer-events-none absolute rounded-md border border-[#D7ECE7] bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-[0_10px_22px_rgba(15,23,42,0.12)]"
+              style={{
+                left: Math.min(Math.max(hoverPoint.x + 12, 8), 260),
+                top: Math.max(hoverPoint.y - 44, 6),
+              }}
+            >
+              {formatCurrency(hoverPoint.value)} | {formatDisplayDate(hoverPoint.date)}
+            </div>
+          </>
+        ) : null}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-5">
+        {chartRanges.map((range) => (
+          <button
+            key={range}
+            type="button"
+            onClick={() => setActiveRange(range)}
+            className={`rounded-full px-4 py-2 text-sm font-bold transition-colors duration-200 ${
+              activeRange === range
+                ? "bg-[#D7ECE7] text-[#105F68]"
+                : "text-slate-700 hover:bg-[#F4FBF9]"
+            }`}
+          >
+            {range}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const UnlistedShareDetailPage = () => {
   const { code, slug } = useParams();
   const [opportunities, setOpportunities] = useState(fallbackOpportunities);
   const [isLoading, setIsLoading] = useState(true);
+  const [units, setUnits] = useState(1);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -114,6 +377,11 @@ const UnlistedShareDetailPage = () => {
     return itemCode === createSlug(code) && itemSlug === createSlug(slug);
   });
 
+  const pricePerUnit = parseCurrencyValue(share?.price);
+  const minimumUnits = parseUnits(share?.minimumInvestment);
+  const selectedUnits = Math.max(units, minimumUnits);
+  const finalAmount = selectedUnits * pricePerUnit;
+
   const fundamentals = share ?
     [
       { label: "Current Price", value: share.price },
@@ -132,6 +400,15 @@ const UnlistedShareDetailPage = () => {
   const whatsappText = encodeURIComponent(
     `Hi Index Money, I want to know more about ${share?.company || "this unlisted share"}. Please connect me.`,
   );
+  const investText = encodeURIComponent(
+    `Hi Index Money, I want to invest in ${share?.company || "this unlisted share"}. Quantity: ${selectedUnits} units. Please connect me.`,
+  );
+
+  useEffect(() => {
+    if (share) {
+      setUnits(parseUnits(share.minimumInvestment));
+    }
+  }, [share]);
 
   if (!share && !isLoading) {
     return (
@@ -169,85 +446,143 @@ const UnlistedShareDetailPage = () => {
             Back to Unlisted Shares
           </Link>
 
-          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
-            <div className="rounded-[32px] border border-[#D7ECE7] bg-white/90 p-7 shadow-[0_18px_42px_rgba(16,95,104,0.09)] backdrop-blur-sm md:p-9">
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-                <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl border border-[#CBE7E1] bg-[#F4FBF9] text-2xl font-black text-[#105F68]">
-                  {share?.logoUrl ?
-                    <img
-                      src={share.logoUrl}
-                      alt={`${share.company} logo`}
-                      className="h-full w-full object-cover"
-                    />
-                  : getInitials(share?.company)}
+          <div className="mt-8 grid items-start gap-6 lg:grid-cols-[1fr_330px]">
+            <div className="space-y-6">
+              <div className="rounded-[32px] border border-[#D7ECE7] bg-white/90 p-7 shadow-[0_18px_42px_rgba(16,95,104,0.09)] backdrop-blur-sm md:p-9">
+                <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+                  <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl border border-[#CBE7E1] bg-[#F4FBF9] text-2xl font-black text-[#105F68]">
+                    {share?.logoUrl ?
+                      <img
+                        src={share.logoUrl}
+                        alt={`${share.company} logo`}
+                        className="h-full w-full object-cover"
+                      />
+                    : getInitials(share?.company)}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#3A9295]">
+                      {share?.sector || "Unlisted Share"}
+                    </p>
+                    <h1 className="mt-2 text-3xl font-black leading-tight text-slate-800 md:text-5xl">
+                      {share?.company}
+                    </h1>
+                    <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-500">
+                      {share?.description ||
+                        `${share?.company} unlisted shares information sourced from the latest Index Money upload.`}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#3A9295]">
-                    {share?.sector || "Unlisted Share"}
-                  </p>
-                  <h1 className="mt-2 text-3xl font-black leading-tight text-slate-800 md:text-5xl">
-                    {share?.company}
-                  </h1>
-                  <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-500">
-                    {share?.description ||
-                      `${share?.company} unlisted shares information sourced from the latest Index Money upload.`}
-                  </p>
+
+                <div className="mt-8 grid gap-4 md:grid-cols-3">
+                  <div className="rounded-2xl bg-[#F4FBF9] p-5">
+                    <BadgeIndianRupee className="h-5 w-5 text-[#3A9295]" />
+                    <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
+                      Price
+                    </p>
+                    <p className="mt-2 text-2xl font-black text-[#105F68]">
+                      {share?.price}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-[#F4FBF9] p-5">
+                    <Building2 className="h-5 w-5 text-[#3A9295]" />
+                    <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
+                      Minimum
+                    </p>
+                    <p className="mt-2 text-lg font-black text-slate-800">
+                      {share?.minimumInvestment}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-[#F4FBF9] p-5">
+                    <Landmark className="h-5 w-5 text-[#3A9295]" />
+                    <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
+                      Status
+                    </p>
+                    <p className="mt-2 text-lg font-black text-slate-800">
+                      {share?.status}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-8 grid gap-4 md:grid-cols-3">
-                <div className="rounded-2xl bg-[#F4FBF9] p-5">
-                  <BadgeIndianRupee className="h-5 w-5 text-[#3A9295]" />
-                  <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                    Price
-                  </p>
-                  <p className="mt-2 text-2xl font-black text-[#105F68]">
-                    {share?.price}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-[#F4FBF9] p-5">
-                  <Building2 className="h-5 w-5 text-[#3A9295]" />
-                  <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                    Minimum
-                  </p>
-                  <p className="mt-2 text-lg font-black text-slate-800">
-                    {share?.minimumInvestment}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-[#F4FBF9] p-5">
-                  <Landmark className="h-5 w-5 text-[#3A9295]" />
-                  <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                    Status
-                  </p>
-                  <p className="mt-2 text-lg font-black text-slate-800">
-                    {share?.status}
-                  </p>
-                </div>
-              </div>
+              <PriceHistoryChart price={share?.price} />
             </div>
 
-            <aside className="rounded-[32px] border border-[#CBE7E1] bg-gradient-to-br from-[#105F68] to-[#0A7F73] p-7 text-white shadow-[0_18px_42px_rgba(16,95,104,0.18)]">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/70">
-                Quick Inquiry
-              </p>
-              <h2 className="mt-3 text-2xl font-black">Check availability</h2>
-              <p className="mt-3 text-sm leading-relaxed text-white/78">
-                Our team will confirm availability, indicative price, and
-                documentation steps before any transaction.
-              </p>
+            <aside className="sticky top-24 rounded-[24px] border border-[#D7ECE7] bg-white p-6 shadow-[0_16px_34px_rgba(15,23,42,0.12)]">
+              <h2 className="text-lg font-black leading-snug text-slate-900">
+                {share?.company}
+              </h2>
+              <div className="my-6 border-t border-dashed border-slate-200" />
+
+              <div className="space-y-5 text-sm">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-slate-500">Price per unit</span>
+                  <span className="font-bold text-slate-950">
+                    {formatCurrency(pricePerUnit)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <span className="inline-flex items-center gap-1 text-slate-500">
+                    Settlement period
+                    <Info className="h-3.5 w-3.5 text-slate-400" />
+                  </span>
+                  <span className="font-bold text-slate-800">29 Jun 2026</span>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-slate-500">Min. units</span>
+                  <span className="font-bold text-slate-800">
+                    {minimumUnits}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-4 border-b border-dashed border-slate-200 pb-4">
+                  <span className="text-slate-500">No. of units to buy</span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setUnits((current) => Math.max(minimumUnits, current - 1))
+                      }
+                      disabled={selectedUnits <= minimumUnits}
+                      aria-label="Decrease units"
+                      className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors duration-200 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      <Minus className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="min-w-6 text-center font-bold text-slate-800">
+                      {selectedUnits}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setUnits((current) => Math.max(minimumUnits, current) + 1)}
+                      aria-label="Increase units"
+                      className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors duration-200 hover:bg-slate-50"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-slate-500">Final amount</span>
+                  <span className="text-xl font-black text-slate-950">
+                    {formatCurrency(finalAmount)}
+                  </span>
+                </div>
+              </div>
+
+              <a
+                href={`https://wa.me/919216180043?text=${investText}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-7 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#3A9295] to-[#105F68] px-5 py-3.5 text-sm font-black text-white shadow-[0_12px_22px_rgba(16,95,104,0.22)] transition duration-200 hover:-translate-y-0.5"
+              >
+                Invest Now
+              </a>
               <a
                 href={`https://wa.me/919216180043?text=${whatsappText}`}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-bold text-[#105F68]"
+                className="mt-3 inline-flex w-full items-center justify-center rounded-full border border-[#CBE7E1] px-5 py-3 text-sm font-bold text-[#105F68] transition-colors duration-200 hover:bg-[#F4FBF9]"
               >
-                Connect on WhatsApp
-              </a>
-              <a
-                href="#unlisted-share-details"
-                className="mt-3 inline-flex w-full items-center justify-center rounded-2xl border border-white/30 px-5 py-3 text-sm font-bold text-white"
-              >
-                View fundamentals
+                Ask a Question
               </a>
             </aside>
           </div>
