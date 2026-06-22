@@ -151,6 +151,7 @@ const PriceHistoryChart = ({ price }) => {
   const wrapperRef = useRef(null);
   const seriesRef = useRef(null);
   const [hoverPoint, setHoverPoint] = useState(null);
+  const [chartWidth, setChartWidth] = useState(0);
   const data = useMemo(() => createChartData(activeRange), [activeRange]);
   const firstValue = data[0]?.value || parseCurrencyValue(price);
   const latestValue = parseCurrencyValue(price);
@@ -245,10 +246,12 @@ const PriceHistoryChart = ({ price }) => {
 
     const resizeObserver = new ResizeObserver(([entry]) => {
       if (!entry) return;
+      const width = Math.floor(entry.contentRect.width);
 
       chart.applyOptions({
-        width: Math.floor(entry.contentRect.width),
+        width,
       });
+      setChartWidth(width);
       chart.timeScale().fitContent();
     });
 
@@ -304,7 +307,10 @@ const PriceHistoryChart = ({ price }) => {
             <div
               className="pointer-events-none absolute rounded-md border border-[#D7ECE7] bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-[0_10px_22px_rgba(15,23,42,0.12)]"
               style={{
-                left: Math.min(Math.max(hoverPoint.x + 12, 8), 260),
+                left: Math.min(
+                  Math.max(hoverPoint.x + 12, 8),
+                  Math.max(chartWidth - 178, 8),
+                ),
                 top: Math.max(hoverPoint.y - 44, 6),
               }}
             >

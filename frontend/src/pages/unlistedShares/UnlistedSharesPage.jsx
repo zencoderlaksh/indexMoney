@@ -309,23 +309,23 @@ const UnlistedSharesPage = () => {
         </div>
       </section>
 
-      <section className="relative px-5 pb-4 md:px-8">
-        <div className="mx-auto max-w-6xl overflow-hidden rounded-[30px] border border-[#CBE7E1] bg-white/90 shadow-[0_14px_38px_rgba(16,95,104,0.08)] backdrop-blur-sm">
-          <div className="border-b border-slate-100 px-6 py-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
+      <section className="relative px-3 pb-4 sm:px-5 md:px-8">
+        <div className="mx-auto max-w-6xl overflow-hidden rounded-[22px] border border-[#CBE7E1] bg-white/90 shadow-[0_14px_38px_rgba(16,95,104,0.08)] backdrop-blur-sm sm:rounded-[30px]">
+          <div className="border-b border-slate-100 px-4 py-5 sm:px-6">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#3A9295] sm:text-xs sm:tracking-[0.24em]">
               Available Opportunities
             </p>
-            <h2 className="mt-2 text-2xl font-bold text-slate-800">
+            <h2 className="mt-2 text-xl font-bold leading-tight text-slate-800 sm:text-2xl">
               {sheetMeta.title}
             </h2>
             {sheetMeta.sourceFileName ?
-              <p className="mt-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
+              <p className="mt-2 break-words text-[10px] font-medium uppercase tracking-[0.12em] text-slate-400 sm:text-xs sm:tracking-[0.18em]">
                 Source file: {sheetMeta.sourceFileName}
               </p>
             : null}
           </div>
 
-          <div className="grid gap-5 p-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid min-w-0 gap-4 p-3 sm:gap-5 sm:p-5 md:grid-cols-2 xl:grid-cols-3">
             {opportunities.map((item, index) => {
               const whatsappText = encodeURIComponent(
                 `Hi Index Money, I want to buy shares in ${item.company}. Please connect me.`,
@@ -340,11 +340,11 @@ const UnlistedSharesPage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.35, delay: index * 0.04 }}
-                  className="group flex min-h-[360px] flex-col rounded-[28px] border border-[#D7ECE7] bg-gradient-to-br from-white via-[#FBFEFD] to-[#EFFAF7] p-5 shadow-[0_14px_34px_rgba(16,95,104,0.08)] transition duration-300 hover:-translate-y-1 hover:border-[#91D8CD] hover:shadow-[0_20px_44px_rgba(16,95,104,0.14)]"
+                  className="group flex min-w-0 flex-col rounded-[20px] border border-[#D7ECE7] bg-gradient-to-br from-white via-[#FBFEFD] to-[#EFFAF7] p-4 shadow-[0_14px_34px_rgba(16,95,104,0.08)] transition duration-300 hover:-translate-y-1 hover:border-[#91D8CD] hover:shadow-[0_20px_44px_rgba(16,95,104,0.14)] sm:min-h-[360px] sm:rounded-[28px] sm:p-5"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-[#CBE7E1] bg-white text-lg font-black text-[#105F68] shadow-sm">
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[#CBE7E1] bg-white text-base font-black text-[#105F68] shadow-sm sm:h-14 sm:w-14 sm:text-lg">
                         {item.logoUrl ?
                           <img
                             src={item.logoUrl}
@@ -353,18 +353,18 @@ const UnlistedSharesPage = () => {
                           />
                         : getInitials(item.company)}
                       </div>
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#3A9295]">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-[#3A9295] sm:text-xs sm:tracking-[0.18em]">
                           {item.sector}
                         </p>
-                        <h3 className="mt-1 line-clamp-2 text-lg font-bold leading-snug text-slate-800">
+                        <h3 className="mt-1 line-clamp-2 text-base font-bold leading-snug text-slate-800 sm:text-lg">
                           {item.company}
                         </h3>
                       </div>
                     </div>
 
                     <span
-                      className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${
+                      className={`max-w-[92px] shrink-0 truncate rounded-full px-2.5 py-1 text-[10px] font-bold sm:max-w-[118px] sm:px-3 sm:text-xs ${
                         item.status === "Available" ?
                           "bg-emerald-50 text-emerald-700"
                         : "bg-amber-50 text-amber-700"
@@ -380,27 +380,27 @@ const UnlistedSharesPage = () => {
                     </p>
                   : null}
 
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    <div className="rounded-2xl border border-[#E1F1EE] bg-white p-4">
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  <div className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3">
+                    <div className="min-w-0 rounded-2xl border border-[#E1F1EE] bg-white p-3 sm:p-4">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400 sm:text-xs sm:tracking-[0.14em]">
                         Indicative Price
                       </p>
-                      <p className="mt-2 text-xl font-black text-[#105F68]">
+                      <p className="mt-2 truncate text-lg font-black text-[#105F68] sm:text-xl">
                         {item.price}
                       </p>
                     </div>
-                    <div className="rounded-2xl border border-[#E1F1EE] bg-white p-4">
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                    <div className="min-w-0 rounded-2xl border border-[#E1F1EE] bg-white p-3 sm:p-4">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400 sm:text-xs sm:tracking-[0.14em]">
                         Minimum
                       </p>
-                      <p className="mt-2 text-sm font-bold text-slate-800">
+                      <p className="mt-2 truncate text-sm font-bold text-slate-800">
                         {item.minimumInvestment}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-4 min-h-[92px] rounded-2xl bg-[#F4FBF9] p-4">
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#3A9295]">
+                  <div className="mt-4 min-h-[92px] rounded-2xl bg-[#F4FBF9] p-3 sm:p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#3A9295] sm:text-xs sm:tracking-[0.18em]">
                       Fundamentals
                     </p>
                     {fundamentals.length ?
@@ -408,12 +408,12 @@ const UnlistedSharesPage = () => {
                         {fundamentals.map((detail) => (
                           <div
                             key={detail.label}
-                            className="flex items-center justify-between gap-3 text-xs"
+                            className="flex min-w-0 items-center justify-between gap-3 text-xs"
                           >
-                            <span className="text-slate-500">
+                            <span className="min-w-0 truncate text-slate-500">
                               {detail.label}
                             </span>
-                            <span className="max-w-[58%] truncate font-bold text-slate-800">
+                            <span className="max-w-[54%] truncate font-bold text-slate-800 sm:max-w-[58%]">
                               {detail.value}
                             </span>
                           </div>
@@ -426,10 +426,10 @@ const UnlistedSharesPage = () => {
                     }
                   </div>
 
-                  <div className="mt-auto flex items-center gap-3 pt-5">
+                  <div className="mt-auto flex min-w-0 items-center gap-2.5 pt-5 sm:gap-3">
                     <Link
                       to={getDetailPath(item)}
-                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(58,146,149,0.18)] transition duration-200 hover:-translate-y-0.5"
+                      className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-3 py-3 text-xs font-bold text-white shadow-[0_12px_24px_rgba(58,146,149,0.18)] transition duration-200 hover:-translate-y-0.5 sm:px-4 sm:text-sm"
                     >
                       View details
                       <ArrowRight className="h-4 w-4" />
@@ -439,7 +439,7 @@ const UnlistedSharesPage = () => {
                       target="_blank"
                       rel="noreferrer"
                       aria-label={`Chat with Index Money about ${item.company} on WhatsApp`}
-                      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#63C1BB] bg-[#EAF8F4] text-[#105F68] transition-colors duration-200 hover:bg-[#d4f0ea]"
+                      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#63C1BB] bg-[#EAF8F4] text-[#105F68] transition-colors duration-200 hover:bg-[#d4f0ea] sm:h-12 sm:w-12"
                     >
                       <WhatsAppIcon className="h-5 w-5" />
                     </a>
@@ -449,7 +449,7 @@ const UnlistedSharesPage = () => {
             })}
           </div>
 
-          <div className="border-t border-slate-100 px-6 py-4 text-sm text-slate-500">
+          <div className="border-t border-slate-100 px-4 py-4 text-xs leading-relaxed text-slate-500 sm:px-6 sm:text-sm">
             *Prices and fundamentals are indicative and will be updated from the
             backend upload.
           </div>
