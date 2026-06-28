@@ -16,6 +16,8 @@ import {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
+import { useAuthStore } from "../../stores/authStore";
+
 const fallbackOpportunities = [
   {
     company: "ABC Ltd",
@@ -86,9 +88,18 @@ const dummyPriceDataByRange = {
     210, 218, 218, 226, 242, 235, 235, 240, 240, 232, 249, 277, 258, 255, 242,
     236, 248, 250, 253, 247, 251, 251, 251, 239, 239, 247, 247,
   ],
-  "2 Y": [164, 164, 169, 172, 172, 181, 178, 190, 186, 198, 206, 203, 219, 211, 235, 227, 251, 247, 265],
-  "3 Y": [132, 135, 137, 145, 142, 154, 160, 158, 172, 169, 184, 190, 188, 205, 218, 214, 236, 249, 265],
-  All: [76, 82, 81, 92, 96, 104, 116, 111, 128, 141, 138, 156, 174, 168, 191, 207, 224, 219, 241, 265],
+  "2 Y": [
+    164, 164, 169, 172, 172, 181, 178, 190, 186, 198, 206, 203, 219, 211, 235,
+    227, 251, 247, 265,
+  ],
+  "3 Y": [
+    132, 135, 137, 145, 142, 154, 160, 158, 172, 169, 184, 190, 188, 205, 218,
+    214, 236, 249, 265,
+  ],
+  All: [
+    76, 82, 81, 92, 96, 104, 116, 111, 128, 141, 138, 156, 174, 168, 191, 207,
+    224, 219, 241, 265,
+  ],
 };
 
 const rangeStepDays = {
@@ -155,7 +166,10 @@ const PriceHistoryChart = ({ price }) => {
   const data = useMemo(() => createChartData(activeRange), [activeRange]);
   const firstValue = data[0]?.value || parseCurrencyValue(price);
   const latestValue = parseCurrencyValue(price);
-  const gain = Math.max(1, Math.round(((latestValue - firstValue) / firstValue) * 1000) / 10);
+  const gain = Math.max(
+    1,
+    Math.round(((latestValue - firstValue) / firstValue) * 1000) / 10,
+  );
 
   useEffect(() => {
     if (!chartRef.current) return undefined;
@@ -294,7 +308,7 @@ const PriceHistoryChart = ({ price }) => {
           aria-label="Indicative dummy price history chart"
           className="h-full w-full"
         />
-        {hoverPoint ? (
+        {hoverPoint ?
           <>
             <div
               className="pointer-events-none absolute h-4 w-4 rounded-full border-[3px] border-white bg-[#105F68] shadow-[0_6px_16px_rgba(16,95,104,0.28)]"
@@ -314,10 +328,11 @@ const PriceHistoryChart = ({ price }) => {
                 top: Math.max(hoverPoint.y - 44, 6),
               }}
             >
-              {formatCurrency(hoverPoint.value)} | {formatDisplayDate(hoverPoint.date)}
+              {formatCurrency(hoverPoint.value)} |{" "}
+              {formatDisplayDate(hoverPoint.date)}
             </div>
           </>
-        ) : null}
+        : null}
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-5">
@@ -327,9 +342,9 @@ const PriceHistoryChart = ({ price }) => {
             type="button"
             onClick={() => setActiveRange(range)}
             className={`rounded-full px-4 py-2 text-sm font-bold transition-colors duration-200 ${
-              activeRange === range
-                ? "bg-[#D7ECE7] text-[#105F68]"
-                : "text-slate-700 hover:bg-[#F4FBF9]"
+              activeRange === range ?
+                "bg-[#D7ECE7] text-[#105F68]"
+              : "text-slate-700 hover:bg-[#F4FBF9]"
             }`}
           >
             {range}
@@ -346,34 +361,33 @@ const UnlistedShareDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [units, setUnits] = useState(1);
 
+  const token = useAuthStore((s) => s.token);
+
+  const fetchOpportunities = async (signal) => {
+    try {
+      const response = await fetch(`${API_BASE}/unlisted/opportunities`, {
+        signal,
+      });
+      if (!response.ok) return;
+
+      const payload = await response.json();
+      const rows = payload?.data?.opportunities;
+
+      if (rows?.length) {
+        setOpportunities(rows);
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        setOpportunities(fallbackOpportunities);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const controller = new AbortController();
-
-    const loadShare = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/unlisted/opportunities`, {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) return;
-
-        const payload = await response.json();
-        const rows = payload?.data?.opportunities;
-
-        if (rows?.length) {
-          setOpportunities(rows);
-        }
-      } catch (error) {
-        if (error.name !== "AbortError") {
-          setOpportunities(fallbackOpportunities);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadShare();
-
+    fetchOpportunities(controller.signal);
     return () => controller.abort();
   }, []);
 
@@ -388,18 +402,19 @@ const UnlistedShareDetailPage = () => {
   const selectedUnits = Math.max(units, minimumUnits);
   const finalAmount = selectedUnits * pricePerUnit;
 
-  const fundamentals = share ?
-    [
-      { label: "Current Price", value: share.price },
-      { label: "Market Cap", value: share.marketCap },
-      { label: "ISIN", value: share.isin },
-      { label: "Face Value", value: share.faceValue },
-      { label: "EPS", value: share.eps },
-      { label: "P/B Ratio", value: share.pbRatio },
-      { label: "Book Value", value: share.bookValue },
-      { label: "Debt / Equity", value: share.debtEquityRatio },
-    ].filter((item) => item.value)
-  : [];
+  const fundamentals =
+    share ?
+      [
+        { label: "Current Price", value: share.price },
+        { label: "Market Cap", value: share.marketCap },
+        { label: "ISIN", value: share.isin },
+        { label: "Face Value", value: share.faceValue },
+        { label: "EPS", value: share.eps },
+        { label: "P/B Ratio", value: share.pbRatio },
+        { label: "Book Value", value: share.bookValue },
+        { label: "Debt / Equity", value: share.debtEquityRatio },
+      ].filter((item) => item.value)
+    : [];
 
   const strengths = splitList(share?.strengths);
   const weaknesses = splitList(share?.weaknesses);
@@ -409,6 +424,56 @@ const UnlistedShareDetailPage = () => {
   const investText = encodeURIComponent(
     `Hi Index Money, I want to invest in ${share?.company || "this unlisted share"}. Quantity: ${selectedUnits} units. Please connect me.`,
   );
+
+  // admin upload state
+  const [uploadFile, setUploadFile] = useState(null);
+  const [uploadTitle, setUploadTitle] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+
+  const handleFileChange = (e) => {
+    const f = e.target.files?.[0] || null;
+    setUploadFile(f);
+    setUploadMessage("");
+  };
+
+  const handleUpload = async () => {
+    if (!uploadFile) {
+      setUploadMessage("Please choose an Excel file to upload");
+      return;
+    }
+
+    setUploading(true);
+    setUploadMessage("");
+
+    try {
+      const form = new FormData();
+      form.append("file", uploadFile);
+      if (uploadTitle) form.append("title", uploadTitle);
+
+      const res = await fetch(`${API_BASE}/unlisted/upload`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: form,
+      });
+
+      const json = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        setUploadMessage(json.error || json.message || "Upload failed");
+      } else {
+        setUploadMessage(json.message || "Upload successful");
+        setUploadFile(null);
+        setUploadTitle("");
+        // refresh opportunities list
+        await fetchOpportunities();
+      }
+    } catch (err) {
+      setUploadMessage(err.message || "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     if (share) {
@@ -420,9 +485,7 @@ const UnlistedShareDetailPage = () => {
     return (
       <main className="min-h-screen bg-[#F7FEFC] px-5 py-20">
         <div className="mx-auto max-w-3xl rounded-[28px] border border-[#D7ECE7] bg-white p-8 text-center shadow-[0_14px_38px_rgba(16,95,104,0.08)]">
-          <h1 className="text-3xl font-bold text-slate-800">
-            Share not found
-          </h1>
+          <h1 className="text-3xl font-bold text-slate-800">Share not found</h1>
           <p className="mt-3 text-slate-500">
             Upload this company in the unlisted shares sheet, then try again.
           </p>
@@ -510,6 +573,51 @@ const UnlistedShareDetailPage = () => {
                 </div>
               </div>
 
+              {token ?
+                <div className="rounded-[20px] border border-[#E6F3EF] bg-[#FBFFFE] p-5">
+                  <h3 className="text-sm font-bold text-slate-800">
+                    Admin: Upload Unlisted Sheet
+                  </h3>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Upload an Excel file (.xlsx/.xls) to import unlisted share
+                    details. Required columns: company, sector, price,
+                    minimumInvestment, status. Optional columns will be mapped
+                    automatically.
+                  </p>
+
+                  <div className="mt-4 flex flex-col gap-3">
+                    <input
+                      type="text"
+                      placeholder="Optional title for this upload"
+                      value={uploadTitle}
+                      onChange={(e) => setUploadTitle(e.target.value)}
+                      className="rounded-md border border-slate-200 px-3 py-2 text-sm"
+                    />
+
+                    <input
+                      type="file"
+                      accept=".xlsx,.xls"
+                      onChange={handleFileChange}
+                      className="text-sm"
+                    />
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={handleUpload}
+                        disabled={uploading}
+                        className="inline-flex items-center gap-2 rounded-full bg-[#105F68] px-4 py-2 text-sm font-bold text-white"
+                      >
+                        {uploading ? "Uploading..." : "Upload"}
+                      </button>
+                      <span className="text-sm text-slate-600">
+                        {uploadMessage}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              : null}
+
               <PriceHistoryChart price={share?.price} />
             </div>
 
@@ -545,7 +653,9 @@ const UnlistedShareDetailPage = () => {
                     <button
                       type="button"
                       onClick={() =>
-                        setUnits((current) => Math.max(minimumUnits, current - 1))
+                        setUnits((current) =>
+                          Math.max(minimumUnits, current - 1),
+                        )
                       }
                       disabled={selectedUnits <= minimumUnits}
                       aria-label="Decrease units"
@@ -558,7 +668,11 @@ const UnlistedShareDetailPage = () => {
                     </span>
                     <button
                       type="button"
-                      onClick={() => setUnits((current) => Math.max(minimumUnits, current) + 1)}
+                      onClick={() =>
+                        setUnits(
+                          (current) => Math.max(minimumUnits, current) + 1,
+                        )
+                      }
                       aria-label="Increase units"
                       className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors duration-200 hover:bg-slate-50"
                     >
@@ -595,7 +709,10 @@ const UnlistedShareDetailPage = () => {
         </div>
       </section>
 
-      <section id="unlisted-share-details" className="relative px-5 pb-16 md:px-8">
+      <section
+        id="unlisted-share-details"
+        className="relative px-5 pb-16 md:px-8"
+      >
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_0.9fr]">
           <div className="rounded-[30px] border border-[#D7ECE7] bg-white/90 p-7 shadow-[0_14px_38px_rgba(16,95,104,0.08)]">
             <div className="flex items-center gap-3">
@@ -640,8 +757,14 @@ const UnlistedShareDetailPage = () => {
                 <div>
                   <p className="font-bold text-emerald-700">Strengths</p>
                   <div className="mt-3 space-y-2">
-                    {(strengths.length ? strengths : ["Upload strengths separated by | in the sheet."]).map((item) => (
-                      <p key={item} className="flex gap-2 text-sm text-slate-600">
+                    {(strengths.length ? strengths : (
+                      ["Upload strengths separated by | in the sheet."]
+                    )
+                    ).map((item) => (
+                      <p
+                        key={item}
+                        className="flex gap-2 text-sm text-slate-600"
+                      >
                         <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                         {item}
                       </p>
@@ -651,8 +774,14 @@ const UnlistedShareDetailPage = () => {
                 <div>
                   <p className="font-bold text-amber-700">Risks</p>
                   <div className="mt-3 space-y-2">
-                    {(weaknesses.length ? weaknesses : ["Upload weaknesses separated by | in the sheet."]).map((item) => (
-                      <p key={item} className="flex gap-2 text-sm text-slate-600">
+                    {(weaknesses.length ? weaknesses : (
+                      ["Upload weaknesses separated by | in the sheet."]
+                    )
+                    ).map((item) => (
+                      <p
+                        key={item}
+                        className="flex gap-2 text-sm text-slate-600"
+                      >
                         <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                         {item}
                       </p>
