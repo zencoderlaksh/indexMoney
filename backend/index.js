@@ -48,10 +48,10 @@ app.use(
       return callback(new Error(`CORS blocked origin: ${origin}`));
     },
     credentials: true,
-  })
+  }),
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 app.use(requestLogger);
 
 // Routes
