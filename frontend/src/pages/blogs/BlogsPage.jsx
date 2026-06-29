@@ -64,6 +64,47 @@ const BlogContent = ({ content }) => {
     );
   }
 
+  const renderTextValue = (value) => {
+    const lines = String(value || "")
+      .split(/\r?\n/)
+      .map((line) => line.trimEnd());
+
+    const paragraphs = [];
+    let currentParagraph = [];
+
+    const flushParagraph = () => {
+      if (currentParagraph.length) {
+        paragraphs.push(currentParagraph.join(" "));
+        currentParagraph = [];
+      }
+    };
+
+    lines.forEach((line) => {
+      if (!line) {
+        flushParagraph();
+        return;
+      }
+
+      const listItem = line.match(/^(?:[-*•]|\d+[.)])\s+(.*)$/);
+      if (listItem) {
+        flushParagraph();
+      }
+
+      currentParagraph.push(line);
+    });
+
+    flushParagraph();
+
+    return paragraphs.map((paragraph, index) => (
+      <p
+        key={index}
+        className="mt-5 text-base leading-8 text-slate-700 whitespace-pre-wrap"
+      >
+        {paragraph}
+      </p>
+    ));
+  };
+
   const blocks = String(content || "")
     .split(/\n{2,}/)
     .map((block) => block.trim())
@@ -97,11 +138,7 @@ const BlogContent = ({ content }) => {
             </ul>
           );
         }
-        return (
-          <p key={index} className="mt-5 text-base leading-8 text-slate-700">
-            {block}
-          </p>
-        );
+        return renderTextValue(block);
       })}
     </div>
   );

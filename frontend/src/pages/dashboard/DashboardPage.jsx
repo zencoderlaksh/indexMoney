@@ -163,6 +163,72 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
     });
   };
 
+  const createHtmlFromPlainText = (text) => {
+    const lines = String(text || "")
+      .replace(/\r\n/g, "\n")
+      .split("\n")
+      .map((line) => line.trimEnd());
+
+    const blocks = [];
+    let currentList = null;
+    let currentParagraph = [];
+
+    const pushParagraph = () => {
+      if (!currentParagraph.length) return;
+      blocks.push(`<p>${currentParagraph.join(" ")}</p>`);
+      currentParagraph = [];
+    };
+
+    const pushList = () => {
+      if (!currentList) return;
+      const items = currentList.map((item) => `<li>${item}</li>`).join("");
+      blocks.push(`<ul>${items}</ul>`);
+      currentList = null;
+    };
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) {
+        pushParagraph();
+        pushList();
+        continue;
+      }
+
+      const listMatch = trimmed.match(/^(?:[-•*]|\d+[.)])\s+(.*)$/);
+      const headingMatch = trimmed.match(/^(#{2,3})\s+(.*)$/);
+
+      if (listMatch) {
+        pushParagraph();
+        const item = listMatch[1];
+        if (!currentList) currentList = [];
+        currentList.push(item);
+        continue;
+      }
+
+      if (headingMatch) {
+        pushParagraph();
+        pushList();
+        const tag = headingMatch[1] === "###" ? "h3" : "h2";
+        blocks.push(`<${tag}>${headingMatch[2]}</${tag}>`);
+        continue;
+      }
+
+      if (/^\s*Table:\s*/i.test(trimmed)) {
+        pushParagraph();
+        pushList();
+        blocks.push(`<p>${trimmed}</p>`);
+        continue;
+      }
+
+      currentParagraph.push(trimmed);
+    }
+
+    pushParagraph();
+    pushList();
+
+    return blocks.join("");
+  };
+
   const applyFormat = (tag) => {
     document.execCommand("formatBlock", false, tag);
     notifyChange();
@@ -181,7 +247,8 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
 
     if (text) {
       event.preventDefault();
-      document.execCommand("insertHTML", false, text.replace(/\n/g, "<br />"));
+      const formatted = createHtmlFromPlainText(text);
+      document.execCommand("insertHTML", false, formatted);
       notifyChange();
     }
   };
@@ -245,7 +312,7 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
         suppressContentEditableWarning
         onInput={notifyChange}
         onPaste={handlePaste}
-        className="min-h-[260px] rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+        className="min-h-[260px] max-h-[420px] overflow-y-auto rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
         data-placeholder={placeholder}
       />
 
