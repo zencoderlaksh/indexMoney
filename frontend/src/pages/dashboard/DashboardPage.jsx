@@ -25,6 +25,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { IMAGES } from "../../constants/images";
+import { looksLikeHtmlContent } from "../../lib/blogContent";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 const defaultTodaysResults = [
@@ -50,9 +51,9 @@ const emptyBlogForm = {
 const fmt = (value) => {
   if (!value) return "-";
   const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? "-"
-    : date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+  return Number.isNaN(date.getTime()) ? "-" : (
+      date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
+    );
 };
 
 const csvCell = (value) => {
@@ -90,7 +91,9 @@ const StatCard = ({ icon: Icon, label, value, sub, color = "#105F68" }) => (
           {label}
         </p>
         <p className="text-xl font-bold text-slate-800">{value}</p>
-        {sub ? <p className="text-xs text-slate-400">{sub}</p> : null}
+        {sub ?
+          <p className="text-xs text-slate-400">{sub}</p>
+        : null}
       </div>
     </div>
   </div>
@@ -133,13 +136,123 @@ const StatusBanner = ({ kind, text }) => {
   return (
     <div
       className={`mb-4 flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm ${
-        ok
-          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-          : "border-amber-200 bg-amber-50 text-amber-700"
+        ok ?
+          "border-emerald-200 bg-emerald-50 text-emerald-700"
+        : "border-amber-200 bg-amber-50 text-amber-700"
       }`}
     >
       <Icon className="mt-0.5 h-4 w-4 flex-shrink-0" />
       <span>{text}</span>
+    </div>
+  );
+};
+
+const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
+  const editorRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== (value || "")) {
+      editorRef.current.innerHTML = value || "";
+    }
+  }, [value]);
+
+  const notifyChange = () => {
+    if (!editorRef.current) return;
+    onChange({
+      target: { name: "content", value: editorRef.current.innerHTML },
+    });
+  };
+
+  const applyFormat = (tag) => {
+    document.execCommand("formatBlock", false, tag);
+    notifyChange();
+  };
+
+  const handlePaste = (event) => {
+    const html = event.clipboardData?.getData("text/html");
+    const text = event.clipboardData?.getData("text/plain");
+
+    if (html) {
+      event.preventDefault();
+      document.execCommand("insertHTML", false, html);
+      notifyChange();
+      return;
+    }
+
+    if (text) {
+      event.preventDefault();
+      document.execCommand("insertHTML", false, text.replace(/\n/g, "<br />"));
+      notifyChange();
+    }
+  };
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-3">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm font-semibold text-slate-700">Blog content</p>
+        <span className="rounded-full bg-[#E7F7F5] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#105F68]">
+          Rich text friendly
+        </span>
+      </div>
+
+      <div className="mb-2 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => applyFormat("p")}
+          className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+        >
+          Paragraph
+        </button>
+        <button
+          type="button"
+          onClick={() => applyFormat("h2")}
+          className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+        >
+          H2
+        </button>
+        <button
+          type="button"
+          onClick={() => applyFormat("h3")}
+          className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+        >
+          H3
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            document.execCommand("insertUnorderedList");
+            notifyChange();
+          }}
+          className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+        >
+          Bullet list
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            document.execCommand("insertOrderedList");
+            notifyChange();
+          }}
+          className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+        >
+          Numbered list
+        </button>
+      </div>
+
+      <div
+        ref={editorRef}
+        contentEditable
+        suppressContentEditableWarning
+        onInput={notifyChange}
+        onPaste={handlePaste}
+        className="min-h-[260px] rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+        data-placeholder={placeholder}
+      />
+
+      <p className="mt-2 text-xs leading-5 text-slate-500">
+        Paste from Google Docs or raw HTML here. Headings, lists, and paragraphs
+        will be preserved on the public blog page.
+      </p>
     </div>
   );
 };
@@ -160,7 +273,15 @@ const QuickViewLinks = ({ links }) => (
   </div>
 );
 
-const TableCard = ({ title, count, description, rows, columns, onExport, loading }) => (
+const TableCard = ({
+  title,
+  count,
+  description,
+  rows,
+  columns,
+  onExport,
+  loading,
+}) => (
   <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
     <SectionHeader
       icon={title.includes("User") ? Users : ClipboardList}
@@ -194,23 +315,28 @@ const TableCard = ({ title, count, description, rows, columns, onExport, loading
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 bg-white">
-          {rows.length ? (
+          {rows.length ?
             rows.map((row) => (
               <tr key={row.id}>
                 {columns.map((col) => (
-                  <td key={`${row.id}-${col.key}`} className="px-4 py-3 text-sm text-slate-700">
+                  <td
+                    key={`${row.id}-${col.key}`}
+                    className="px-4 py-3 text-sm text-slate-700"
+                  >
                     {col.render ? col.render(row) : row[col.key] || "-"}
                   </td>
                 ))}
               </tr>
             ))
-          ) : (
-            <tr>
-              <td colSpan={columns.length} className="px-4 py-8 text-center text-sm text-slate-400">
+          : <tr>
+              <td
+                colSpan={columns.length}
+                className="px-4 py-8 text-center text-sm text-slate-400"
+              >
                 {loading ? "Loading..." : "No records found."}
               </td>
             </tr>
-          )}
+          }
         </tbody>
       </table>
     </div>
@@ -227,10 +353,14 @@ const DashboardPage = () => {
     [token],
   );
 
-  const [todaysResults, setTodaysResults] = React.useState(defaultTodaysResults);
+  const [todaysResults, setTodaysResults] =
+    React.useState(defaultTodaysResults);
   const [homepageLoading, setHomepageLoading] = React.useState(true);
   const [homepageSaving, setHomepageSaving] = React.useState(false);
-  const [homepageStatus, setHomepageStatus] = React.useState({ kind: "", text: "" });
+  const [homepageStatus, setHomepageStatus] = React.useState({
+    kind: "",
+    text: "",
+  });
 
   const [performanceMeta, setPerformanceMeta] = React.useState({
     title: "",
@@ -240,7 +370,10 @@ const DashboardPage = () => {
   const [performanceForm, setPerformanceForm] = React.useState(emptyForm);
   const [performanceLoading, setPerformanceLoading] = React.useState(true);
   const [performanceUploading, setPerformanceUploading] = React.useState(false);
-  const [performanceStatus, setPerformanceStatus] = React.useState({ kind: "", text: "" });
+  const [performanceStatus, setPerformanceStatus] = React.useState({
+    kind: "",
+    text: "",
+  });
 
   const [unlistedMeta, setUnlistedMeta] = React.useState({
     title: "",
@@ -250,16 +383,26 @@ const DashboardPage = () => {
   const [unlistedForm, setUnlistedForm] = React.useState(emptyForm);
   const [unlistedLoading, setUnlistedLoading] = React.useState(true);
   const [unlistedUploading, setUnlistedUploading] = React.useState(false);
-  const [unlistedStatus, setUnlistedStatus] = React.useState({ kind: "", text: "" });
+  const [unlistedStatus, setUnlistedStatus] = React.useState({
+    kind: "",
+    text: "",
+  });
 
   const [usersData, setUsersData] = React.useState([]);
   const [enquiryData, setEnquiryData] = React.useState([]);
   const [dematAccountData, setDematAccountData] = React.useState([]);
   const [adminDataLoading, setAdminDataLoading] = React.useState(true);
-  const [adminDataStatus, setAdminDataStatus] = React.useState({ kind: "", text: "" });
+  const [adminDataStatus, setAdminDataStatus] = React.useState({
+    kind: "",
+    text: "",
+  });
 
   const [blogs, setBlogs] = React.useState([]);
-  const [blogStats, setBlogStats] = React.useState({ total: 0, published: 0, drafts: 0 });
+  const [blogStats, setBlogStats] = React.useState({
+    total: 0,
+    published: 0,
+    drafts: 0,
+  });
   const [blogForm, setBlogForm] = React.useState(emptyBlogForm);
   const [blogsLoading, setBlogsLoading] = React.useState(true);
   const [blogSaving, setBlogSaving] = React.useState(false);
@@ -282,7 +425,9 @@ const DashboardPage = () => {
       const res = await fetch(`${API_BASE}/homepage`);
       const json = await res.json().catch(() => ({}));
       const rows = json?.data?.todaysResults;
-      setTodaysResults(Array.isArray(rows) && rows.length ? rows : defaultTodaysResults);
+      setTodaysResults(
+        Array.isArray(rows) && rows.length ? rows : defaultTodaysResults,
+      );
     } catch {
       setTodaysResults(defaultTodaysResults);
     } finally {
@@ -350,13 +495,20 @@ const DashboardPage = () => {
         );
       }
       setUsersData(Array.isArray(usersJson?.data) ? usersJson.data : []);
-      setEnquiryData(Array.isArray(enquiriesJson?.data) ? enquiriesJson.data : []);
-      setDematAccountData(Array.isArray(dematAccountsJson?.data) ? dematAccountsJson.data : []);
+      setEnquiryData(
+        Array.isArray(enquiriesJson?.data) ? enquiriesJson.data : [],
+      );
+      setDematAccountData(
+        Array.isArray(dematAccountsJson?.data) ? dematAccountsJson.data : [],
+      );
     } catch (error) {
       setUsersData([]);
       setEnquiryData([]);
       setDematAccountData([]);
-      setAdminDataStatus({ kind: "error", text: error.message || "Unable to load admin data" });
+      setAdminDataStatus({
+        kind: "error",
+        text: error.message || "Unable to load admin data",
+      });
     } finally {
       setAdminDataLoading(false);
     }
@@ -367,7 +519,9 @@ const DashboardPage = () => {
     try {
       setBlogsLoading(true);
       setBlogStatus({ kind: "", text: "" });
-      const res = await fetch(`${API_BASE}/blogs/admin`, { headers: authHeaders });
+      const res = await fetch(`${API_BASE}/blogs/admin`, {
+        headers: authHeaders,
+      });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json?.error || "Unable to load blogs");
       setBlogs(Array.isArray(json?.data) ? json.data : []);
@@ -375,7 +529,10 @@ const DashboardPage = () => {
     } catch (error) {
       setBlogs([]);
       setBlogStats({ total: 0, published: 0, drafts: 0 });
-      setBlogStatus({ kind: "error", text: error.message || "Unable to load blogs" });
+      setBlogStatus({
+        kind: "error",
+        text: error.message || "Unable to load blogs",
+      });
     } finally {
       setBlogsLoading(false);
     }
@@ -388,7 +545,15 @@ const DashboardPage = () => {
     loadUnlisted();
     loadAdminData();
     loadBlogs();
-  }, [user, token, loadHomepage, loadPerformance, loadUnlisted, loadAdminData, loadBlogs]);
+  }, [
+    user,
+    token,
+    loadHomepage,
+    loadPerformance,
+    loadUnlisted,
+    loadAdminData,
+    loadBlogs,
+  ]);
 
   if (!user || !token || !user.isAdmin) return null;
 
@@ -402,11 +567,17 @@ const DashboardPage = () => {
       }))
       .filter((row) => row.label || row.points || row.note);
     if (!cleanedRows.length) {
-      setHomepageStatus({ kind: "error", text: "Add at least one row before saving." });
+      setHomepageStatus({
+        kind: "error",
+        text: "Add at least one row before saving.",
+      });
       return;
     }
     if (cleanedRows.some((row) => !row.label || !row.points || !row.note)) {
-      setHomepageStatus({ kind: "error", text: "Each row needs label, points, and note." });
+      setHomepageStatus({
+        kind: "error",
+        text: "Each row needs label, points, and note.",
+      });
       return;
     }
     try {
@@ -417,11 +588,18 @@ const DashboardPage = () => {
         body: JSON.stringify({ todaysResults: cleanedRows }),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json?.error || "Unable to save Today's Results");
+      if (!res.ok)
+        throw new Error(json?.error || "Unable to save Today's Results");
       setTodaysResults(json?.data?.todaysResults || cleanedRows);
-      setHomepageStatus({ kind: "success", text: "Today's Results saved successfully." });
+      setHomepageStatus({
+        kind: "success",
+        text: "Today's Results saved successfully.",
+      });
     } catch (error) {
-      setHomepageStatus({ kind: "error", text: error.message || "Unable to save Today's Results" });
+      setHomepageStatus({
+        kind: "error",
+        text: error.message || "Unable to save Today's Results",
+      });
     } finally {
       setHomepageSaving(false);
     }
@@ -431,10 +609,17 @@ const DashboardPage = () => {
     const isPerformance = kind === "performance";
     const form = isPerformance ? performanceForm : unlistedForm;
     const setStatus = isPerformance ? setPerformanceStatus : setUnlistedStatus;
-    const setUploading = isPerformance ? setPerformanceUploading : setUnlistedUploading;
-    const url = isPerformance ? `${API_BASE}/performance/upload` : `${API_BASE}/unlisted/upload`;
+    const setUploading =
+      isPerformance ? setPerformanceUploading : setUnlistedUploading;
+    const url =
+      isPerformance ?
+        `${API_BASE}/performance/upload`
+      : `${API_BASE}/unlisted/upload`;
     if (!form.file) {
-      setStatus({ kind: "error", text: "Choose an Excel file before uploading." });
+      setStatus({
+        kind: "error",
+        text: "Choose an Excel file before uploading.",
+      });
       return;
     }
     try {
@@ -443,7 +628,11 @@ const DashboardPage = () => {
       const data = new FormData();
       data.append("title", form.title);
       data.append("file", form.file);
-      const res = await fetch(url, { method: "POST", headers: authHeaders, body: data });
+      const res = await fetch(url, {
+        method: "POST",
+        headers: authHeaders,
+        body: data,
+      });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json?.error || "Upload failed");
       if (isPerformance) {
@@ -461,7 +650,10 @@ const DashboardPage = () => {
           totalRows: json?.data?.opportunities?.length || 0,
         });
       }
-      setStatus({ kind: "success", text: json?.message || "Sheet uploaded successfully." });
+      setStatus({
+        kind: "success",
+        text: json?.message || "Sheet uploaded successfully.",
+      });
     } catch (error) {
       setStatus({ kind: "error", text: error.message || "Upload failed" });
     } finally {
@@ -500,8 +692,15 @@ const DashboardPage = () => {
     const nextStatus = statusOverride || blogForm.status;
     setBlogStatus({ kind: "", text: "" });
 
-    if (!blogForm.title.trim() || !blogForm.excerpt.trim() || !blogForm.content.trim()) {
-      setBlogStatus({ kind: "error", text: "Title, excerpt, and content are required." });
+    if (
+      !blogForm.title.trim() ||
+      !blogForm.excerpt.trim() ||
+      !blogForm.content.trim()
+    ) {
+      setBlogStatus({
+        kind: "error",
+        text: "Title, excerpt, and content are required.",
+      });
       return;
     }
 
@@ -510,7 +709,9 @@ const DashboardPage = () => {
       const payload = { ...blogForm, status: nextStatus };
       const isEditing = Boolean(blogForm.id);
       const res = await fetch(
-        isEditing ? `${API_BASE}/blogs/admin/${blogForm.id}` : `${API_BASE}/blogs/admin`,
+        isEditing ?
+          `${API_BASE}/blogs/admin/${blogForm.id}`
+        : `${API_BASE}/blogs/admin`,
         {
           method: isEditing ? "PUT" : "POST",
           headers: { "Content-Type": "application/json", ...authHeaders },
@@ -522,11 +723,17 @@ const DashboardPage = () => {
       setBlogForm(emptyBlogForm);
       setBlogStatus({
         kind: "success",
-        text: nextStatus === "published" ? "Blog published successfully." : "Blog saved as draft.",
+        text:
+          nextStatus === "published" ?
+            "Blog published successfully."
+          : "Blog saved as draft.",
       });
       await loadBlogs();
     } catch (error) {
-      setBlogStatus({ kind: "error", text: error.message || "Unable to save blog" });
+      setBlogStatus({
+        kind: "error",
+        text: error.message || "Unable to save blog",
+      });
     } finally {
       setBlogSaving(false);
     }
@@ -535,7 +742,9 @@ const DashboardPage = () => {
   const deleteBlog = async (blog) => {
     const blogId = blog.id || blog._id;
     if (!blogId) return;
-    const confirmed = window.confirm(`Delete "${blog.title}"? This cannot be undone.`);
+    const confirmed = window.confirm(
+      `Delete "${blog.title}"? This cannot be undone.`,
+    );
     if (!confirmed) return;
 
     try {
@@ -550,7 +759,10 @@ const DashboardPage = () => {
       setBlogStatus({ kind: "success", text: "Blog deleted successfully." });
       await loadBlogs();
     } catch (error) {
-      setBlogStatus({ kind: "error", text: error.message || "Unable to delete blog" });
+      setBlogStatus({
+        kind: "error",
+        text: error.message || "Unable to delete blog",
+      });
     }
   };
 
@@ -571,7 +783,10 @@ const DashboardPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-[#C8E6E2]/20 via-white to-[#9ED5D1]/15">
       <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/80 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-5">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2"
+          >
             <img
               src={IMAGES.logo}
               alt="Index Money"
@@ -581,7 +796,10 @@ const DashboardPage = () => {
           <div className="flex items-center gap-3">
             <span className="hidden items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs text-slate-500 sm:flex">
               <ShieldCheck className="h-3.5 w-3.5 text-[#63C1BB]" />
-              Logged in as <strong className="text-slate-700">{user.fullName || user.email}</strong>
+              Logged in as{" "}
+              <strong className="text-slate-700">
+                {user.fullName || user.email}
+              </strong>
             </span>
             <button
               onClick={() => {
@@ -604,9 +822,12 @@ const DashboardPage = () => {
               <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-white/70">
                 Admin Dashboard
               </p>
-              <h1 className="text-2xl font-bold md:text-3xl">Admin-only content and lead management</h1>
+              <h1 className="text-2xl font-bold md:text-3xl">
+                Admin-only content and lead management
+              </h1>
               <p className="mt-1.5 text-sm text-white/70">
-                Review registered users and enquiries, export them, and manage public website data.
+                Review registered users and enquiries, export them, and manage
+                public website data.
               </p>
             </div>
             <button
@@ -619,13 +840,54 @@ const DashboardPage = () => {
         </div>
 
         <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[repeat(7,minmax(0,1fr))]">
-          <StatCard icon={Users} label="Registered Users" value={adminDataLoading ? "..." : usersData.length} sub="Accounts in the system" />
-          <StatCard icon={ClipboardList} label="Enquiries" value={adminDataLoading ? "..." : enquiryData.length} sub="Leads received" color="#3A9295" />
-          <StatCard icon={FileSpreadsheet} label="Demat Leads" value={adminDataLoading ? "..." : dematAccountData.length} sub="Account requests" color="#1f8a70" />
-          <StatCard icon={BookOpen} label="Active Blogs" value={blogsLoading ? "..." : blogStats.published} sub={`${blogStats.drafts} drafts`} color="#1f7a6d" />
-          <StatCard icon={BarChart2} label="Today's Results" value={`${todaysResults.length} Rows`} sub="Daily update block" color="#63C1BB" />
-          <StatCard icon={FileSpreadsheet} label="Performance Sheet" value={performanceMeta.totalTrades || "0"} sub="Uploaded trades" color="#2f7d80" />
-          <StatCard icon={Database} label="Unlisted Sheet" value={unlistedMeta.totalRows || "0"} sub="Opportunity rows" color="#205d63" />
+          <StatCard
+            icon={Users}
+            label="Registered Users"
+            value={adminDataLoading ? "..." : usersData.length}
+            sub="Accounts in the system"
+          />
+          <StatCard
+            icon={ClipboardList}
+            label="Enquiries"
+            value={adminDataLoading ? "..." : enquiryData.length}
+            sub="Leads received"
+            color="#3A9295"
+          />
+          <StatCard
+            icon={FileSpreadsheet}
+            label="Demat Leads"
+            value={adminDataLoading ? "..." : dematAccountData.length}
+            sub="Account requests"
+            color="#1f8a70"
+          />
+          <StatCard
+            icon={BookOpen}
+            label="Active Blogs"
+            value={blogsLoading ? "..." : blogStats.published}
+            sub={`${blogStats.drafts} drafts`}
+            color="#1f7a6d"
+          />
+          <StatCard
+            icon={BarChart2}
+            label="Today's Results"
+            value={`${todaysResults.length} Rows`}
+            sub="Daily update block"
+            color="#63C1BB"
+          />
+          <StatCard
+            icon={FileSpreadsheet}
+            label="Performance Sheet"
+            value={performanceMeta.totalTrades || "0"}
+            sub="Uploaded trades"
+            color="#2f7d80"
+          />
+          <StatCard
+            icon={Database}
+            label="Unlisted Sheet"
+            value={unlistedMeta.totalRows || "0"}
+            sub="Opportunity rows"
+            color="#205d63"
+          />
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
@@ -635,8 +897,12 @@ const DashboardPage = () => {
                 <User className="h-5 w-5 text-white" />
               </span>
               <div>
-                <p className="text-sm font-bold text-slate-800">Admin Profile</p>
-                <p className="text-xs text-slate-400">Logged-in administrator information</p>
+                <p className="text-sm font-bold text-slate-800">
+                  Admin Profile
+                </p>
+                <p className="text-xs text-slate-400">
+                  Logged-in administrator information
+                </p>
               </div>
             </div>
             <div className="divide-y divide-slate-50">
@@ -660,7 +926,10 @@ const DashboardPage = () => {
                 "Check fresh enquiries and export them as CSV.",
                 "Update Today's Results and upload the latest sheets.",
               ].map((item) => (
-                <div key={item} className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                <div
+                  key={item}
+                  className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-600"
+                >
                   {item}
                 </div>
               ))}
@@ -670,7 +939,10 @@ const DashboardPage = () => {
 
         <div className="mt-8 grid gap-8 xl:grid-cols-2">
           <div>
-            <StatusBanner kind={adminDataStatus.kind} text={adminDataStatus.text} />
+            <StatusBanner
+              kind={adminDataStatus.kind}
+              text={adminDataStatus.text}
+            />
             <TableCard
               title="Registered Users"
               count={usersData.length}
@@ -680,7 +952,14 @@ const DashboardPage = () => {
               onExport={() =>
                 downloadCsv(
                   "indexmoney-users.csv",
-                  ["Full Name", "Email", "Mobile Number", "City", "Role", "Joined At"],
+                  [
+                    "Full Name",
+                    "Email",
+                    "Mobile Number",
+                    "City",
+                    "Role",
+                    "Joined At",
+                  ],
                   usersData.map((entry) => [
                     entry.fullName,
                     entry.email,
@@ -698,14 +977,22 @@ const DashboardPage = () => {
                   label: "Email",
                   render: (row) => (
                     <div>
-                      <div className="font-medium text-slate-800">{row.email || "-"}</div>
-                      <div className="text-xs text-slate-400">{row.isAdmin ? "Admin" : "User"}</div>
+                      <div className="font-medium text-slate-800">
+                        {row.email || "-"}
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        {row.isAdmin ? "Admin" : "User"}
+                      </div>
                     </div>
                   ),
                 },
                 { key: "mobileNumber", label: "Mobile" },
                 { key: "city", label: "City" },
-                { key: "createdAt", label: "Joined", render: (row) => fmt(row.createdAt) },
+                {
+                  key: "createdAt",
+                  label: "Joined",
+                  render: (row) => fmt(row.createdAt),
+                },
               ]}
             />
           </div>
@@ -734,7 +1021,11 @@ const DashboardPage = () => {
               { key: "email", label: "Email" },
               { key: "phone", label: "Phone" },
               { key: "planType", label: "Plan" },
-              { key: "createdAt", label: "Received", render: (row) => fmt(row.createdAt) },
+              {
+                key: "createdAt",
+                label: "Received",
+                render: (row) => fmt(row.createdAt),
+              },
             ]}
           />
         </div>
@@ -762,7 +1053,11 @@ const DashboardPage = () => {
               { key: "fullName", label: "Full Name" },
               { key: "mobileNumber", label: "Mobile" },
               { key: "email", label: "Email" },
-              { key: "createdAt", label: "Received", render: (row) => fmt(row.createdAt) },
+              {
+                key: "createdAt",
+                label: "Received",
+                render: (row) => fmt(row.createdAt),
+              },
             ]}
           />
         </div>
@@ -817,13 +1112,10 @@ const DashboardPage = () => {
                   className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
                 />
 
-                <textarea
-                  name="content"
-                  rows={10}
+                <BlogRichTextEditor
                   value={blogForm.content}
                   onChange={handleBlogChange}
-                  placeholder="Write the blog content. Use ## headings, ### subheadings, blank lines for paragraphs, and - bullets."
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  placeholder="Paste Google Docs content here. Headings, bullets, paragraphs, and tables will be preserved."
                 />
 
                 <div className="grid gap-4 md:grid-cols-2">
@@ -908,38 +1200,56 @@ const DashboardPage = () => {
                 <div className="border-b border-slate-100 p-4">
                   <div className="grid grid-cols-3 gap-3">
                     <div className="rounded-2xl bg-slate-50 p-3 text-center">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Total</p>
-                      <p className="mt-1 text-xl font-bold text-slate-800">{blogStats.total}</p>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        Total
+                      </p>
+                      <p className="mt-1 text-xl font-bold text-slate-800">
+                        {blogStats.total}
+                      </p>
                     </div>
                     <div className="rounded-2xl bg-emerald-50 p-3 text-center">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">Active</p>
-                      <p className="mt-1 text-xl font-bold text-emerald-700">{blogStats.published}</p>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">
+                        Active
+                      </p>
+                      <p className="mt-1 text-xl font-bold text-emerald-700">
+                        {blogStats.published}
+                      </p>
                     </div>
                     <div className="rounded-2xl bg-amber-50 p-3 text-center">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">Drafts</p>
-                      <p className="mt-1 text-xl font-bold text-amber-700">{blogStats.drafts}</p>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">
+                        Drafts
+                      </p>
+                      <p className="mt-1 text-xl font-bold text-amber-700">
+                        {blogStats.drafts}
+                      </p>
                     </div>
                   </div>
                 </div>
                 <div className="max-h-[650px] divide-y divide-slate-100 overflow-y-auto">
-                  {blogs.length ? (
+                  {blogs.length ?
                     blogs.map((blog) => (
                       <div key={blog.id || blog._id} className="p-4">
                         <div className="flex items-start justify-between gap-4">
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
-                              <h3 className="font-bold text-slate-900">{blog.title}</h3>
+                              <h3 className="font-bold text-slate-900">
+                                {blog.title}
+                              </h3>
                               <span
                                 className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                                  blog.status === "published"
-                                    ? "bg-emerald-50 text-emerald-700"
-                                    : "bg-amber-50 text-amber-700"
+                                  blog.status === "published" ?
+                                    "bg-emerald-50 text-emerald-700"
+                                  : "bg-amber-50 text-amber-700"
                                 }`}
                               >
-                                {blog.status === "published" ? "Active" : "Draft"}
+                                {blog.status === "published" ?
+                                  "Active"
+                                : "Draft"}
                               </span>
                             </div>
-                            <p className="mt-1 text-xs text-slate-400">/{blog.slug}</p>
+                            <p className="mt-1 text-xs text-slate-400">
+                              /{blog.slug}
+                            </p>
                             <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">
                               {blog.excerpt}
                             </p>
@@ -957,7 +1267,7 @@ const DashboardPage = () => {
                             <Pencil className="h-3.5 w-3.5" />
                             Edit
                           </button>
-                          {blog.status === "published" ? (
+                          {blog.status === "published" ?
                             <button
                               type="button"
                               onClick={() => navigate(`/blogs/${blog.slug}`)}
@@ -966,7 +1276,7 @@ const DashboardPage = () => {
                               <Eye className="h-3.5 w-3.5" />
                               View
                             </button>
-                          ) : null}
+                          : null}
                           <button
                             type="button"
                             onClick={() => deleteBlog(blog)}
@@ -978,11 +1288,12 @@ const DashboardPage = () => {
                         </div>
                       </div>
                     ))
-                  ) : (
-                    <div className="p-8 text-center text-sm text-slate-400">
-                      {blogsLoading ? "Loading blogs..." : "No blogs yet. Write the first one on the left."}
+                  : <div className="p-8 text-center text-sm text-slate-400">
+                      {blogsLoading ?
+                        "Loading blogs..."
+                      : "No blogs yet. Write the first one on the left."}
                     </div>
-                  )}
+                  }
                 </div>
               </div>
             </div>
@@ -997,8 +1308,11 @@ const DashboardPage = () => {
               title="Today's Results Admin"
               description="These rows feed the small Today's Results card on the home hero."
             />
-            <StatusBanner kind={homepageStatus.kind} text={homepageStatus.text} />
-            {homepageStatus.kind === "success" ? (
+            <StatusBanner
+              kind={homepageStatus.kind}
+              text={homepageStatus.text}
+            />
+            {homepageStatus.kind === "success" ?
               <QuickViewLinks
                 links={[
                   {
@@ -1007,15 +1321,24 @@ const DashboardPage = () => {
                   },
                 ]}
               />
-            ) : null}
+            : null}
             <div className="space-y-3">
               {todaysResults.map((row, index) => (
-                <div key={`${index}-${row.label}`} className="grid gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4 md:grid-cols-[1fr_1fr_1fr_auto]">
+                <div
+                  key={`${index}-${row.label}`}
+                  className="grid gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4 md:grid-cols-[1fr_1fr_1fr_auto]"
+                >
                   <input
                     type="text"
                     value={row.label}
                     onChange={(e) =>
-                      setTodaysResults((current) => current.map((item, i) => (i === index ? { ...item, label: e.target.value } : item)))
+                      setTodaysResults((current) =>
+                        current.map((item, i) =>
+                          i === index ?
+                            { ...item, label: e.target.value }
+                          : item,
+                        ),
+                      )
                     }
                     placeholder="Label"
                     className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
@@ -1024,7 +1347,13 @@ const DashboardPage = () => {
                     type="text"
                     value={row.points}
                     onChange={(e) =>
-                      setTodaysResults((current) => current.map((item, i) => (i === index ? { ...item, points: e.target.value } : item)))
+                      setTodaysResults((current) =>
+                        current.map((item, i) =>
+                          i === index ?
+                            { ...item, points: e.target.value }
+                          : item,
+                        ),
+                      )
                     }
                     placeholder="Points"
                     className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
@@ -1033,7 +1362,13 @@ const DashboardPage = () => {
                     type="text"
                     value={row.note}
                     onChange={(e) =>
-                      setTodaysResults((current) => current.map((item, i) => (i === index ? { ...item, note: e.target.value } : item)))
+                      setTodaysResults((current) =>
+                        current.map((item, i) =>
+                          i === index ?
+                            { ...item, note: e.target.value }
+                          : item,
+                        ),
+                      )
                     }
                     placeholder="Note"
                     className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
@@ -1041,7 +1376,11 @@ const DashboardPage = () => {
                   <button
                     type="button"
                     disabled={todaysResults.length <= 1}
-                    onClick={() => setTodaysResults((current) => current.filter((_, i) => i !== index))}
+                    onClick={() =>
+                      setTodaysResults((current) =>
+                        current.filter((_, i) => i !== index),
+                      )
+                    }
                     className="rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Remove
@@ -1052,7 +1391,12 @@ const DashboardPage = () => {
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
-                onClick={() => setTodaysResults((current) => [...current, { label: "", points: "", note: "" }])}
+                onClick={() =>
+                  setTodaysResults((current) => [
+                    ...current,
+                    { label: "", points: "", note: "" },
+                  ])
+                }
                 className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
               >
                 Add Row
@@ -1076,8 +1420,11 @@ const DashboardPage = () => {
               title="Past Performance Sheet Upload"
               description="Upload the past performance Excel here so the public cards and table stay current."
             />
-            <StatusBanner kind={performanceStatus.kind} text={performanceStatus.text} />
-            {performanceStatus.kind === "success" ? (
+            <StatusBanner
+              kind={performanceStatus.kind}
+              text={performanceStatus.text}
+            />
+            {performanceStatus.kind === "success" ?
               <QuickViewLinks
                 links={[
                   {
@@ -1090,25 +1437,42 @@ const DashboardPage = () => {
                   },
                 ]}
               />
-            ) : null}
+            : null}
             <div className="mb-5 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm text-slate-600">
-              <p className="font-semibold text-slate-700">Required Excel columns</p>
-              <p className="mt-2">`date`, `index`, `callType`, `entry`, `sl`, `target`, `result`, `points`</p>
-              <p className="mt-3 font-semibold text-slate-700">Optional extra columns</p>
+              <p className="font-semibold text-slate-700">
+                Required Excel columns
+              </p>
+              <p className="mt-2">
+                `date`, `index`, `callType`, `entry`, `sl`, `target`, `result`,
+                `points`
+              </p>
+              <p className="mt-3 font-semibold text-slate-700">
+                Optional extra columns
+              </p>
               <p className="mt-2">`tradeId`</p>
             </div>
             <div className="space-y-4">
               <input
                 type="text"
                 value={performanceForm.title}
-                onChange={(e) => setPerformanceForm((current) => ({ ...current, title: e.target.value }))}
+                onChange={(e) =>
+                  setPerformanceForm((current) => ({
+                    ...current,
+                    title: e.target.value,
+                  }))
+                }
                 placeholder="Upload title"
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
               />
               <input
                 type="file"
                 accept=".xlsx,.xls"
-                onChange={(e) => setPerformanceForm((current) => ({ ...current, file: e.target.files?.[0] || null }))}
+                onChange={(e) =>
+                  setPerformanceForm((current) => ({
+                    ...current,
+                    file: e.target.files?.[0] || null,
+                  }))
+                }
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[#E7F7F5] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#105F68]"
               />
               <button
@@ -1118,14 +1482,24 @@ const DashboardPage = () => {
                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#3A9295] px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Upload className="h-4 w-4" />
-                {performanceUploading ? "Uploading..." : "Upload Performance Sheet"}
+                {performanceUploading ?
+                  "Uploading..."
+                : "Upload Performance Sheet"}
               </button>
             </div>
             <div className="mt-6 rounded-2xl border border-slate-100 bg-[#f8fcfb] p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Latest uploaded file</p>
-              <p className="mt-2 text-sm font-semibold text-slate-800">{performanceMeta.sourceFileName || "No file uploaded yet"}</p>
-              <p className="mt-1 text-sm text-slate-500">{performanceMeta.title || "No upload title yet"}</p>
-              <p className="mt-2 text-xs font-medium text-slate-400">{performanceMeta.totalTrades} trade rows available</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                Latest uploaded file
+              </p>
+              <p className="mt-2 text-sm font-semibold text-slate-800">
+                {performanceMeta.sourceFileName || "No file uploaded yet"}
+              </p>
+              <p className="mt-1 text-sm text-slate-500">
+                {performanceMeta.title || "No upload title yet"}
+              </p>
+              <p className="mt-2 text-xs font-medium text-slate-400">
+                {performanceMeta.totalTrades} trade rows available
+              </p>
             </div>
           </section>
         </div>
@@ -1138,8 +1512,11 @@ const DashboardPage = () => {
               title="Unlisted Opportunities Sheet Upload"
               description="Upload the unlisted shares Excel sheet here. The public cards and detail pages fetch the latest uploaded data automatically."
             />
-            <StatusBanner kind={unlistedStatus.kind} text={unlistedStatus.text} />
-            {unlistedStatus.kind === "success" ? (
+            <StatusBanner
+              kind={unlistedStatus.kind}
+              text={unlistedStatus.text}
+            />
+            {unlistedStatus.kind === "success" ?
               <QuickViewLinks
                 links={[
                   {
@@ -1148,33 +1525,51 @@ const DashboardPage = () => {
                   },
                 ]}
               />
-            ) : null}
+            : null}
             <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
               <div className="space-y-4">
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm text-slate-600">
-                  <p className="font-semibold text-slate-700">Required Excel columns</p>
-                  <p className="mt-2">`company`, `sector`, `price`, `minimumInvestment`, `status`</p>
-                  <p className="mt-4 font-semibold text-slate-700">Optional card/detail columns</p>
+                  <p className="font-semibold text-slate-700">
+                    Required Excel columns
+                  </p>
+                  <p className="mt-2">
+                    `company`, `sector`, `price`, `minimumInvestment`, `status`
+                  </p>
+                  <p className="mt-4 font-semibold text-slate-700">
+                    Optional card/detail columns
+                  </p>
                   <p className="mt-2 leading-6">
-                    `code`, `slug`, `logoUrl`, `badge`, `description`, `marketCap`, `isin`, `faceValue`,
-                    `eps`, `pbRatio`, `bookValue`, `debtEquityRatio`, `settlementPeriod`, `minUnits`,
-                    `aboutCompany`, `strengths`, `weaknesses`
+                    `code`, `slug`, `logoUrl`, `badge`, `description`,
+                    `marketCap`, `isin`, `faceValue`, `eps`, `pbRatio`,
+                    `bookValue`, `debtEquityRatio`, `settlementPeriod`,
+                    `minUnits`, `aboutCompany`, `strengths`, `weaknesses`
                   </p>
                   <p className="mt-3 text-xs leading-5 text-slate-500">
-                    Use `strengths` and `weaknesses` with values separated by `|` to show bullet points on each share detail page.
+                    Use `strengths` and `weaknesses` with values separated by
+                    `|` to show bullet points on each share detail page.
                   </p>
                 </div>
                 <input
                   type="text"
                   value={unlistedForm.title}
-                  onChange={(e) => setUnlistedForm((current) => ({ ...current, title: e.target.value }))}
+                  onChange={(e) =>
+                    setUnlistedForm((current) => ({
+                      ...current,
+                      title: e.target.value,
+                    }))
+                  }
                   placeholder="Upload title"
                   className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
                 />
                 <input
                   type="file"
                   accept=".xlsx,.xls"
-                  onChange={(e) => setUnlistedForm((current) => ({ ...current, file: e.target.files?.[0] || null }))}
+                  onChange={(e) =>
+                    setUnlistedForm((current) => ({
+                      ...current,
+                      file: e.target.files?.[0] || null,
+                    }))
+                  }
                   className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[#E7F7F5] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#105F68]"
                 />
                 <button
@@ -1188,10 +1583,18 @@ const DashboardPage = () => {
                 </button>
               </div>
               <div className="rounded-2xl border border-slate-100 bg-[#f8fcfb] p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Latest uploaded file</p>
-                <p className="mt-2 text-sm font-semibold text-slate-800">{unlistedMeta.sourceFileName || "No file uploaded yet"}</p>
-                <p className="mt-1 text-sm text-slate-500">{unlistedMeta.title || "No upload title yet"}</p>
-                <p className="mt-2 text-xs font-medium text-slate-400">{unlistedMeta.totalRows} rows available</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                  Latest uploaded file
+                </p>
+                <p className="mt-2 text-sm font-semibold text-slate-800">
+                  {unlistedMeta.sourceFileName || "No file uploaded yet"}
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                  {unlistedMeta.title || "No upload title yet"}
+                </p>
+                <p className="mt-2 text-xs font-medium text-slate-400">
+                  {unlistedMeta.totalRows} rows available
+                </p>
               </div>
             </div>
           </section>
