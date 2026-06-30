@@ -429,27 +429,65 @@ const DashboardPage = () => {
     text: "",
   });
 
+  const [performanceTrades, setPerformanceTrades] = React.useState([]);
   const [performanceMeta, setPerformanceMeta] = React.useState({
-    title: "",
-    sourceFileName: "",
+    title: "Latest Performance",
     totalTrades: 0,
   });
-  const [performanceForm, setPerformanceForm] = React.useState(emptyForm);
+  const [performanceForm, setPerformanceForm] = React.useState({
+    id: "",
+    tradeId: "",
+    date: "",
+    index: "Nifty",
+    callType: "CE",
+    entry: "",
+    sl: "",
+    target: "",
+    result: "Target Hit",
+    points: "",
+    chartUrl: "",
+    chartTitle: "",
+    chartNotes: "",
+  });
   const [performanceLoading, setPerformanceLoading] = React.useState(true);
-  const [performanceUploading, setPerformanceUploading] = React.useState(false);
+  const [performanceSaving, setPerformanceSaving] = React.useState(false);
   const [performanceStatus, setPerformanceStatus] = React.useState({
     kind: "",
     text: "",
   });
 
+  const [unlistedOpportunities, setUnlistedOpportunities] = React.useState([]);
   const [unlistedMeta, setUnlistedMeta] = React.useState({
-    title: "",
-    sourceFileName: "",
+    title: "Latest Unlisted Opportunities",
     totalRows: 0,
   });
-  const [unlistedForm, setUnlistedForm] = React.useState(emptyForm);
+  const [unlistedForm, setUnlistedForm] = React.useState({
+    id: "",
+    company: "",
+    sector: "",
+    price: "",
+    minimumInvestment: "",
+    status: "Available",
+    code: "",
+    slug: "",
+    logoUrl: "",
+    badge: "",
+    description: "",
+    marketCap: "",
+    isin: "",
+    faceValue: "",
+    eps: "",
+    pbRatio: "",
+    bookValue: "",
+    debtEquityRatio: "",
+    settlementPeriod: "",
+    minUnits: "",
+    aboutCompany: "",
+    strengths: "",
+    weaknesses: "",
+  });
   const [unlistedLoading, setUnlistedLoading] = React.useState(true);
-  const [unlistedUploading, setUnlistedUploading] = React.useState(false);
+  const [unlistedSaving, setUnlistedSaving] = React.useState(false);
   const [unlistedStatus, setUnlistedStatus] = React.useState({
     kind: "",
     text: "",
@@ -508,13 +546,14 @@ const DashboardPage = () => {
       const res = await fetch(`${API_BASE}/performance`);
       const json = await res.json().catch(() => ({}));
       const data = json?.data;
+      setPerformanceTrades(Array.isArray(data?.trades) ? data.trades : []);
       setPerformanceMeta({
-        title: data?.title || "",
-        sourceFileName: data?.sourceFileName || "",
+        title: data?.title || "Latest Performance",
         totalTrades: data?.trades?.length || 0,
       });
     } catch {
-      setPerformanceMeta({ title: "", sourceFileName: "", totalTrades: 0 });
+      setPerformanceTrades([]);
+      setPerformanceMeta({ title: "Latest Performance", totalTrades: 0 });
     } finally {
       setPerformanceLoading(false);
     }
@@ -526,13 +565,14 @@ const DashboardPage = () => {
       const res = await fetch(`${API_BASE}/unlisted/opportunities`);
       const json = await res.json().catch(() => ({}));
       const data = json?.data;
+      setUnlistedOpportunities(Array.isArray(data?.opportunities) ? data.opportunities : []);
       setUnlistedMeta({
-        title: data?.title || "",
-        sourceFileName: data?.sourceFileName || "",
+        title: data?.title || "Latest Unlisted Opportunities",
         totalRows: data?.opportunities?.length || 0,
       });
     } catch {
-      setUnlistedMeta({ title: "", sourceFileName: "", totalRows: 0 });
+      setUnlistedOpportunities([]);
+      setUnlistedMeta({ title: "Latest Unlisted Opportunities", totalRows: 0 });
     } finally {
       setUnlistedLoading(false);
     }
@@ -674,14 +714,13 @@ const DashboardPage = () => {
 
   const uploadSheet = async (kind) => {
     const isPerformance = kind === "performance";
-    const form = isPerformance ? performanceForm : unlistedForm;
-    const setStatus = isPerformance ? setPerformanceStatus : setUnlistedStatus;
-    const setUploading =
-      isPerformance ? setPerformanceUploading : setUnlistedUploading;
-    const url =
-      isPerformance ?
-        `${API_BASE}/performance/upload`
-      : `${API_BASE}/unlisted/upload`;
+    if (!isPerformance) return;
+
+    const form = performanceForm;
+    const setStatus = setPerformanceStatus;
+    const setUploading = setPerformanceUploading;
+    const url = `${API_BASE}/performance/upload`;
+
     if (!form.file) {
       setStatus({
         kind: "error",
@@ -702,21 +741,12 @@ const DashboardPage = () => {
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json?.error || "Upload failed");
-      if (isPerformance) {
-        setPerformanceForm(emptyForm);
-        setPerformanceMeta({
-          title: json?.data?.title || form.title,
-          sourceFileName: json?.data?.sourceFileName || "",
-          totalTrades: json?.data?.trades?.length || 0,
-        });
-      } else {
-        setUnlistedForm(emptyForm);
-        setUnlistedMeta({
-          title: json?.data?.title || form.title,
-          sourceFileName: json?.data?.sourceFileName || "",
-          totalRows: json?.data?.opportunities?.length || 0,
-        });
-      }
+      setPerformanceForm(emptyForm);
+      setPerformanceMeta({
+        title: json?.data?.title || form.title,
+        sourceFileName: json?.data?.sourceFileName || "",
+        totalTrades: json?.data?.trades?.length || 0,
+      });
       setStatus({
         kind: "success",
         text: json?.message || "Sheet uploaded successfully.",
@@ -725,6 +755,327 @@ const DashboardPage = () => {
       setStatus({ kind: "error", text: error.message || "Upload failed" });
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handlePerformanceChange = (e) => {
+    const { name, value } = e.target;
+    setPerformanceForm((curr) => ({ ...curr, [name]: value }));
+  };
+
+  const savePerformanceTrade = async () => {
+    setPerformanceStatus({ kind: "", text: "" });
+    if (
+      !performanceForm.date.trim() ||
+      !performanceForm.index.trim() ||
+      !performanceForm.callType.trim() ||
+      performanceForm.entry === "" ||
+      performanceForm.sl === "" ||
+      performanceForm.target === "" ||
+      !performanceForm.result.trim() ||
+      !performanceForm.points.trim()
+    ) {
+      setPerformanceStatus({
+        kind: "error",
+        text: "Date, Index, Call Type, Entry, SL, Target, Result, and Points are required.",
+      });
+      return;
+    }
+
+    setPerformanceSaving(true);
+    try {
+      const isEditing = Boolean(performanceForm.id);
+      const url = isEditing
+        ? `${API_BASE}/performance/trades/${performanceForm.id}`
+        : `${API_BASE}/performance/trades`;
+
+      const method = isEditing ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json", ...authHeaders },
+        body: JSON.stringify(performanceForm),
+      });
+
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.error || "Failed to save performance trade");
+
+      setPerformanceForm({
+        id: "",
+        tradeId: "",
+        date: "",
+        index: "Nifty",
+        callType: "CE",
+        entry: "",
+        sl: "",
+        target: "",
+        result: "Target Hit",
+        points: "",
+        chartUrl: "",
+        chartTitle: "",
+        chartNotes: "",
+      });
+
+      setPerformanceStatus({
+        kind: "success",
+        text: isEditing
+          ? "Performance trade updated successfully."
+          : "Performance trade created successfully.",
+      });
+      await loadPerformance();
+    } catch (error) {
+      setPerformanceStatus({
+        kind: "error",
+        text: error.message || "Failed to save performance trade",
+      });
+    } finally {
+      setPerformanceSaving(false);
+    }
+  };
+
+  const editPerformanceTrade = (trade) => {
+    setPerformanceForm({
+      id: trade.id || trade._id || "",
+      tradeId: trade.tradeId || "",
+      date: trade.date || "",
+      index: trade.index || "Nifty",
+      callType: trade.callType || "CE",
+      entry: trade.entry !== undefined ? trade.entry : "",
+      sl: trade.sl !== undefined ? trade.sl : "",
+      target: trade.target !== undefined ? trade.target : "",
+      result: trade.result || "Target Hit",
+      points: trade.points || "",
+      chartUrl: trade.chartUrl || "",
+      chartTitle: trade.chartTitle || "",
+      chartNotes: trade.chartNotes || "",
+    });
+    setPerformanceStatus({ kind: "", text: "" });
+    const elem = document.getElementById("performance-form-section");
+    if (elem) {
+      elem.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const deletePerformanceTrade = async (trade) => {
+    const tradeId = trade.id || trade._id;
+    if (!tradeId) return;
+
+    const confirmed = window.confirm(
+      `Delete trade "${trade.index} ${trade.callType} on ${trade.date}"? This cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    try {
+      setPerformanceStatus({ kind: "", text: "" });
+      const res = await fetch(`${API_BASE}/performance/trades/${tradeId}`, {
+        method: "DELETE",
+        headers: authHeaders,
+      });
+
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.error || "Failed to delete trade");
+
+      if (performanceForm.id === tradeId) {
+        setPerformanceForm({
+          id: "",
+          tradeId: "",
+          date: "",
+          index: "Nifty",
+          callType: "CE",
+          entry: "",
+          sl: "",
+          target: "",
+          result: "Target Hit",
+          points: "",
+          chartUrl: "",
+          chartTitle: "",
+          chartNotes: "",
+        });
+      }
+
+      setPerformanceStatus({
+        kind: "success",
+        text: "Performance trade deleted successfully.",
+      });
+      await loadPerformance();
+    } catch (error) {
+      setPerformanceStatus({
+        kind: "error",
+        text: error.message || "Failed to delete performance trade",
+      });
+    }
+  };
+
+  const handleUnlistedChange = (e) => {
+    const { name, value } = e.target;
+    setUnlistedForm((curr) => ({ ...curr, [name]: value }));
+  };
+
+  const saveUnlistedOpportunity = async () => {
+    setUnlistedStatus({ kind: "", text: "" });
+    if (
+      !unlistedForm.company.trim() ||
+      !unlistedForm.sector.trim() ||
+      !unlistedForm.price.trim() ||
+      !unlistedForm.minimumInvestment.trim() ||
+      !unlistedForm.status.trim()
+    ) {
+      setUnlistedStatus({
+        kind: "error",
+        text: "Company, sector, price, minimum investment, and status are required.",
+      });
+      return;
+    }
+
+    setUnlistedSaving(true);
+    try {
+      const isEditing = Boolean(unlistedForm.id);
+      const url = isEditing
+        ? `${API_BASE}/unlisted/opportunities/${unlistedForm.id}`
+        : `${API_BASE}/unlisted/opportunities`;
+
+      const method = isEditing ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json", ...authHeaders },
+        body: JSON.stringify(unlistedForm),
+      });
+
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.error || "Failed to save unlisted opportunity");
+
+      setUnlistedForm({
+        id: "",
+        company: "",
+        sector: "",
+        price: "",
+        minimumInvestment: "",
+        status: "Available",
+        code: "",
+        slug: "",
+        logoUrl: "",
+        badge: "",
+        description: "",
+        marketCap: "",
+        isin: "",
+        faceValue: "",
+        eps: "",
+        pbRatio: "",
+        bookValue: "",
+        debtEquityRatio: "",
+        settlementPeriod: "",
+        minUnits: "",
+        aboutCompany: "",
+        strengths: "",
+        weaknesses: "",
+      });
+
+      setUnlistedStatus({
+        kind: "success",
+        text: isEditing
+          ? "Unlisted opportunity updated successfully."
+          : "Unlisted opportunity created successfully.",
+      });
+      await loadUnlisted();
+    } catch (error) {
+      setUnlistedStatus({
+        kind: "error",
+        text: error.message || "Failed to save unlisted opportunity",
+      });
+    } finally {
+      setUnlistedSaving(false);
+    }
+  };
+
+  const editUnlistedOpportunity = (opp) => {
+    setUnlistedForm({
+      id: opp.id || opp._id || "",
+      company: opp.company || "",
+      sector: opp.sector || "",
+      price: opp.price || "",
+      minimumInvestment: opp.minimumInvestment || "",
+      status: opp.status || "Available",
+      code: opp.code || "",
+      slug: opp.slug || "",
+      logoUrl: opp.logoUrl || "",
+      badge: opp.badge || "",
+      description: opp.description || "",
+      marketCap: opp.marketCap || "",
+      isin: opp.isin || "",
+      faceValue: opp.faceValue || "",
+      eps: opp.eps || "",
+      pbRatio: opp.pbRatio || "",
+      bookValue: opp.bookValue || "",
+      debtEquityRatio: opp.debtEquityRatio || "",
+      settlementPeriod: opp.settlementPeriod || "",
+      minUnits: opp.minUnits || "",
+      aboutCompany: opp.aboutCompany || "",
+      strengths: opp.strengths || "",
+      weaknesses: opp.weaknesses || "",
+    });
+    setUnlistedStatus({ kind: "", text: "" });
+    const elem = document.getElementById("unlisted-form-section");
+    if (elem) {
+      elem.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const deleteUnlistedOpportunity = async (opp) => {
+    const oppId = opp.id || opp._id;
+    if (!oppId) return;
+
+    const confirmed = window.confirm(
+      `Delete "${opp.company}"? This cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    try {
+      setUnlistedStatus({ kind: "", text: "" });
+      const res = await fetch(`${API_BASE}/unlisted/opportunities/${oppId}`, {
+        method: "DELETE",
+        headers: authHeaders,
+      });
+
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.error || "Failed to delete opportunity");
+
+      if (unlistedForm.id === oppId) {
+        setUnlistedForm({
+          id: "",
+          company: "",
+          sector: "",
+          price: "",
+          minimumInvestment: "",
+          status: "Available",
+          code: "",
+          slug: "",
+          logoUrl: "",
+          badge: "",
+          description: "",
+          marketCap: "",
+          isin: "",
+          faceValue: "",
+          eps: "",
+          pbRatio: "",
+          bookValue: "",
+          debtEquityRatio: "",
+          settlementPeriod: "",
+          minUnits: "",
+          aboutCompany: "",
+          strengths: "",
+          weaknesses: "",
+        });
+      }
+
+      setUnlistedStatus({
+        kind: "success",
+        text: "Unlisted opportunity deleted successfully.",
+      });
+      await loadUnlisted();
+    } catch (error) {
+      setUnlistedStatus({
+        kind: "error",
+        text: error.message || "Failed to delete unlisted opportunity",
+      });
     }
   };
 
@@ -1480,18 +1831,18 @@ const DashboardPage = () => {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+          <section id="performance-form-section" className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
             <SectionHeader
-              icon={Upload}
-              eyebrow="Past Performance Module"
-              title="Past Performance Sheet Upload"
-              description="Upload the past performance Excel here so the public cards and table stay current."
+              icon={BarChart2}
+              eyebrow="Performance CMS"
+              title={performanceForm.id ? `Edit Performance Trade` : "Add Performance Trade"}
+              description="Enter past performance trade levels and charts directly. No spreadsheet upload required."
             />
             <StatusBanner
               kind={performanceStatus.kind}
               text={performanceStatus.text}
             />
-            {performanceStatus.kind === "success" ?
+            {performanceStatus.kind === "success" && (
               <QuickViewLinks
                 links={[
                   {
@@ -1504,164 +1855,737 @@ const DashboardPage = () => {
                   },
                 ]}
               />
-            : null}
-            <div className="mb-5 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm text-slate-600">
-              <p className="font-semibold text-slate-700">
-                Required Excel columns
-              </p>
-              <p className="mt-2">
-                `date`, `index`, `callType`, `entry`, `sl`, `target`, `result`,
-                `points`
-              </p>
-              <p className="mt-3 font-semibold text-slate-700">
-                Optional extra columns
-              </p>
-              <p className="mt-2">`tradeId`</p>
+            )}
+
+            <div className="mt-5 rounded-2xl border border-slate-100 bg-slate-50 p-5">
+              <h3 className="mb-4 text-sm font-bold text-slate-800">1. Trade Details</h3>
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date *</label>
+                  <input
+                    name="date"
+                    type="text"
+                    required
+                    value={performanceForm.date}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. 02 Jan 2025"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Index / Instrument *</label>
+                  <input
+                    name="index"
+                    type="text"
+                    required
+                    value={performanceForm.index}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. Nifty or Bank Nifty"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Call Type *</label>
+                  <input
+                    name="callType"
+                    type="text"
+                    required
+                    value={performanceForm.callType}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. CE or PE"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Entry Price *</label>
+                  <input
+                    name="entry"
+                    type="number"
+                    required
+                    value={performanceForm.entry}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. 210"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Stop Loss *</label>
+                  <input
+                    name="sl"
+                    type="number"
+                    required
+                    value={performanceForm.sl}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. 190"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Target Price *</label>
+                  <input
+                    name="target"
+                    type="number"
+                    required
+                    value={performanceForm.target}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. 255"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Outcome Result *</label>
+                  <select
+                    name="result"
+                    value={performanceForm.result}
+                    onChange={handlePerformanceChange}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  >
+                    <option value="Target Hit">Target Hit</option>
+                    <option value="SL Hit">SL Hit</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Points PnL *</label>
+                  <input
+                    name="points"
+                    type="text"
+                    required
+                    value={performanceForm.points}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. +45 or -15"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Trade Code / ID</label>
+                  <input
+                    name="tradeId"
+                    type="text"
+                    value={performanceForm.tradeId}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. nifty-ce-01"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+              </div>
+
+              <h3 className="mb-4 mt-6 text-sm font-bold text-slate-800 border-t border-slate-200/50 pt-5">2. Chart Setup</h3>
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Chart Image URL</label>
+                  <input
+                    name="chartUrl"
+                    type="text"
+                    value={performanceForm.chartUrl}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. https://domain.com/chart.png"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Chart Title</label>
+                  <input
+                    name="chartTitle"
+                    type="text"
+                    value={performanceForm.chartTitle}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. Nifty CE breakout chart"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Chart Notes</label>
+                  <input
+                    name="chartNotes"
+                    type="text"
+                    value={performanceForm.chartNotes}
+                    onChange={handlePerformanceChange}
+                    placeholder="e.g. Breakout from morning range..."
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={savePerformanceTrade}
+                  disabled={performanceSaving}
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#105F68] px-6 py-3 text-sm font-bold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Save className="h-4 w-4" />
+                  {performanceSaving ? "Saving..." : performanceForm.id ? "Update Trade" : "Save New Trade"}
+                </button>
+
+                {performanceForm.id && (
+                  <button
+                    type="button"
+                    onClick={() => setPerformanceForm({
+                      id: "",
+                      tradeId: "",
+                      date: "",
+                      index: "Nifty",
+                      callType: "CE",
+                      entry: "",
+                      sl: "",
+                      target: "",
+                      result: "Target Hit",
+                      points: "",
+                      chartUrl: "",
+                      chartTitle: "",
+                      chartNotes: "",
+                    })}
+                    className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-white"
+                  >
+                    Cancel Edit
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setPerformanceForm({
+                    id: "",
+                    tradeId: "",
+                    date: "",
+                    index: "Nifty",
+                    callType: "CE",
+                    entry: "",
+                    sl: "",
+                    target: "",
+                    result: "Target Hit",
+                    points: "",
+                    chartUrl: "",
+                    chartTitle: "",
+                    chartNotes: "",
+                  })}
+                  className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100"
+                >
+                  Clear Form
+                </button>
+              </div>
             </div>
-            <div className="space-y-4">
-              <input
-                type="text"
-                value={performanceForm.title}
-                onChange={(e) =>
-                  setPerformanceForm((current) => ({
-                    ...current,
-                    title: e.target.value,
-                  }))
-                }
-                placeholder="Upload title"
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
-              />
-              <input
-                type="file"
-                accept=".xlsx,.xls"
-                onChange={(e) =>
-                  setPerformanceForm((current) => ({
-                    ...current,
-                    file: e.target.files?.[0] || null,
-                  }))
-                }
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[#E7F7F5] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#105F68]"
-              />
-              <button
-                type="button"
-                onClick={() => uploadSheet("performance")}
-                disabled={performanceUploading || performanceLoading}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#3A9295] px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <Upload className="h-4 w-4" />
-                {performanceUploading ?
-                  "Uploading..."
-                : "Upload Performance Sheet"}
-              </button>
-            </div>
-            <div className="mt-6 rounded-2xl border border-slate-100 bg-[#f8fcfb] p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Latest uploaded file
-              </p>
-              <p className="mt-2 text-sm font-semibold text-slate-800">
-                {performanceMeta.sourceFileName || "No file uploaded yet"}
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-                {performanceMeta.title || "No upload title yet"}
-              </p>
-              <p className="mt-2 text-xs font-medium text-slate-400">
-                {performanceMeta.totalTrades} trade rows available
-              </p>
+
+            <div className="mt-8 border-t border-slate-100 pt-8">
+              <h3 className="mb-4 text-lg font-bold text-slate-800">Existing Trades ({performanceTrades.length})</h3>
+              
+              <div className="overflow-x-auto rounded-2xl border border-slate-100">
+                <table className="min-w-full divide-y divide-slate-100">
+                  <thead className="bg-[#105F68] text-white">
+                    <tr>
+                      <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Date</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Instrument</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Call Type</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Entry</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">SL</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Target</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Result</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Points PnL</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#CBE7E1]/40 bg-white">
+                    {performanceTrades.length ? (
+                      performanceTrades.map((trade) => (
+                        <tr key={trade.id || trade._id} className="hover:bg-[#EFFAF7]/45 transition-colors duration-150">
+                          <td className="px-4 py-3 text-sm font-medium text-slate-700">{trade.date}</td>
+                          <td className="px-4 py-3 text-sm font-bold text-slate-850">{trade.index}</td>
+                          <td className="px-4 py-3 text-sm text-slate-700">
+                            <span className="rounded-full bg-[#E7F7F5] px-2.5 py-0.5 text-xs font-semibold text-[#105F68]">
+                              {trade.callType}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-sm font-semibold text-slate-700">{trade.entry}</td>
+                          <td className="px-4 py-3 text-sm text-slate-600">{trade.sl}</td>
+                          <td className="px-4 py-3 text-sm text-slate-650">{trade.target}</td>
+                          <td className="px-4 py-3 text-sm">
+                            <span className={`inline-block rounded-full px-3 py-0.5 text-xs font-bold ${
+                              trade.result === 'Target Hit' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                            }`}>
+                              {trade.result}
+                            </span>
+                          </td>
+                          <td className={`px-4 py-3 text-sm font-black ${
+                            trade.result === 'Target Hit' ? 'text-emerald-600' : 'text-rose-600'
+                          }`}>{trade.points}</td>
+                          <td className="px-4 py-3 text-sm">
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => editPerformanceTrade(trade)}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => deletePerformanceTrade(trade)}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="9" className="px-4 py-8 text-center text-sm text-slate-400">
+                          {performanceLoading ? "Loading performance trades..." : "No trades found. Add a trade above to populate."}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
         </div>
 
         <div className="mt-8">
-          <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+          <section id="unlisted-form-section" className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
             <SectionHeader
-              icon={FileSpreadsheet}
-              eyebrow="Unlisted Module"
-              title="Unlisted Opportunities Sheet Upload"
-              description="Upload the unlisted shares Excel sheet here. The public cards and detail pages fetch the latest uploaded data automatically."
+              icon={Database}
+              eyebrow="Unlisted Shares CMS"
+              title={unlistedForm.id ? `Edit Unlisted Share: ${unlistedForm.company}` : "Add Unlisted Share"}
+              description="Enter unlisted share details and fundamentals directly. No spreadsheet upload required."
             />
+            
             <StatusBanner
               kind={unlistedStatus.kind}
               text={unlistedStatus.text}
             />
-            {unlistedStatus.kind === "success" ?
+
+            {unlistedStatus.kind === "success" && (
               <QuickViewLinks
                 links={[
                   {
-                    label: "View Unlisted Shares",
+                    label: "View Unlisted Shares Page",
                     onClick: () => navigate("/unlisted-shares"),
                   },
                 ]}
               />
-            : null}
-            <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
-              <div className="space-y-4">
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm text-slate-600">
-                  <p className="font-semibold text-slate-700">
-                    Required Excel columns
-                  </p>
-                  <p className="mt-2">
-                    `company`, `sector`, `price`, `minimumInvestment`, `status`
-                  </p>
-                  <p className="mt-4 font-semibold text-slate-700">
-                    Optional card/detail columns
-                  </p>
-                  <p className="mt-2 leading-6">
-                    `code`, `slug`, `logoUrl`, `badge`, `description`,
-                    `marketCap`, `isin`, `faceValue`, `eps`, `pbRatio`,
-                    `bookValue`, `debtEquityRatio`, `settlementPeriod`,
-                    `minUnits`, `aboutCompany`, `strengths`, `weaknesses`
-                  </p>
-                  <p className="mt-3 text-xs leading-5 text-slate-500">
-                    Use `strengths` and `weaknesses` with values separated by
-                    `|` to show bullet points on each share detail page.
-                  </p>
+            )}
+
+            <div className="mt-5 rounded-2xl border border-slate-100 bg-slate-50 p-5">
+              <h3 className="mb-4 text-sm font-bold text-slate-800">1. Basic Details</h3>
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Company Name *</label>
+                  <input
+                    name="company"
+                    type="text"
+                    required
+                    value={unlistedForm.company}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. Reliance Retail"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
                 </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Sector *</label>
+                  <input
+                    name="sector"
+                    type="text"
+                    required
+                    value={unlistedForm.sector}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. Retail"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Price *</label>
+                  <input
+                    name="price"
+                    type="text"
+                    required
+                    value={unlistedForm.price}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. Rs 350"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Min Investment *</label>
+                  <input
+                    name="minimumInvestment"
+                    type="text"
+                    required
+                    value={unlistedForm.minimumInvestment}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. 100 Shares"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status *</label>
+                  <select
+                    name="status"
+                    value={unlistedForm.status}
+                    onChange={handleUnlistedChange}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  >
+                    <option value="Available">Available</option>
+                    <option value="Limited">Limited</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Company Code</label>
+                  <input
+                    name="code"
+                    type="text"
+                    value={unlistedForm.code}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. RELRETAIL"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Slug</label>
+                  <input
+                    name="slug"
+                    type="text"
+                    value={unlistedForm.slug}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. reliance-retail"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Logo URL</label>
+                  <input
+                    name="logoUrl"
+                    type="text"
+                    value={unlistedForm.logoUrl}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. https://domain.com/logo.png"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Badge Tag</label>
+                  <input
+                    name="badge"
+                    type="text"
+                    value={unlistedForm.badge}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. Pre-IPO or Hot"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4 flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Short Description</label>
                 <input
+                  name="description"
                   type="text"
-                  value={unlistedForm.title}
-                  onChange={(e) =>
-                    setUnlistedForm((current) => ({
-                      ...current,
-                      title: e.target.value,
-                    }))
-                  }
-                  placeholder="Upload title"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  value={unlistedForm.description}
+                  onChange={handleUnlistedChange}
+                  placeholder="e.g. A brief overview of company's core offering..."
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
                 />
-                <input
-                  type="file"
-                  accept=".xlsx,.xls"
-                  onChange={(e) =>
-                    setUnlistedForm((current) => ({
-                      ...current,
-                      file: e.target.files?.[0] || null,
-                    }))
-                  }
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[#E7F7F5] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#105F68]"
-                />
+              </div>
+
+              <h3 className="mb-4 mt-6 text-sm font-bold text-slate-800 border-t border-slate-200/50 pt-5">2. Fundamentals Reports (Separated)</h3>
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Market Cap</label>
+                  <input
+                    name="marketCap"
+                    type="text"
+                    value={unlistedForm.marketCap}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. Rs 2,50,000 Cr"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">ISIN</label>
+                  <input
+                    name="isin"
+                    type="text"
+                    value={unlistedForm.isin}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. INE002A01018"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Face Value</label>
+                  <input
+                    name="faceValue"
+                    type="text"
+                    value={unlistedForm.faceValue}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. Rs 10"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">EPS</label>
+                  <input
+                    name="eps"
+                    type="text"
+                    value={unlistedForm.eps}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. Rs 12.50"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">P/B Ratio</label>
+                  <input
+                    name="pbRatio"
+                    type="text"
+                    value={unlistedForm.pbRatio}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. 3.4"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Book Value</label>
+                  <input
+                    name="bookValue"
+                    type="text"
+                    value={unlistedForm.bookValue}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. Rs 140"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Debt / Equity</label>
+                  <input
+                    name="debtEquityRatio"
+                    type="text"
+                    value={unlistedForm.debtEquityRatio}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. 0.15"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Settlement Period</label>
+                  <input
+                    name="settlementPeriod"
+                    type="text"
+                    value={unlistedForm.settlementPeriod}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. T+2 Days"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Min Buy Units</label>
+                  <input
+                    name="minUnits"
+                    type="text"
+                    value={unlistedForm.minUnits}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. 100"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+              </div>
+
+              <h3 className="mb-4 mt-6 text-sm font-bold text-slate-800 border-t border-slate-200/50 pt-5">3. Deep-Dive Reports</h3>
+              <div className="space-y-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">About Company Description</label>
+                  <textarea
+                    name="aboutCompany"
+                    rows={3}
+                    value={unlistedForm.aboutCompany}
+                    onChange={handleUnlistedChange}
+                    placeholder="Detailed history, business lines, and background information about the company..."
+                    className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  />
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Strengths (Pipe separated '|')</label>
+                    <textarea
+                      name="strengths"
+                      rows={3}
+                      value={unlistedForm.strengths}
+                      onChange={handleUnlistedChange}
+                      placeholder="e.g. Strong brand presence | Debt-free | High margin expansion"
+                      className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Weaknesses / Risks (Pipe separated '|')</label>
+                    <textarea
+                      name="weaknesses"
+                      rows={3}
+                      value={unlistedForm.weaknesses}
+                      onChange={handleUnlistedChange}
+                      placeholder="e.g. Subject to regulatory approvals | High competitive pressure"
+                      className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-3">
                 <button
                   type="button"
-                  onClick={() => uploadSheet("unlisted")}
-                  disabled={unlistedUploading || unlistedLoading}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#105F68] px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={saveUnlistedOpportunity}
+                  disabled={unlistedSaving}
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#105F68] px-6 py-3 text-sm font-bold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  <Upload className="h-4 w-4" />
-                  {unlistedUploading ? "Uploading..." : "Upload Unlisted Sheet"}
+                  <Save className="h-4 w-4" />
+                  {unlistedSaving ? "Saving..." : unlistedForm.id ? "Update Share" : "Save New Share"}
+                </button>
+
+                {unlistedForm.id && (
+                  <button
+                    type="button"
+                    onClick={() => setUnlistedForm({
+                      id: "",
+                      company: "",
+                      sector: "",
+                      price: "",
+                      minimumInvestment: "",
+                      status: "Available",
+                      code: "",
+                      slug: "",
+                      logoUrl: "",
+                      badge: "",
+                      description: "",
+                      marketCap: "",
+                      isin: "",
+                      faceValue: "",
+                      eps: "",
+                      pbRatio: "",
+                      bookValue: "",
+                      debtEquityRatio: "",
+                      settlementPeriod: "",
+                      minUnits: "",
+                      aboutCompany: "",
+                      strengths: "",
+                      weaknesses: "",
+                    })}
+                    className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-white"
+                  >
+                    Cancel Edit
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setUnlistedForm({
+                    id: "",
+                    company: "",
+                    sector: "",
+                    price: "",
+                    minimumInvestment: "",
+                    status: "Available",
+                    code: "",
+                    slug: "",
+                    logoUrl: "",
+                    badge: "",
+                    description: "",
+                    marketCap: "",
+                    isin: "",
+                    faceValue: "",
+                    eps: "",
+                    pbRatio: "",
+                    bookValue: "",
+                    debtEquityRatio: "",
+                    settlementPeriod: "",
+                    minUnits: "",
+                    aboutCompany: "",
+                    strengths: "",
+                    weaknesses: "",
+                  })}
+                  className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100"
+                >
+                  Clear Form
                 </button>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-[#f8fcfb] p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                  Latest uploaded file
-                </p>
-                <p className="mt-2 text-sm font-semibold text-slate-800">
-                  {unlistedMeta.sourceFileName || "No file uploaded yet"}
-                </p>
-                <p className="mt-1 text-sm text-slate-500">
-                  {unlistedMeta.title || "No upload title yet"}
-                </p>
-                <p className="mt-2 text-xs font-medium text-slate-400">
-                  {unlistedMeta.totalRows} rows available
-                </p>
+            </div>
+
+            <div className="mt-8 border-t border-slate-100 pt-8">
+              <h3 className="mb-4 text-lg font-bold text-slate-800">Existing Opportunities ({unlistedOpportunities.length})</h3>
+              
+              <div className="overflow-x-auto rounded-2xl border border-slate-100">
+                <table className="min-w-full divide-y divide-slate-100">
+                  <thead className="bg-slate-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Logo</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Company</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Sector</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Price</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Min. Investment</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 bg-white">
+                    {unlistedOpportunities.length ? (
+                      unlistedOpportunities.map((opp) => (
+                        <tr key={opp.id || opp._id}>
+                          <td className="px-4 py-3 text-sm text-slate-700">
+                            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50 text-xs font-bold text-[#105F68]">
+                              {opp.logoUrl ? (
+                                <img src={opp.logoUrl} alt={opp.company} className="h-full w-full object-cover" />
+                              ) : (
+                                opp.company.substring(0, 2).toUpperCase()
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-sm font-bold text-slate-850">
+                            <div>
+                              <div>{opp.company}</div>
+                              <div className="text-xs font-normal text-slate-400">Code: {opp.code || "-"} | Slug: {opp.slug || "-"}</div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-slate-700">{opp.sector}</td>
+                          <td className="px-4 py-3 text-sm font-semibold text-[#105F68]">{opp.price}</td>
+                          <td className="px-4 py-3 text-sm text-slate-700">{opp.minimumInvestment}</td>
+                          <td className="px-4 py-3 text-sm text-slate-700">
+                            <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-bold ${
+                              opp.status === 'Available' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                            }`}>
+                              {opp.badge || opp.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-slate-700">
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => editUnlistedOpportunity(opp)}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => deleteUnlistedOpportunity(opp)}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="7" className="px-4 py-8 text-center text-sm text-slate-400">
+                          {unlistedLoading ? "Loading opportunities..." : "No opportunities found. Enter details above to add the first one."}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           </section>

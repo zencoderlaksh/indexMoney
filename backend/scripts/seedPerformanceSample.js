@@ -5,7 +5,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const XLSX = require("xlsx");
 const config = require("../config");
-const PerformanceUpload = require("../models/performanceUploadModel");
+const PerformanceTrade = require("../models/performanceTradeModel");
 
 const samplePath = path.join(__dirname, "..", "sample-data", "performance-sample.xlsx");
 
@@ -40,13 +40,12 @@ const seed = async () => {
 
   const trades = parseRows();
 
-  const upload = await PerformanceUpload.create({
-    title: "Dummy Excel Upload - April 2026",
-    sourceFileName: path.basename(samplePath),
-    trades,
-  });
+  // Clear existing standalone trades
+  await PerformanceTrade.deleteMany({});
 
-  console.log(`Seeded performance upload ${upload._id} with ${trades.length} rows.`);
+  const seeded = await PerformanceTrade.create(trades);
+
+  console.log(`Seeded ${seeded.length} standalone performance trades.`);
   await mongoose.disconnect();
 };
 

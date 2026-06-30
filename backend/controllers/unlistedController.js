@@ -1,144 +1,91 @@
-const XLSX = require("xlsx");
-const UnlistedOpportunityUpload = require("../models/unlistedOpportunityUploadModel");
+const UnlistedOpportunity = require("../models/unlistedOpportunityModel");
 const UnlistedInquiry = require("../models/unlistedInquiryModel");
 
-const HEADER_ALIASES = {
-  company: ["company", "company name", "name"],
-  code: ["code", "symbol", "company code", "share code"],
-  slug: ["slug", "url slug", "page slug"],
-  logoUrl: ["logo", "logo url", "logo image", "image", "image url"],
-  sector: ["sector", "industry"],
-  price: ["price", "indicative price", "rate"],
-  minimumInvestment: ["minimuminvestment", "minimum investment", "minimum shares"],
-  status: ["status", "availability"],
-  badge: ["badge", "tag", "label"],
-  description: ["description", "short description", "summary"],
-  marketCap: ["market cap", "market capitalization"],
-  isin: ["isin"],
-  faceValue: ["face value"],
-  eps: ["eps"],
-  pbRatio: ["p/b ratio", "pb ratio", "price to book"],
-  bookValue: ["book value"],
-  debtEquityRatio: ["debt / equity ratio", "debt equity ratio", "debt to equity"],
-  settlementPeriod: ["settlement period", "settlement"],
-  minUnits: ["min units", "minimum units", "minimum quantity"],
-  aboutCompany: ["about company", "about", "company overview"],
-  strengths: ["strengths", "key strengths"],
-  weaknesses: ["weaknesses", "key weaknesses"],
-};
-
-const normalizeHeader = (value) =>
+const createSlug = (value) =>
   String(value || "")
-    .trim()
     .toLowerCase()
-    .replace(/[_-]+/g, " ")
-    .replace(/\s+/g, " ");
-
-const findValue = (row, aliases) => {
-  for (const [key, value] of Object.entries(row)) {
-    if (aliases.includes(normalizeHeader(key))) {
-      return value;
-    }
-  }
-
-  return "";
-};
-
-const parseRows = (buffer) => {
-  const workbook = XLSX.read(buffer, { type: "buffer" });
-  const firstSheetName = workbook.SheetNames[0];
-
-  if (!firstSheetName) {
-    throw new Error("The uploaded Excel file does not contain any worksheet");
-  }
-
-  const worksheet = workbook.Sheets[firstSheetName];
-  const rows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-
-  if (!rows.length) {
-    throw new Error("The uploaded Excel file is empty");
-  }
-
-  return rows.map((row, index) => {
-    const opportunity = {
-      company: String(findValue(row, HEADER_ALIASES.company)).trim(),
-      code: String(findValue(row, HEADER_ALIASES.code)).trim(),
-      slug: String(findValue(row, HEADER_ALIASES.slug)).trim(),
-      logoUrl: String(findValue(row, HEADER_ALIASES.logoUrl)).trim(),
-      sector: String(findValue(row, HEADER_ALIASES.sector)).trim(),
-      price: String(findValue(row, HEADER_ALIASES.price)).trim(),
-      minimumInvestment: String(
-        findValue(row, HEADER_ALIASES.minimumInvestment),
-      ).trim(),
-      status: String(findValue(row, HEADER_ALIASES.status)).trim(),
-      badge: String(findValue(row, HEADER_ALIASES.badge)).trim(),
-      description: String(findValue(row, HEADER_ALIASES.description)).trim(),
-      marketCap: String(findValue(row, HEADER_ALIASES.marketCap)).trim(),
-      isin: String(findValue(row, HEADER_ALIASES.isin)).trim(),
-      faceValue: String(findValue(row, HEADER_ALIASES.faceValue)).trim(),
-      eps: String(findValue(row, HEADER_ALIASES.eps)).trim(),
-      pbRatio: String(findValue(row, HEADER_ALIASES.pbRatio)).trim(),
-      bookValue: String(findValue(row, HEADER_ALIASES.bookValue)).trim(),
-      debtEquityRatio: String(
-        findValue(row, HEADER_ALIASES.debtEquityRatio),
-      ).trim(),
-      settlementPeriod: String(
-        findValue(row, HEADER_ALIASES.settlementPeriod),
-      ).trim(),
-      minUnits: String(findValue(row, HEADER_ALIASES.minUnits)).trim(),
-      aboutCompany: String(findValue(row, HEADER_ALIASES.aboutCompany)).trim(),
-      strengths: String(findValue(row, HEADER_ALIASES.strengths)).trim(),
-      weaknesses: String(findValue(row, HEADER_ALIASES.weaknesses)).trim(),
-    };
-
-    if (
-      !opportunity.company ||
-      !opportunity.sector ||
-      !opportunity.price ||
-      !opportunity.minimumInvestment ||
-      !opportunity.status
-    ) {
-      throw new Error(
-        `Row ${index + 2} is invalid. Required columns: company, sector, price, minimumInvestment, status. Optional columns such as code, slug, logoUrl, marketCap, isin, faceValue, eps, pbRatio, bookValue, debtEquityRatio, aboutCompany, strengths, and weaknesses will be imported when present.`,
-      );
-    }
-
-    return opportunity;
-  });
-};
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
 const getLatestUnlistedOpportunities = async (req, res, next) => {
   try {
-    const latestUpload = await UnlistedOpportunityUpload.findOne().sort({
-      createdAt: -1,
+    const opportunities = await UnlistedOpportunity.find().sort({ company: 1 });
+    res.json({
+      data: {
+        title: "Latest Unlisted Opportunities",
+        opportunities,
+      },
     });
-
-    res.json({ data: latestUpload || null });
   } catch (err) {
     next(err);
   }
 };
 
-const uploadUnlistedSheet = async (req, res, next) => {
+const createUnlistedOpportunity = async (req, res, next) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: "Please upload an Excel file" });
+    const { company, sector, price, minimumInvestment, status } = req.body;
+    if (!company || !sector || !price || !minimumInvestment || !status) {
+      return res.status(400).json({ error: "Missing required fields: company, sector, price, minimumInvestment, status" });
     }
 
-    const opportunities = parseRows(req.file.buffer);
-    const title =
-      String(req.body?.title || "").trim() || "Latest Unlisted Opportunities";
+    const body = { ...req.body };
+    if (!body.slug) {
+      body.slug = createSlug(company);
+    }
+    if (!body.code) {
+      body.code = company.split(/\s+/).map(w => w[0]).join("").toUpperCase();
+    }
 
-    const upload = await UnlistedOpportunityUpload.create({
-      title,
-      sourceFileName: req.file.originalname,
-      opportunities,
-    });
+    const opportunity = await UnlistedOpportunity.create(body);
+    res.status(201).json({ data: opportunity });
+  } catch (err) {
+    next(err);
+  }
+};
 
-    res.status(201).json({
-      data: upload,
-      message: `Imported ${opportunities.length} unlisted opportunity rows successfully.`,
-    });
+const updateUnlistedOpportunity = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { company, sector, price, minimumInvestment, status } = req.body;
+    if (!company || !sector || !price || !minimumInvestment || !status) {
+      return res.status(400).json({ error: "Missing required fields: company, sector, price, minimumInvestment, status" });
+    }
+
+    const body = { ...req.body };
+    if (!body.slug) {
+      body.slug = createSlug(company);
+    }
+    if (!body.code) {
+      body.code = company.split(/\s+/).map(w => w[0]).join("").toUpperCase();
+    }
+
+    const opportunity = await UnlistedOpportunity.findByIdAndUpdate(
+      id,
+      body,
+      { new: true, runValidators: true }
+    );
+
+    if (!opportunity) {
+      return res.status(404).json({ error: "Opportunity not found" });
+    }
+
+    res.json({ data: opportunity });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteUnlistedOpportunity = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const opportunity = await UnlistedOpportunity.findByIdAndDelete(id);
+
+    if (!opportunity) {
+      return res.status(404).json({ error: "Opportunity not found" });
+    }
+
+    res.json({ message: "Unlisted opportunity deleted successfully" });
   } catch (err) {
     next(err);
   }
@@ -192,5 +139,7 @@ module.exports = {
   createUnlistedInquiry,
   getLatestUnlistedOpportunities,
   listUnlistedInquiries,
-  uploadUnlistedSheet,
+  createUnlistedOpportunity,
+  updateUnlistedOpportunity,
+  deleteUnlistedOpportunity,
 };

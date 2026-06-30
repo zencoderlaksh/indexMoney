@@ -25,29 +25,7 @@ const unlistedOpportunitySchema = new mongoose.Schema(
     strengths: { type: String, trim: true },
     weaknesses: { type: String, trim: true },
   },
-  { _id: false },
-);
-
-const unlistedOpportunityUploadSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      default: "Latest Unlisted Opportunities",
-      trim: true,
-    },
-    sourceFileName: { type: String, required: true, trim: true },
-    opportunities: {
-      type: [unlistedOpportunitySchema],
-      validate: {
-        validator: (value) => Array.isArray(value) && value.length > 0,
-        message: "At least one unlisted opportunity row is required",
-      },
-    },
-  },
   { timestamps: true },
 );
 
-module.exports = mongoose.model(
-  "UnlistedOpportunityUpload",
-  unlistedOpportunityUploadSchema,
-);
+module.exports = mongoose.model("UnlistedOpportunity", unlistedOpportunitySchema);

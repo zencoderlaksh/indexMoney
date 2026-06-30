@@ -425,55 +425,7 @@ const UnlistedShareDetailPage = () => {
     `Hi Index Money, I want to invest in ${share?.company || "this unlisted share"}. Quantity: ${selectedUnits} units. Please connect me.`,
   );
 
-  // admin upload state
-  const [uploadFile, setUploadFile] = useState(null);
-  const [uploadTitle, setUploadTitle] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const [uploadMessage, setUploadMessage] = useState("");
 
-  const handleFileChange = (e) => {
-    const f = e.target.files?.[0] || null;
-    setUploadFile(f);
-    setUploadMessage("");
-  };
-
-  const handleUpload = async () => {
-    if (!uploadFile) {
-      setUploadMessage("Please choose an Excel file to upload");
-      return;
-    }
-
-    setUploading(true);
-    setUploadMessage("");
-
-    try {
-      const form = new FormData();
-      form.append("file", uploadFile);
-      if (uploadTitle) form.append("title", uploadTitle);
-
-      const res = await fetch(`${API_BASE}/unlisted/upload`, {
-        method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: form,
-      });
-
-      const json = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        setUploadMessage(json.error || json.message || "Upload failed");
-      } else {
-        setUploadMessage(json.message || "Upload successful");
-        setUploadFile(null);
-        setUploadTitle("");
-        // refresh opportunities list
-        await fetchOpportunities();
-      }
-    } catch (err) {
-      setUploadMessage(err.message || "Upload failed");
-    } finally {
-      setUploading(false);
-    }
-  };
 
   useEffect(() => {
     if (share) {
@@ -573,50 +525,7 @@ const UnlistedShareDetailPage = () => {
                 </div>
               </div>
 
-              {token ?
-                <div className="rounded-[20px] border border-[#E6F3EF] bg-[#FBFFFE] p-5">
-                  <h3 className="text-sm font-bold text-slate-800">
-                    Admin: Upload Unlisted Sheet
-                  </h3>
-                  <p className="mt-2 text-xs text-slate-500">
-                    Upload an Excel file (.xlsx/.xls) to import unlisted share
-                    details. Required columns: company, sector, price,
-                    minimumInvestment, status. Optional columns will be mapped
-                    automatically.
-                  </p>
 
-                  <div className="mt-4 flex flex-col gap-3">
-                    <input
-                      type="text"
-                      placeholder="Optional title for this upload"
-                      value={uploadTitle}
-                      onChange={(e) => setUploadTitle(e.target.value)}
-                      className="rounded-md border border-slate-200 px-3 py-2 text-sm"
-                    />
-
-                    <input
-                      type="file"
-                      accept=".xlsx,.xls"
-                      onChange={handleFileChange}
-                      className="text-sm"
-                    />
-
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={handleUpload}
-                        disabled={uploading}
-                        className="inline-flex items-center gap-2 rounded-full bg-[#105F68] px-4 py-2 text-sm font-bold text-white"
-                      >
-                        {uploading ? "Uploading..." : "Upload"}
-                      </button>
-                      <span className="text-sm text-slate-600">
-                        {uploadMessage}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              : null}
 
               <PriceHistoryChart price={share?.price} />
             </div>

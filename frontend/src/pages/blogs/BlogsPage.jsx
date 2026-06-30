@@ -8,7 +8,7 @@ import {
   SearchX,
   UserRound,
 } from "lucide-react";
-import { sanitizeBlogHtml } from "../../lib/blogContent";
+import { sanitizeBlogHtml, parseMarkdownToHtml } from "../../lib/blogContent";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -50,97 +50,17 @@ const setCanonical = (href) => {
 };
 
 const BlogContent = ({ content }) => {
-  const cleaned = React.useMemo(() => sanitizeBlogHtml(content), [content]);
-
-  if (
-    cleaned &&
-    /<(h[1-6]|p|ul|ol|li|table|tr|td|th|blockquote|br|div)\b/i.test(cleaned)
-  ) {
-    return (
-      <div
-        className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-p:leading-8 prose-a:text-[#105F68]"
-        dangerouslySetInnerHTML={{ __html: cleaned }}
-      />
-    );
-  }
-
-  const renderTextValue = (value) => {
-    const lines = String(value || "")
-      .split(/\r?\n/)
-      .map((line) => line.trimEnd());
-
-    const paragraphs = [];
-    let currentParagraph = [];
-
-    const flushParagraph = () => {
-      if (currentParagraph.length) {
-        paragraphs.push(currentParagraph.join(" "));
-        currentParagraph = [];
-      }
-    };
-
-    lines.forEach((line) => {
-      if (!line) {
-        flushParagraph();
-        return;
-      }
-
-      const listItem = line.match(/^(?:[-*•]|\d+[.)])\s+(.*)$/);
-      if (listItem) {
-        flushParagraph();
-      }
-
-      currentParagraph.push(line);
-    });
-
-    flushParagraph();
-
-    return paragraphs.map((paragraph, index) => (
-      <p
-        key={index}
-        className="mt-5 text-base leading-8 text-slate-700 whitespace-pre-wrap"
-      >
-        {paragraph}
-      </p>
-    ));
-  };
-
-  const blocks = String(content || "")
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean);
+  const htmlContent = React.useMemo(() => {
+    const isHtml = /<(h[1-6]|p|ul|ol|li|table|tr|td|th|blockquote|br|div)\b/i.test(content || "");
+    const rawHtml = isHtml ? content : parseMarkdownToHtml(content);
+    return sanitizeBlogHtml(rawHtml);
+  }, [content]);
 
   return (
-    <div className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-p:leading-8 prose-a:text-[#105F68]">
-      {blocks.map((block, index) => {
-        if (block.startsWith("### ")) {
-          return (
-            <h3 key={index} className="mt-8 text-2xl font-bold text-slate-900">
-              {block.replace(/^### /, "")}
-            </h3>
-          );
-        }
-        if (block.startsWith("## ")) {
-          return (
-            <h2 key={index} className="mt-10 text-3xl font-bold text-slate-900">
-              {block.replace(/^## /, "")}
-            </h2>
-          );
-        }
-        if (block.startsWith("- ")) {
-          return (
-            <ul key={index} className="my-6 space-y-3 pl-5 text-slate-700">
-              {block.split("\n").map((item) => (
-                <li key={item} className="list-disc leading-7">
-                  {item.replace(/^- /, "")}
-                </li>
-              ))}
-            </ul>
-          );
-        }
-        return renderTextValue(block);
-      })}
-    </div>
+    <div
+      className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-p:leading-8 prose-a:text-[#105F68]"
+      dangerouslySetInnerHTML={{ __html: htmlContent }}
+    />
   );
 };
 

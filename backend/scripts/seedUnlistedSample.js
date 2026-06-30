@@ -5,7 +5,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const XLSX = require("xlsx");
 const config = require("../config");
-const UnlistedOpportunityUpload = require("../models/unlistedOpportunityUploadModel");
+const UnlistedOpportunity = require("../models/unlistedOpportunityModel");
 
 const samplePath = path.join(
   __dirname,
@@ -55,14 +55,13 @@ const seed = async () => {
 
   const opportunities = parseRows();
 
-  const upload = await UnlistedOpportunityUpload.create({
-    title: "Dummy Unlisted Opportunities - April 2026",
-    sourceFileName: path.basename(samplePath),
-    opportunities,
-  });
+  // Clear existing standalone opportunities
+  await UnlistedOpportunity.deleteMany({});
+
+  const seeded = await UnlistedOpportunity.create(opportunities);
 
   console.log(
-    `Seeded unlisted opportunities upload ${upload._id} with ${opportunities.length} rows.`,
+    `Seeded ${seeded.length} standalone unlisted opportunities.`,
   );
 
   await mongoose.disconnect();

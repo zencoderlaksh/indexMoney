@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const performanceTradeSchema = new mongoose.Schema(
   {
-    tradeId: { type: String, required: true, trim: true },
+    tradeId: { type: String, required: true, unique: true, trim: true },
     date: { type: String, required: true, trim: true },
     index: { type: String, required: true, trim: true },
     callType: { type: String, required: true, trim: true },
@@ -15,26 +15,7 @@ const performanceTradeSchema = new mongoose.Schema(
     chartTitle: { type: String, default: "", trim: true },
     chartNotes: { type: String, default: "", trim: true },
   },
-  { _id: false },
-);
-
-const performanceUploadSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      default: "Latest Uploaded Performance",
-      trim: true,
-    },
-    sourceFileName: { type: String, required: true, trim: true },
-    trades: {
-      type: [performanceTradeSchema],
-      validate: {
-        validator: (value) => Array.isArray(value) && value.length > 0,
-        message: "At least one trade row is required",
-      },
-    },
-  },
   { timestamps: true },
 );
 
-module.exports = mongoose.model("PerformanceUpload", performanceUploadSchema);
+module.exports = mongoose.model("PerformanceTrade", performanceTradeSchema);
