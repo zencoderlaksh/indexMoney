@@ -40,6 +40,9 @@ const createPerformanceTrade = async (req, res, next) => {
     }
 
     const body = { ...req.body };
+    if (!body.id) delete body.id;
+    if (!body._id) delete body._id;
+
     if (!body.tradeId) {
       body.tradeId = crypto.randomBytes(6).toString("hex");
     }

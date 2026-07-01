@@ -30,6 +30,9 @@ const createUnlistedOpportunity = async (req, res, next) => {
     }
 
     const body = { ...req.body };
+    if (!body.id) delete body.id;
+    if (!body._id) delete body._id;
+
     if (!body.slug) {
       body.slug = createSlug(company);
     }

@@ -790,10 +790,13 @@ const DashboardPage = () => {
         : `${API_BASE}/performance/trades`;
 
       const method = isEditing ? "PUT" : "POST";
+      const payload = { ...performanceForm };
+      if (!isEditing) delete payload.id;
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json", ...authHeaders },
-        body: JSON.stringify(performanceForm),
+        body: JSON.stringify(payload),
       });
 
       const json = await res.json().catch(() => ({}));
@@ -934,10 +937,13 @@ const DashboardPage = () => {
         : `${API_BASE}/unlisted/opportunities`;
 
       const method = isEditing ? "PUT" : "POST";
+      const payload = { ...unlistedForm };
+      if (!isEditing) delete payload.id;
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json", ...authHeaders },
-        body: JSON.stringify(unlistedForm),
+        body: JSON.stringify(payload),
       });
 
       const json = await res.json().catch(() => ({}));

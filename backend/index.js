@@ -25,13 +25,112 @@ const allowedOrigins = [
     .filter(Boolean),
 ];
 
+// Migration helper for legacy upload collections to standalone documents
+const migrateLegacyData = async () => {
+  try {
+    const db = mongoose.connection.db;
+
+    // 1. Migrate Unlisted Opportunities
+    const unlistedColls = await db.listCollections({ name: "unlistedopportunityuploads" }).toArray();
+    if (unlistedColls.length > 0) {
+      const oldCollection = db.collection("unlistedopportunityuploads");
+      const oldUploads = await oldCollection.find({}).toArray();
+      if (oldUploads.length > 0) {
+        console.log(`[Migration] Found ${oldUploads.length} legacy unlisted upload documents. Migrating...`);
+        const UnlistedOpportunity = require("./models/unlistedOpportunityModel");
+        let count = 0;
+        for (const upload of oldUploads) {
+          const opportunities = upload.opportunities || [];
+          for (const opp of opportunities) {
+            const query = opp.isin ? { isin: opp.isin } : { company: opp.company };
+            const exists = await UnlistedOpportunity.findOne(query);
+            if (!exists) {
+              await UnlistedOpportunity.create({
+                company: opp.company,
+                sector: opp.sector,
+                price: opp.price,
+                minimumInvestment: opp.minimumInvestment,
+                status: opp.status || "Available",
+                code: opp.code || "",
+                slug: opp.slug || "",
+                logoUrl: opp.logoUrl || "",
+                badge: opp.badge || "",
+                description: opp.description || "",
+                marketCap: opp.marketCap || "",
+                isin: opp.isin || "",
+                faceValue: opp.faceValue || "",
+                eps: opp.eps || "",
+                pbRatio: opp.pbRatio || "",
+                bookValue: opp.bookValue || "",
+                debtEquityRatio: opp.debtEquityRatio || "",
+                settlementPeriod: opp.settlementPeriod || "",
+                minUnits: opp.minUnits || "",
+                aboutCompany: opp.aboutCompany || "",
+                strengths: opp.strengths || "",
+                weaknesses: opp.weaknesses || "",
+              });
+              count++;
+            }
+          }
+        }
+        if (count > 0) {
+          console.log(`[Migration] Successfully migrated ${count} unlisted opportunities.`);
+        }
+      }
+    }
+
+    // 2. Migrate Performance Trades
+    const performanceColls = await db.listCollections({ name: "performanceuploads" }).toArray();
+    if (performanceColls.length > 0) {
+      const oldCollection = db.collection("performanceuploads");
+      const oldUploads = await oldCollection.find({}).toArray();
+      if (oldUploads.length > 0) {
+        console.log(`[Migration] Found ${oldUploads.length} legacy performance uploads. Migrating...`);
+        const PerformanceTrade = require("./models/performanceTradeModel");
+        let count = 0;
+        for (const upload of oldUploads) {
+          const trades = upload.trades || [];
+          for (const trade of trades) {
+            const exists = await PerformanceTrade.findOne({ tradeId: trade.tradeId });
+            if (!exists) {
+              await PerformanceTrade.create({
+                tradeId: trade.tradeId,
+                date: trade.date,
+                index: trade.index,
+                callType: trade.callType,
+                entry: trade.entry,
+                sl: trade.sl,
+                target: trade.target,
+                result: trade.result,
+                points: trade.points,
+                chartUrl: trade.chartUrl || "",
+                chartTitle: trade.chartTitle || "",
+                chartNotes: trade.chartNotes || "",
+              });
+              count++;
+            }
+          }
+        }
+        if (count > 0) {
+          console.log(`[Migration] Successfully migrated ${count} performance trades.`);
+        }
+      }
+    }
+  } catch (err) {
+    console.error("[Migration] Error migrating legacy data:", err);
+  }
+};
+
 // MongoDB connection
 mongoose
   .connect(config.mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("Connected to MongoDB"))
+  .then(async () => {
+    console.log("Connected to MongoDB");
+    await migrateLegacyData();
+  })
   .catch((err) => {
     console.error("Failed to connect to MongoDB", err);
     process.exit(1);
