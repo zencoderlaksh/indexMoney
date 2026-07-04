@@ -181,14 +181,14 @@ const Hero = () => {
           >
             <h1 className="max-w-4xl text-4xl font-extrabold leading-[1.06] tracking-tight text-slate-900 sm:text-5xl md:text-6xl lg:text-[3.9rem]">
               <span className="mr-2">🎯</span>
-              Daily Nifty, BankNifty & Sensex Calls with{" "}
+              Bazaar Sabko Dikhta Hai,{" "}
               <span
                 className="bg-clip-text text-transparent"
                 style={{
                   backgroundImage: "linear-gradient(135deg, #3A9295, #105F68)",
                 }}
               >
-                Proper SL & Targets
+                Rasta Kam Logon Ko Milta Hai.
               </span>
             </h1>
           </motion.div>
@@ -199,9 +199,7 @@ const Hero = () => {
             transition={{ duration: 0.5, delay: 0.18 }}
             className="max-w-2xl text-lg leading-relaxed text-slate-600"
           >
-            Get high-probability trades based on technical analysis with proper
-            risk management. Join 5,000+ traders using our real-time Nifty,
-            BankNifty & Sensex calls.
+            Nifty, BankNifty, Sensex ki daily calls aur Pre-IPO Unlisted Shares — dono ek expert ki nazar se.
           </motion.p>
 
           <motion.div
