@@ -364,16 +364,7 @@ const PastPerformancePage = () => {
                 </div>
 
                 <div className="mt-6 overflow-hidden rounded-[24px] border border-slate-100 bg-slate-50">
-                  {selectedTrade.chartUrl && !imageError ? (
-                    <img
-                      src={selectedTrade.chartUrl}
-                      alt={selectedTrade.chartTitle || `${selectedTrade.index} chart`}
-                      onError={() => setImageError(true)}
-                      className="h-auto w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
-                    />
-                  ) : (
-                    <TradingPerformanceChart trade={selectedTrade} />
-                  )}
+                  <TradingPerformanceChart trade={selectedTrade} />
                 </div>
 
                 <div className="mt-6 grid gap-4 md:grid-cols-3">
