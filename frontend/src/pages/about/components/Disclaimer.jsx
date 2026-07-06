@@ -6,7 +6,7 @@ const Disclaimer = () => {
     <section className="pb-16 pt-10">
       <div className="max-w-2xl rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-start gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E7F7F5] text-[#105F68]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E7F7F5] text-[#023e7d]">
             <AlertTriangle className="h-4 w-4" />
           </div>
           <div>

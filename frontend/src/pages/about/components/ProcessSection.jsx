@@ -47,7 +47,7 @@ const ProcessSection = () => {
             className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm"
           >
             <div className="flex items-start gap-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E7F7F5] text-[#105F68]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E7F7F5] text-[#023e7d]">
                 <Icon className="h-5 w-5" />
               </div>
               <div>
@@ -58,7 +58,7 @@ const ProcessSection = () => {
               </div>
             </div>
             <div className="mt-4 flex items-center gap-2 text-xs font-medium text-slate-500">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#C8E6E2] text-[#105F68]">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#7d8597] text-[#023e7d]">
                 {idx + 1}
               </span>
               <span>Step {idx + 1}</span>
@@ -105,7 +105,7 @@ const ProcessSection = () => {
               key={item.title}
               className="rounded-2xl border border-[#B9E3DD] bg-gradient-to-br from-[#E7F7F5] via-[#CAEDF0] to-white p-5 shadow-lg transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl"
             >
-              <div className="mb-3 inline-flex items-center justify-center rounded-full bg-[#63C1BB]/15 p-3 text-[#105F68]">
+              <div className="mb-3 inline-flex items-center justify-center rounded-full bg-[#0466c8]/15 p-3 text-[#023e7d]">
                 <Zap className="h-5 w-5" />
               </div>
               <h4 className="text-lg font-semibold text-slate-900">

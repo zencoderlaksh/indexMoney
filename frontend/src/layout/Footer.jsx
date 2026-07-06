@@ -1,79 +1,81 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Linkedin } from "lucide-react";
 import { IMAGES } from "../constants/images";
 
 const Footer = () => {
   return (
-    <footer className="bg-muted mt-20 border-t">
-      <div className="container mx-auto px-4 md:px-8 lg:px-16 py-12">
+    <footer className="bg-[#001233] text-slate-300 border-t border-[#002855]/40 mt-20">
+      <div className="mx-auto max-w-7xl px-5 py-16 md:px-8">
         {/* Top Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Logo & About */}
-          <div>
-            <Link to="/" className="mb-3 block w-fit">
+          <div className="lg:col-span-2">
+            <Link to="/" className="mb-4 block w-fit">
               <img
                 src={IMAGES.logo}
                 alt="Index Money"
-                className="h-16 w-40 object-contain object-left"
+                className="h-12 w-36 object-contain object-left filter brightness-0 invert"
               />
             </Link>
-            <p className="text-sm text-muted-foreground">
-              Professional Index & F&O advisory platform focused on structured,
-              technical and risk-managed trading strategies.
+            <p className="text-sm leading-7 text-slate-400 max-w-sm">
+              An information platform for unlisted, pre-IPO and ESOP shares in India. 
+              We provide company research and indicative prices, and help connect buyers 
+              with sellers. We are not a stock exchange and do not operate a trading platform.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Explore */}
           <div>
-            <h3 className="font-semibold mb-3">Quick Links</h3>
-            <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <Link to="/">Home</Link>
-              <Link to="/about">About Us</Link>
-              <Link to="/unlisted-shares">Unlisted Shares</Link>
-              <Link to="/services">Services</Link>
-              <Link to="/performance">Past Performance</Link>
-              <Link to="/contact">Contact Us</Link>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Explore</h3>
+            <div className="flex flex-col gap-2.5 text-sm text-slate-400">
+              <Link to="/unlisted-shares" className="hover:text-[#0466c8] transition-colors">All shares</Link>
+              <Link to="/sectors" className="hover:text-[#0466c8] transition-colors">Sectors</Link>
+              <Link to="/drhp-filed" className="hover:text-[#0466c8] transition-colors">DRHP filed</Link>
+              <Link to="/knowledge-center" className="hover:text-[#0466c8] transition-colors">Knowledge center</Link>
+              <Link to="/research" className="hover:text-[#0466c8] transition-colors">Research</Link>
+              <Link to="/media" className="hover:text-[#0466c8] transition-colors">Media coverage</Link>
+              <Link to="/unlisted-shares" className="hover:text-[#0466c8] transition-colors">Screener</Link>
             </div>
           </div>
 
-          {/* Plans */}
+          {/* Company */}
           <div>
-            <h3 className="font-semibold mb-3">Legal</h3>
-            <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <Link to="/privacy-policy">Privacy Policy</Link>
-              <Link to="/disclaimer">Disclaimer</Link>
-              <Link to="/terms-and-conditions">Terms & Conditions</Link>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Company</h3>
+            <div className="flex flex-col gap-2.5 text-sm text-slate-400">
+              <Link to="/" className="hover:text-[#0466c8] transition-colors">About us</Link>
+              <Link to="/" className="hover:text-[#0466c8] transition-colors">Our products</Link>
+              <Link to="/" className="hover:text-[#0466c8] transition-colors">Become a partner</Link>
+              <Link to="/" className="hover:text-[#0466c8] transition-colors">Official bank accounts</Link>
+              <Link to="/" className="hover:text-[#0466c8] transition-colors">Contact</Link>
             </div>
           </div>
 
-          {/* Contact */}
+          {/* Legal */}
           <div>
-            <h3 className="font-semibold mb-3">Contact</h3>
-            <div className="text-sm text-muted-foreground space-y-2">
-              <p>Support Hours:</p>
-              <p>9:00 AM – 6:00 PM</p>
-              <p>Email: Support@indexmoney.in</p>
-              <p>Phone: +91-92161-80043</p>
-              <p>WhatsApp: +91-92161-80043</p>
-              <p>Address: 142, Dhule Maharashtra 424001</p>
-
-              {/* Social Icons */}
-              <div className="flex gap-3 pt-3">
-                <Facebook className="h-4 w-4 cursor-pointer" />
-                <Instagram className="h-4 w-4 cursor-pointer" />
-                <Linkedin className="h-4 w-4 cursor-pointer" />
-              </div>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Legal</h3>
+            <div className="flex flex-col gap-2.5 text-sm text-slate-400">
+              <Link to="/disclaimer" className="hover:text-[#0466c8] transition-colors">Disclaimer</Link>
+              <Link to="/terms-and-conditions" className="hover:text-[#0466c8] transition-colors">Terms of use</Link>
+              <Link to="/privacy-policy" className="hover:text-[#0466c8] transition-colors">Privacy policy</Link>
             </div>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="border-t mt-10 pt-6 text-center text-xs text-muted-foreground">
+        {/* Bottom Disclaimer */}
+        <div className="border-t border-slate-800 mt-12 pt-8 text-[11px] leading-6 text-slate-500">
           <p>
-            Investments in securities market are subject to market risks. Please
-            read all related documents carefully before investing.
+            <strong className="text-slate-400">Important — please read. </strong>
+            www.IndexMoney.com (operated by Index Money Pvt. Ltd.) is <strong className="text-slate-400">not</strong> a stock exchange 
+            or trading platform recognised by SEBI under the Securities Contracts (Regulation) Act, 1956, and does 
+            <strong className="text-slate-400"> not</strong> permit secondary-market trading on the platform. We are not SEBI-registered investment advisers, 
+            brokers or portfolio managers. All content — including company data, valuations and indicative prices — is for informational 
+            and educational only and is <strong className="text-slate-400">not</strong> investment, financial, legal or tax advice. Indicative prices are 
+            not an offer to buy or sell and may differ from any price at which a deal is actually concluded. Investing in unlisted 
+            shares carries substantial risk, including risk of loss of capital, illiquidity, valuation uncertainty and no guarantee of 
+            any IPO. <strong className="text-slate-400">Past performance does not indicate future results. </strong> Conduct your own due 
+            diligence and consult SEBI-registered advisers before any investment. Visiting this site or contacting us creates no 
+            advisory, broker or fiduciary relationship.
           </p>
-          <p className="mt-2">
+          <p className="mt-4 text-slate-600">
             © {new Date().getFullYear()} Index Money. All Rights Reserved.
           </p>
         </div>

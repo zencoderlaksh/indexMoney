@@ -7,10 +7,10 @@ import { motion } from "framer-motion";
 
 
 const videoTestimonials = [
-    { name: "Rajesh Kumar", city: "Bengaluru", plan: "Nifty Option Plan", bg: "from-[#105F68] to-[#3A9295]", videoUrl: "/dummy-videos/client-testimonial-sample-1.mp4" },
-    { name: "Meera Nair", city: "Chennai", plan: "Bank Nifty Plan", bg: "from-[#3A9295] to-[#63C1BB]", videoUrl: "/dummy-videos/client-testimonial-sample-2.mp4" },
-    { name: "Arjun Patel", city: "Surat", plan: "Sensex Futures", bg: "from-[#63C1BB] to-[#9ED5D1]", videoUrl: "/dummy-videos/client-testimonial-sample-3.mp4" },
-    { name: "Divya Rao", city: "Kolkata", plan: "Nifty Futures", bg: "from-[#105F68] to-[#63C1BB]", videoUrl: "/dummy-videos/client-testimonial-sample-1.mp4" },
+    { name: "Rajesh Kumar", city: "Bengaluru", plan: "Nifty Option Plan", bg: "from-[#023e7d] to-[#0353a4]", videoUrl: "/dummy-videos/client-testimonial-sample-1.mp4" },
+    { name: "Meera Nair", city: "Chennai", plan: "Bank Nifty Plan", bg: "from-[#0353a4] to-[#0466c8]", videoUrl: "/dummy-videos/client-testimonial-sample-2.mp4" },
+    { name: "Arjun Patel", city: "Surat", plan: "Sensex Futures", bg: "from-[#0466c8] to-[#5c677d]", videoUrl: "/dummy-videos/client-testimonial-sample-3.mp4" },
+    { name: "Divya Rao", city: "Kolkata", plan: "Nifty Futures", bg: "from-[#023e7d] to-[#0466c8]", videoUrl: "/dummy-videos/client-testimonial-sample-1.mp4" },
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -35,12 +35,12 @@ const TestimonialsSection = () => {
                     transition={{ duration: 0.55 }}
                     className="text-center mb-14"
                 >
-                    <span className="inline-block mb-3 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-[#C8E6E2] text-[#105F68] border border-[#9ED5D1]">
+                    <span className="inline-block mb-3 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-[#7d8597] text-[#023e7d] border border-[#5c677d]">
                         Testimonials
                     </span>
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-800 leading-tight mb-4">
                         What Our{" "}
-                        <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, #3A9295, #105F68)" }}>
+                        <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, #0353a4, #023e7d)" }}>
                             Clients Say
                         </span>
                     </h2>
@@ -55,7 +55,7 @@ const TestimonialsSection = () => {
                                 <img
                                     key={s}
                                     src={`https://api.dicebear.com/7.x/notionists/svg?seed=${s}&backgroundColor=d1fae5`}
-                                    className="w-7 h-7 rounded-full border-2 border-white bg-[#C8E6E2]"
+                                    className="w-7 h-7 rounded-full border-2 border-white bg-[#7d8597]"
                                     alt={s}
                                 />
                             ))}

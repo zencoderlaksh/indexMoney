@@ -116,7 +116,7 @@ const parseInlineMarkdown = (text = "") => {
   result = result.replace(/`(.*?)`/g, `<code class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded font-mono text-sm">$1</code>`);
 
   // Links ([text](url))
-  result = result.replace(/\[(.*?)\]\((.*?)\)/g, `<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#105F68] hover:underline font-semibold">$1</a>`);
+  result = result.replace(/\[(.*?)\]\((.*?)\)/g, `<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#023e7d] hover:underline font-semibold">$1</a>`);
 
   return result;
 };
@@ -183,7 +183,7 @@ export const parseMarkdownToHtml = (markdown = "") => {
 
     // 4. Check if Blockquote
     if (trimmed.startsWith("> ")) {
-      htmlResult.push(`<blockquote class="border-l-4 border-[#105F68] bg-[#F4FAF9] pl-4 py-2 my-5 text-slate-700 italic">${parseInlineMarkdown(trimmed.slice(2))}</blockquote>`);
+      htmlResult.push(`<blockquote class="border-l-4 border-[#023e7d] bg-[#F4FAF9] pl-4 py-2 my-5 text-slate-700 italic">${parseInlineMarkdown(trimmed.slice(2))}</blockquote>`);
       continue;
     }
 

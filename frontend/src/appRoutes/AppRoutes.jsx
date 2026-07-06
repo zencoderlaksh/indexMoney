@@ -13,6 +13,11 @@ import TermsAndConditions from "../pages/legal/TermsAndConditions";
 import ContactPage from "../pages/contact/ContactPage";
 import UnlistedSharesPage from "../pages/unlistedShares/UnlistedSharesPage";
 import UnlistedShareDetailPage from "../pages/unlistedShares/UnlistedShareDetailPage";
+import SectorsPage from "../pages/unlistedShares/SectorsPage";
+import DrhpFiledPage from "../pages/unlistedShares/DrhpFiledPage";
+import LearnPage from "../pages/learn/LearnPage";
+import ResearchPage from "../pages/research/ResearchPage";
+import MediaPage from "../pages/media/MediaPage";
 import ServicesPage from "../pages/services/ServicesPage";
 import PastPerformancePage from "../pages/pastPerformance/PastPerformancePage";
 import BlogsPage from "../pages/blogs/BlogsPage";
@@ -23,21 +28,28 @@ const AppRoutes = () => {
       {/* Public — with header/footer */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<ServicesPage />} />
+        {/* <Route path="/about" element={<About />} /> */}
+        {/* <Route path="/services" element={<ServicesPage />} /> */}
         <Route path="/unlisted-shares" element={<UnlistedSharesPage />} />
         <Route path="/unlisted-shares/:code/:slug" element={<UnlistedShareDetailPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/past-performance" element={<PastPerformancePage />} />
-        <Route path="/blogs" element={<BlogsPage />} />
-        <Route path="/blogs/:slug" element={<BlogsPage />} />
+        <Route path="/sectors" element={<SectorsPage />} />
+        <Route path="/drhp-filed" element={<DrhpFiledPage />} />
+        <Route path="/learn" element={<LearnPage />} />
+        <Route path="/learn/:slug" element={<LearnPage />} />
+        <Route path="/research" element={<ResearchPage />} />
+        <Route path="/research/:slug" element={<ResearchPage />} />
+        <Route path="/media" element={<MediaPage />} />
+        {/* <Route path="/contact" element={<ContactPage />} /> */}
+        {/* <Route path="/past-performance" element={<PastPerformancePage />} /> */}
+        <Route path="/knowledge-center" element={<BlogsPage />} />
+        <Route path="/knowledge-center/:slug" element={<BlogsPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
       </Route>
 
       {/* Subscription checkout — no header, standalone page */}
-      <Route path="/pay-now" element={<SubscriptionPage />} />
+      {/* <Route path="/pay-now" element={<SubscriptionPage />} /> */}
 
       {/* Auth pages — no header/footer */}
       <Route path="/signup" element={<SignupPage />} />

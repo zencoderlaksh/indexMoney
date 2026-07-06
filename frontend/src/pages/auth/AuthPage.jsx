@@ -9,19 +9,19 @@ import { IMAGES } from "../../constants/images";
 /* ── Background decoration ───────────────────────────────────────────────────── */
 const BackgroundDecor = () => (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#C8E6E2]/40 via-white to-[#9ED5D1]/30" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#7d8597]/40 via-white to-[#5c677d]/30" />
         <div
             className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full opacity-30"
-            style={{ background: "radial-gradient(circle, #63C1BB 0%, transparent 70%)" }}
+            style={{ background: "radial-gradient(circle, #0466c8 0%, transparent 70%)" }}
         />
         <div
             className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full opacity-20"
-            style={{ background: "radial-gradient(circle, #3A9295 0%, transparent 70%)" }}
+            style={{ background: "radial-gradient(circle, #0353a4 0%, transparent 70%)" }}
         />
         <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#105F68" strokeWidth="1" />
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#023e7d" strokeWidth="1" />
                 </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
@@ -33,7 +33,7 @@ const BackgroundDecor = () => (
 const TabButton = ({ active, onClick, children }) => (
     <button
         onClick={onClick}
-        className={`relative flex-1 py-2.5 text-sm font-semibold rounded-xl transition-colors duration-200 ${active ? "text-[#105F68]" : "text-slate-400 hover:text-slate-600"
+        className={`relative flex-1 py-2.5 text-sm font-semibold rounded-xl transition-colors duration-200 ${active ? "text-[#023e7d]" : "text-slate-400 hover:text-slate-600"
             }`}
     >
         {active && (
@@ -95,9 +95,9 @@ const AuthPage = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -12, scale: 0.95 }}
                         transition={{ duration: 0.3 }}
-                        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-[#105F68] text-white text-sm font-medium px-5 py-3.5 rounded-2xl shadow-xl shadow-[#105F68]/25 max-w-sm w-full"
+                        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-[#023e7d] text-white text-sm font-medium px-5 py-3.5 rounded-2xl shadow-xl shadow-[#023e7d]/25 max-w-sm w-full"
                     >
-                        <CheckCircle2 className="w-5 h-5 text-[#9ED5D1] flex-shrink-0" />
+                        <CheckCircle2 className="w-5 h-5 text-[#5c677d] flex-shrink-0" />
                         {successMsg}
                     </motion.div>
                 )}
@@ -111,7 +111,7 @@ const AuthPage = () => {
                 className="w-full max-w-[440px] bg-white rounded-2xl shadow-xl shadow-slate-200/80 border border-slate-100 overflow-hidden"
             >
                 {/* Brand strip */}
-                <div className="bg-gradient-to-r from-[#105F68] to-[#3A9295] px-8 py-6 text-center">
+                <div className="bg-gradient-to-r from-[#023e7d] to-[#0353a4] px-8 py-6 text-center">
                     <button
                         onClick={() => navigate("/")}
                         className="inline-flex items-center justify-center group"
@@ -168,7 +168,7 @@ const AuthPage = () => {
                                 Don't have an account?{" "}
                                 <button
                                     onClick={() => switchTab("signup")}
-                                    className="text-[#3A9295] font-semibold hover:text-[#105F68] transition-colors"
+                                    className="text-[#0353a4] font-semibold hover:text-[#023e7d] transition-colors"
                                 >
                                     Sign Up
                                 </button>
@@ -178,7 +178,7 @@ const AuthPage = () => {
                                 Already have an account?{" "}
                                 <button
                                     onClick={() => switchTab("login")}
-                                    className="text-[#3A9295] font-semibold hover:text-[#105F68] transition-colors"
+                                    className="text-[#0353a4] font-semibold hover:text-[#023e7d] transition-colors"
                                 >
                                     Login
                                 </button>
@@ -188,7 +188,7 @@ const AuthPage = () => {
 
                     {/* Security note */}
                     <div className="flex items-center justify-center gap-1.5 mt-5">
-                        <ShieldCheck className="w-3.5 h-3.5 text-[#63C1BB]" strokeWidth={2} />
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#0466c8]" strokeWidth={2} />
                         <p className="text-[11px] text-slate-400">Your data is securely encrypted.</p>
                     </div>
                 </div>

@@ -237,18 +237,18 @@ const PastPerformancePage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
-          className="mb-8 rounded-[28px] border border-[#D0ECE6]/60 bg-white/90 px-6 py-8 shadow-xl shadow-[#105F68]/5 backdrop-blur-sm md:px-8"
+          className="mb-8 rounded-[28px] border border-[#D0ECE6]/60 bg-white/90 px-6 py-8 shadow-xl shadow-[#023e7d]/5 backdrop-blur-sm md:px-8"
         >
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#105F68]">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#023e7d]">
             Past Performance
           </p>
           <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900 md:text-5xl">
-            Transparency in <span className="bg-gradient-to-r from-[#105F68] to-[#3A9295] bg-clip-text text-transparent">Every Trade Levels</span>
+            Transparency in <span className="bg-gradient-to-r from-[#023e7d] to-[#0353a4] bg-clip-text text-transparent">Every Trade Levels</span>
           </h1>
           <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-600 md:text-base">
             We list entry, stop loss, and target levels with exact outcomes. Use the interactive side panel below to view full charts and analyst notes for each trade.
           </p>
-          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.22em] text-[#3A9295]">
+          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.22em] text-[#0353a4]">
             {fetchError
               ? `${fetchError}. Showing sample trade levels.`
               : "Synchronized with live backend updates."}
@@ -262,7 +262,7 @@ const PastPerformancePage = () => {
               <button
                 type="button"
                 onClick={() => navigate("/")}
-                className="inline-flex items-center gap-1 text-sm font-bold text-[#105F68] transition-colors hover:text-[#08353A]"
+                className="inline-flex items-center gap-1 text-sm font-bold text-[#023e7d] transition-colors hover:text-[#08353A]"
               >
                 Back to Home
               </button>
@@ -280,13 +280,13 @@ const PastPerformancePage = () => {
                     onClick={() => openTrade(trade.tradeId)}
                     className={`w-full rounded-[24px] border text-left transition-all duration-300 relative overflow-hidden ${
                       isActive
-                        ? "border-[#105F68] bg-[#F2FAF8] shadow-md shadow-[#105F68]/5"
-                        : "border-slate-200/80 bg-white hover:border-[#63C1BB]/60 hover:shadow-md hover:shadow-slate-100"
+                        ? "border-[#023e7d] bg-[#F2FAF8] shadow-md shadow-[#023e7d]/5"
+                        : "border-slate-200/80 bg-white hover:border-[#0466c8]/60 hover:shadow-md hover:shadow-slate-100"
                     }`}
                   >
                     {/* Premium Active Indicator Accent bar */}
                     {isActive && (
-                      <span className="absolute left-0 top-0 bottom-0 w-[5px] bg-[#105F68] rounded-l-full" />
+                      <span className="absolute left-0 top-0 bottom-0 w-[5px] bg-[#023e7d] rounded-l-full" />
                     )}
 
                     <div className="p-5">
@@ -335,12 +335,12 @@ const PastPerformancePage = () => {
             </div>
           </section>
 
-          <section className="rounded-[30px] border border-[#D0ECE6]/60 bg-white p-6 shadow-xl shadow-[#105F68]/5">
+          <section className="rounded-[30px] border border-[#D0ECE6]/60 bg-white p-6 shadow-xl shadow-[#023e7d]/5">
             {selectedTrade ? (
               <>
                 <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-5">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#105F68]">
+                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#023e7d]">
                       Selected Chart Analysis
                     </p>
                     <h2 className="mt-2 text-2xl font-black text-slate-900 md:text-3xl leading-snug">
@@ -356,7 +356,7 @@ const PastPerformancePage = () => {
                       href={selectedTrade.chartUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center rounded-full bg-[#E7F7F5] px-4.5 py-2 text-xs font-bold text-[#105F68] transition-colors hover:bg-[#d6efeb]"
+                      className="inline-flex items-center rounded-full bg-[#E7F7F5] px-4.5 py-2 text-xs font-bold text-[#023e7d] transition-colors hover:bg-[#d6efeb]"
                     >
                       Open Full Image
                     </a>
@@ -388,7 +388,7 @@ const PastPerformancePage = () => {
                 </div>
 
                 <div className="mt-6 rounded-2xl border border-[#D0ECE6]/60 bg-[#F4FAF9] p-5">
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#105F68]/80">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#023e7d]/80">
                     Analyst Commentary & Notes
                   </p>
                   <p className="mt-2 text-sm leading-relaxed text-slate-700 font-medium">

@@ -26,6 +26,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { IMAGES } from "../../constants/images";
 import { looksLikeHtmlContent } from "../../lib/blogContent";
+import VideoManager from "./components/VideoManager";
+import ResearchManager from "./components/ResearchManager";
+import MediaManager from "./components/MediaManager";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 const defaultTodaysResults = [
@@ -77,7 +80,7 @@ const downloadCsv = (filename, headers, rows) => {
   URL.revokeObjectURL(url);
 };
 
-const StatCard = ({ icon: Icon, label, value, sub, color = "#105F68" }) => (
+const StatCard = ({ icon: Icon, label, value, sub, color = "#023e7d" }) => (
   <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
     <div className="flex items-center gap-3">
       <span
@@ -101,8 +104,8 @@ const StatCard = ({ icon: Icon, label, value, sub, color = "#105F68" }) => (
 
 const InfoRow = ({ icon: Icon, label, value }) => (
   <div className="flex items-center gap-3 border-b border-slate-50 py-3 last:border-0">
-    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#C8E6E2]/40">
-      <Icon className="h-4 w-4 text-[#3A9295]" />
+    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#7d8597]/40">
+      <Icon className="h-4 w-4 text-[#0353a4]" />
     </span>
     <div>
       <p className="text-xs font-medium text-slate-400">{label}</p>
@@ -114,7 +117,7 @@ const InfoRow = ({ icon: Icon, label, value }) => (
 const SectionHeader = ({ icon: Icon, eyebrow, title, description, action }) => (
   <div className="mb-5 flex items-start justify-between gap-4">
     <div className="flex items-start gap-3">
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#E7F7F5] text-[#105F68]">
+      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#E7F7F5] text-[#023e7d]">
         <Icon className="h-5 w-5" />
       </span>
       <div>
@@ -257,7 +260,7 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
     <div className="rounded-xl border border-slate-200 bg-white p-3">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm font-semibold text-slate-700">Blog content</p>
-        <span className="rounded-full bg-[#E7F7F5] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#105F68]">
+        <span className="rounded-full bg-[#E7F7F5] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#023e7d]">
           Rich text friendly
         </span>
       </div>
@@ -312,7 +315,7 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
         suppressContentEditableWarning
         onInput={notifyChange}
         onPaste={handlePaste}
-        className="min-h-[260px] max-h-[420px] overflow-y-auto rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+        className="min-h-[260px] max-h-[420px] overflow-y-auto rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
         data-placeholder={placeholder}
       />
 
@@ -1204,7 +1207,7 @@ const DashboardPage = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#C8E6E2]/20 via-white to-[#9ED5D1]/15">
+    <div className="min-h-screen bg-gradient-to-br from-[#7d8597]/20 via-white to-[#5c677d]/15">
       <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/80 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-5">
           <button
@@ -1219,7 +1222,7 @@ const DashboardPage = () => {
           </button>
           <div className="flex items-center gap-3">
             <span className="hidden items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs text-slate-500 sm:flex">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#63C1BB]" />
+              <ShieldCheck className="h-3.5 w-3.5 text-[#0466c8]" />
               Logged in as{" "}
               <strong className="text-slate-700">
                 {user.fullName || user.email}
@@ -1230,7 +1233,7 @@ const DashboardPage = () => {
                 logout();
                 navigate("/login", { replace: true });
               }}
-              className="flex items-center gap-1.5 rounded-xl bg-[#3A9295] px-4 py-2 text-xs font-semibold text-white shadow-sm"
+              className="flex items-center gap-1.5 rounded-xl bg-[#0353a4] px-4 py-2 text-xs font-semibold text-white shadow-sm"
             >
               <LogOut className="h-3.5 w-3.5" />
               Logout
@@ -1240,7 +1243,7 @@ const DashboardPage = () => {
       </header>
 
       <main className="mx-auto max-w-7xl px-5 py-10">
-        <div className="mb-8 rounded-2xl bg-gradient-to-r from-[#105F68] to-[#3A9295] px-8 py-7 text-white shadow-lg shadow-[#105F68]/20">
+        <div className="mb-8 rounded-2xl bg-gradient-to-r from-[#023e7d] to-[#0353a4] px-8 py-7 text-white shadow-lg shadow-[#023e7d]/20">
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-white/70">
@@ -1275,7 +1278,7 @@ const DashboardPage = () => {
             label="Enquiries"
             value={adminDataLoading ? "..." : enquiryData.length}
             sub="Leads received"
-            color="#3A9295"
+            color="#0353a4"
           />
           <StatCard
             icon={FileSpreadsheet}
@@ -1296,7 +1299,7 @@ const DashboardPage = () => {
             label="Today's Results"
             value={`${todaysResults.length} Rows`}
             sub="Daily update block"
-            color="#63C1BB"
+            color="#0466c8"
           />
           <StatCard
             icon={FileSpreadsheet}
@@ -1317,7 +1320,7 @@ const DashboardPage = () => {
         <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
           <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
             <div className="mb-6 flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#63C1BB] to-[#3A9295]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0466c8] to-[#0353a4]">
                 <User className="h-5 w-5 text-white" />
               </span>
               <div>
@@ -1515,7 +1518,7 @@ const DashboardPage = () => {
                     value={blogForm.title}
                     onChange={handleBlogChange}
                     placeholder="Blog title"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                   <input
                     name="slug"
@@ -1523,7 +1526,7 @@ const DashboardPage = () => {
                     value={blogForm.slug}
                     onChange={handleBlogChange}
                     placeholder="SEO slug, auto-created if empty"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
 
@@ -1533,7 +1536,7 @@ const DashboardPage = () => {
                   value={blogForm.excerpt}
                   onChange={handleBlogChange}
                   placeholder="Short SEO excerpt"
-                  className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                 />
 
                 <BlogRichTextEditor
@@ -1549,7 +1552,7 @@ const DashboardPage = () => {
                     value={blogForm.coverImageUrl}
                     onChange={handleBlogChange}
                     placeholder="Cover image URL"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                   <input
                     name="authorName"
@@ -1557,7 +1560,7 @@ const DashboardPage = () => {
                     value={blogForm.authorName}
                     onChange={handleBlogChange}
                     placeholder="Author name"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
 
@@ -1569,7 +1572,7 @@ const DashboardPage = () => {
                     onChange={handleBlogChange}
                     placeholder="Meta title"
                     maxLength={70}
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                   <input
                     name="keywords"
@@ -1577,7 +1580,7 @@ const DashboardPage = () => {
                     value={blogForm.keywords}
                     onChange={handleBlogChange}
                     placeholder="Keywords, comma separated"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
 
@@ -1588,7 +1591,7 @@ const DashboardPage = () => {
                   onChange={handleBlogChange}
                   placeholder="Meta description"
                   maxLength={170}
-                  className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                 />
 
                 <div className="flex flex-col gap-3 sm:flex-row">
@@ -1605,7 +1608,7 @@ const DashboardPage = () => {
                     type="button"
                     onClick={() => saveBlog("published")}
                     disabled={blogSaving}
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#105F68] px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#023e7d] px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <BookOpen className="h-4 w-4" />
                     {blogSaving ? "Publishing..." : "Publish Blog"}
@@ -1765,7 +1768,7 @@ const DashboardPage = () => {
                       )
                     }
                     placeholder="Label"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                   <input
                     type="text"
@@ -1780,7 +1783,7 @@ const DashboardPage = () => {
                       )
                     }
                     placeholder="Points"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                   <input
                     type="text"
@@ -1795,7 +1798,7 @@ const DashboardPage = () => {
                       )
                     }
                     placeholder="Note"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                   <button
                     type="button"
@@ -1829,7 +1832,7 @@ const DashboardPage = () => {
                 type="button"
                 onClick={saveHomepageResults}
                 disabled={homepageSaving || homepageLoading}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#105F68] px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#023e7d] px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Save className="h-4 w-4" />
                 {homepageSaving ? "Saving..." : "Save Today's Results"}
@@ -1875,7 +1878,7 @@ const DashboardPage = () => {
                     value={performanceForm.date}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. 02 Jan 2025"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -1887,7 +1890,7 @@ const DashboardPage = () => {
                     value={performanceForm.index}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. Nifty or Bank Nifty"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -1899,7 +1902,7 @@ const DashboardPage = () => {
                     value={performanceForm.callType}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. CE or PE"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -1911,7 +1914,7 @@ const DashboardPage = () => {
                     value={performanceForm.entry}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. 210"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -1923,7 +1926,7 @@ const DashboardPage = () => {
                     value={performanceForm.sl}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. 190"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -1935,7 +1938,7 @@ const DashboardPage = () => {
                     value={performanceForm.target}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. 255"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -1944,7 +1947,7 @@ const DashboardPage = () => {
                     name="result"
                     value={performanceForm.result}
                     onChange={handlePerformanceChange}
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   >
                     <option value="Target Hit">Target Hit</option>
                     <option value="SL Hit">SL Hit</option>
@@ -1959,7 +1962,7 @@ const DashboardPage = () => {
                     value={performanceForm.points}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. +45 or -15"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -1970,7 +1973,7 @@ const DashboardPage = () => {
                     value={performanceForm.tradeId}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. nifty-ce-01"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
               </div>
@@ -1985,7 +1988,7 @@ const DashboardPage = () => {
                     value={performanceForm.chartUrl}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. https://domain.com/chart.png"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -1996,7 +1999,7 @@ const DashboardPage = () => {
                     value={performanceForm.chartTitle}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. Nifty CE breakout chart"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2007,7 +2010,7 @@ const DashboardPage = () => {
                     value={performanceForm.chartNotes}
                     onChange={handlePerformanceChange}
                     placeholder="e.g. Breakout from morning range..."
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
               </div>
@@ -2017,7 +2020,7 @@ const DashboardPage = () => {
                   type="button"
                   onClick={savePerformanceTrade}
                   disabled={performanceSaving}
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#105F68] px-6 py-3 text-sm font-bold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#023e7d] px-6 py-3 text-sm font-bold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Save className="h-4 w-4" />
                   {performanceSaving ? "Saving..." : performanceForm.id ? "Update Trade" : "Save New Trade"}
@@ -2076,7 +2079,7 @@ const DashboardPage = () => {
               
               <div className="overflow-x-auto rounded-2xl border border-slate-100">
                 <table className="min-w-full divide-y divide-slate-100">
-                  <thead className="bg-[#105F68] text-white">
+                  <thead className="bg-[#023e7d] text-white">
                     <tr>
                       <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Date</th>
                       <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Instrument</th>
@@ -2089,14 +2092,14 @@ const DashboardPage = () => {
                       <th className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#CBE7E1]/40 bg-white">
+                  <tbody className="divide-y divide-[#5c677d]/40 bg-white">
                     {performanceTrades.length ? (
                       performanceTrades.map((trade) => (
-                        <tr key={trade.id || trade._id} className="hover:bg-[#EFFAF7]/45 transition-colors duration-150">
+                        <tr key={trade.id || trade._id} className="hover:bg-[#f1f5f9]/45 transition-colors duration-150">
                           <td className="px-4 py-3 text-sm font-medium text-slate-700">{trade.date}</td>
                           <td className="px-4 py-3 text-sm font-bold text-slate-850">{trade.index}</td>
                           <td className="px-4 py-3 text-sm text-slate-700">
-                            <span className="rounded-full bg-[#E7F7F5] px-2.5 py-0.5 text-xs font-semibold text-[#105F68]">
+                            <span className="rounded-full bg-[#E7F7F5] px-2.5 py-0.5 text-xs font-semibold text-[#023e7d]">
                               {trade.callType}
                             </span>
                           </td>
@@ -2186,7 +2189,7 @@ const DashboardPage = () => {
                     value={unlistedForm.company}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. Reliance Retail"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2198,7 +2201,7 @@ const DashboardPage = () => {
                     value={unlistedForm.sector}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. Retail"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2210,7 +2213,7 @@ const DashboardPage = () => {
                     value={unlistedForm.price}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. Rs 350"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2222,7 +2225,7 @@ const DashboardPage = () => {
                     value={unlistedForm.minimumInvestment}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. 100 Shares"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2231,7 +2234,7 @@ const DashboardPage = () => {
                     name="status"
                     value={unlistedForm.status}
                     onChange={handleUnlistedChange}
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   >
                     <option value="Available">Available</option>
                     <option value="Limited">Limited</option>
@@ -2245,7 +2248,7 @@ const DashboardPage = () => {
                     value={unlistedForm.code}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. RELRETAIL"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2256,7 +2259,7 @@ const DashboardPage = () => {
                     value={unlistedForm.slug}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. reliance-retail"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2267,7 +2270,7 @@ const DashboardPage = () => {
                     value={unlistedForm.logoUrl}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. https://domain.com/logo.png"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2278,7 +2281,7 @@ const DashboardPage = () => {
                     value={unlistedForm.badge}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. Pre-IPO or Hot"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
               </div>
@@ -2291,7 +2294,7 @@ const DashboardPage = () => {
                   value={unlistedForm.description}
                   onChange={handleUnlistedChange}
                   placeholder="e.g. A brief overview of company's core offering..."
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                 />
               </div>
 
@@ -2305,7 +2308,7 @@ const DashboardPage = () => {
                     value={unlistedForm.marketCap}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. Rs 2,50,000 Cr"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2316,7 +2319,7 @@ const DashboardPage = () => {
                     value={unlistedForm.isin}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. INE002A01018"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2327,7 +2330,7 @@ const DashboardPage = () => {
                     value={unlistedForm.faceValue}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. Rs 10"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2338,7 +2341,7 @@ const DashboardPage = () => {
                     value={unlistedForm.eps}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. Rs 12.50"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2349,7 +2352,7 @@ const DashboardPage = () => {
                     value={unlistedForm.pbRatio}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. 3.4"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2360,7 +2363,7 @@ const DashboardPage = () => {
                     value={unlistedForm.bookValue}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. Rs 140"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2371,7 +2374,7 @@ const DashboardPage = () => {
                     value={unlistedForm.debtEquityRatio}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. 0.15"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2382,7 +2385,7 @@ const DashboardPage = () => {
                     value={unlistedForm.settlementPeriod}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. T+2 Days"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -2393,7 +2396,7 @@ const DashboardPage = () => {
                     value={unlistedForm.minUnits}
                     onChange={handleUnlistedChange}
                     placeholder="e.g. 100"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
               </div>
@@ -2408,7 +2411,7 @@ const DashboardPage = () => {
                     value={unlistedForm.aboutCompany}
                     onChange={handleUnlistedChange}
                     placeholder="Detailed history, business lines, and background information about the company..."
-                    className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                    className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
@@ -2420,7 +2423,7 @@ const DashboardPage = () => {
                       value={unlistedForm.strengths}
                       onChange={handleUnlistedChange}
                       placeholder="e.g. Strong brand presence | Debt-free | High margin expansion"
-                      className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                      className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
@@ -2431,7 +2434,7 @@ const DashboardPage = () => {
                       value={unlistedForm.weaknesses}
                       onChange={handleUnlistedChange}
                       placeholder="e.g. Subject to regulatory approvals | High competitive pressure"
-                      className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20"
+                      className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                     />
                   </div>
                 </div>
@@ -2442,7 +2445,7 @@ const DashboardPage = () => {
                   type="button"
                   onClick={saveUnlistedOpportunity}
                   disabled={unlistedSaving}
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#105F68] px-6 py-3 text-sm font-bold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#023e7d] px-6 py-3 text-sm font-bold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Save className="h-4 w-4" />
                   {unlistedSaving ? "Saving..." : unlistedForm.id ? "Update Share" : "Save New Share"}
@@ -2537,7 +2540,7 @@ const DashboardPage = () => {
                       unlistedOpportunities.map((opp) => (
                         <tr key={opp.id || opp._id}>
                           <td className="px-4 py-3 text-sm text-slate-700">
-                            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50 text-xs font-bold text-[#105F68]">
+                            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50 text-xs font-bold text-[#023e7d]">
                               {opp.logoUrl ? (
                                 <img src={opp.logoUrl} alt={opp.company} className="h-full w-full object-cover" />
                               ) : (
@@ -2552,7 +2555,7 @@ const DashboardPage = () => {
                             </div>
                           </td>
                           <td className="px-4 py-3 text-sm text-slate-700">{opp.sector}</td>
-                          <td className="px-4 py-3 text-sm font-semibold text-[#105F68]">{opp.price}</td>
+                          <td className="px-4 py-3 text-sm font-semibold text-[#023e7d]">{opp.price}</td>
                           <td className="px-4 py-3 text-sm text-slate-700">{opp.minimumInvestment}</td>
                           <td className="px-4 py-3 text-sm text-slate-700">
                             <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-bold ${
@@ -2595,6 +2598,15 @@ const DashboardPage = () => {
               </div>
             </div>
           </section>
+
+          {/* New Content Managers for Learn, Research, and Media */}
+          <div className="mt-8 grid gap-8 xl:grid-cols-2">
+            <VideoManager authHeaders={authHeaders} />
+            <MediaManager authHeaders={authHeaders} />
+          </div>
+          <div className="mt-8">
+            <ResearchManager authHeaders={authHeaders} />
+          </div>
         </div>
       </main>
     </div>

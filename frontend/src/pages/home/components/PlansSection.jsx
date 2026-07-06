@@ -122,23 +122,23 @@ const PlanCard = ({
       style={
         active ?
           {
-            background: "linear-gradient(135deg, #63C1BB, #3A9295)",
+            background: "linear-gradient(135deg, #0466c8, #0353a4)",
             boxShadow: popular ?
-              "0 28px 60px rgba(58,146,149,0.34)"
+              "0 28px 60px rgba(3,83,164,0.34)"
             : "0 24px 52px rgba(99,193,187,0.40)",
             borderColor: "transparent",
           }
         : {
             background: "#ffffff",
             boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
-            borderColor: "#C8E6E2",
+            borderColor: "#7d8597",
           }
       }
       className="relative flex h-full cursor-pointer flex-col gap-5 rounded-2xl border p-6 transition-colors duration-300"
     >
       {popular && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#105F68] px-3 py-1 text-xs font-bold text-white shadow-lg">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[#023e7d] px-3 py-1 text-xs font-bold text-white shadow-lg">
             <Flame className="h-3.5 w-3.5" />
             Most Popular
           </span>
@@ -150,14 +150,14 @@ const PlanCard = ({
           animate={
             active ?
               { backgroundColor: "rgba(255,255,255,0.20)" }
-            : { backgroundColor: "#C8E6E2" }
+            : { backgroundColor: "#7d8597" }
           }
           transition={{ duration: 0.25 }}
           className="flex-shrink-0 rounded-xl p-2.5"
         >
           <Icon
             className="h-5 w-5 transition-colors duration-300"
-            style={{ color: active ? "#ffffff" : "#105F68" }}
+            style={{ color: active ? "#ffffff" : "#023e7d" }}
             strokeWidth={2}
           />
         </motion.div>
@@ -165,13 +165,13 @@ const PlanCard = ({
         <div>
           <h3
             className="text-base font-bold leading-snug transition-colors duration-300"
-            style={{ color: active ? "#ffffff" : "#105F68" }}
+            style={{ color: active ? "#ffffff" : "#023e7d" }}
           >
             {title}
           </h3>
           <p
             className="mt-0.5 text-xs transition-colors duration-300"
-            style={{ color: active ? "rgba(255,255,255,0.78)" : "#3A9295" }}
+            style={{ color: active ? "rgba(255,255,255,0.78)" : "#0353a4" }}
           >
             {subtitle}
           </p>
@@ -181,7 +181,7 @@ const PlanCard = ({
       <div
         className="h-px transition-colors duration-300"
         style={{
-          backgroundColor: active ? "rgba(255,255,255,0.20)" : "#C8E6E2",
+          backgroundColor: active ? "rgba(255,255,255,0.20)" : "#7d8597",
         }}
       />
 
@@ -191,18 +191,18 @@ const PlanCard = ({
             <span
               className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full transition-colors duration-300"
               style={{
-                backgroundColor: active ? "rgba(255,255,255,0.20)" : "#C8E6E2",
+                backgroundColor: active ? "rgba(255,255,255,0.20)" : "#7d8597",
               }}
             >
               <FIcon
                 className="h-3 w-3 transition-colors duration-300"
-                style={{ color: active ? "#ffffff" : "#3A9295" }}
+                style={{ color: active ? "#ffffff" : "#0353a4" }}
                 strokeWidth={2.5}
               />
             </span>
             <span
               className="text-sm transition-colors duration-300"
-              style={{ color: active ? "rgba(255,255,255,0.92)" : "#105F68" }}
+              style={{ color: active ? "rgba(255,255,255,0.92)" : "#023e7d" }}
             >
               {text}
             </span>
@@ -220,7 +220,7 @@ const PlanCard = ({
           </span>
           <span
             className="text-3xl font-extrabold tracking-tight transition-colors duration-300"
-            style={{ color: active ? "#ffffff" : "#105F68" }}
+            style={{ color: active ? "#ffffff" : "#023e7d" }}
           >
             {price}
           </span>
@@ -244,11 +244,11 @@ const PlanCard = ({
           active ?
             {
               backgroundColor: "#ffffff",
-              color: "#105F68",
+              color: "#023e7d",
               boxShadow: "0 4px 16px rgba(255,255,255,0.25)",
             }
           : {
-              backgroundColor: "#105F68",
+              backgroundColor: "#023e7d",
               color: "#ffffff",
             }
         }
@@ -258,7 +258,7 @@ const PlanCard = ({
 
       <div
         className="flex flex-col gap-1.5 text-xs font-medium transition-colors duration-300"
-        style={{ color: active ? "rgba(255,255,255,0.92)" : "#105F68" }}
+        style={{ color: active ? "rgba(255,255,255,0.92)" : "#023e7d" }}
       >
         {trustPoints.map((point) => (
           <div key={point} className="flex items-center gap-2">
@@ -272,7 +272,7 @@ const PlanCard = ({
         className="rounded-xl px-3 py-2 text-center text-xs font-semibold transition-colors duration-300"
         style={{
           backgroundColor: active ? "rgba(255,255,255,0.12)" : "#F3FAF8",
-          color: active ? "#FDE68A" : "#105F68",
+          color: active ? "#FDE68A" : "#023e7d",
         }}
       >
         ⏳ Offer valid till today
@@ -304,9 +304,9 @@ const PlansSection = () => {
             transition={{ duration: 0.4 }}
             className="mb-3 inline-block rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
             style={{
-              backgroundColor: "#C8E6E2",
-              color: "#105F68",
-              borderColor: "#9ED5D1",
+              backgroundColor: "#7d8597",
+              color: "#023e7d",
+              borderColor: "#5c677d",
             }}
           >
             Subscription Plans
@@ -314,14 +314,14 @@ const PlansSection = () => {
 
           <h2
             className="mb-4 text-3xl font-bold leading-tight md:text-4xl lg:text-5xl"
-            style={{ color: "#105F68" }}
+            style={{ color: "#023e7d" }}
           >
             Start Earning with Our{" "}
-            <span style={{ color: "#3A9295" }}>Trading Plans 🚀</span>
+            <span style={{ color: "#0353a4" }}>Trading Plans 🚀</span>
           </h2>
           <p
             className="mx-auto max-w-2xl text-base md:text-lg"
-            style={{ color: "#3A9295" }}
+            style={{ color: "#0353a4" }}
           >
             Get real-time Nifty, BankNifty & Sensex calls with proper entry, SL
             & targets.
@@ -345,7 +345,7 @@ const PlansSection = () => {
           ))}
         </motion.div>
 
-        <div className="mt-6 text-center text-sm font-semibold text-[#105F68]">
+        <div className="mt-6 text-center text-sm font-semibold text-[#023e7d]">
           ⏳ Offer valid till today
         </div>
       </div>

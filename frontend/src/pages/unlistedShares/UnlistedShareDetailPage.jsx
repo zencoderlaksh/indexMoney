@@ -201,7 +201,7 @@ const PriceHistoryChart = ({ price }) => {
       crosshair: {
         mode: 0,
         vertLine: {
-          color: "#3A9295",
+          color: "#0353a4",
           width: 1,
           style: 3,
           labelVisible: false,
@@ -218,14 +218,14 @@ const PriceHistoryChart = ({ price }) => {
     });
 
     const series = chart.addSeries(LineSeries, {
-      color: "#105F68",
+      color: "#023e7d",
       lineWidth: 3,
       lastValueVisible: false,
       priceLineVisible: false,
       crosshairMarkerVisible: true,
       crosshairMarkerRadius: 6,
       crosshairMarkerBorderColor: "#ffffff",
-      crosshairMarkerBackgroundColor: "#105F68",
+      crosshairMarkerBackgroundColor: "#023e7d",
       crosshairMarkerBorderWidth: 3,
     });
 
@@ -280,7 +280,7 @@ const PriceHistoryChart = ({ price }) => {
   }, [data]);
 
   return (
-    <div className="rounded-[30px] border border-[#D7ECE7] bg-white/95 p-5 shadow-[0_14px_38px_rgba(16,95,104,0.08)] md:p-7">
+    <div className="rounded-[30px] border border-[#7d8597] bg-white/90 dark:bg-[#001845]/90 95 p-5 shadow-[0_14px_38px_rgba(2,62,125,0.08)] md:p-7">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -290,14 +290,14 @@ const PriceHistoryChart = ({ price }) => {
             <p className="text-sm font-bold text-emerald-600 md:text-base">
               +{formatCurrency(Math.max(1, latestValue - firstValue))} ({gain}%)
             </p>
-            <span className="text-sm font-semibold text-slate-500">
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
               {activeRange}
             </span>
             <Info className="h-4 w-4 text-slate-400" />
           </div>
         </div>
 
-        <span className="rounded-md bg-[#EAF8F4] px-3 py-2 text-xs font-bold text-[#105F68]">
+        <span className="rounded-md bg-[#f1f5f9] px-3 py-2 text-xs font-bold text-[#023e7d]">
           Hot Right Now
         </span>
       </div>
@@ -311,7 +311,7 @@ const PriceHistoryChart = ({ price }) => {
         {hoverPoint ?
           <>
             <div
-              className="pointer-events-none absolute h-4 w-4 rounded-full border-[3px] border-white bg-[#105F68] shadow-[0_6px_16px_rgba(16,95,104,0.28)]"
+              className="pointer-events-none absolute h-4 w-4 rounded-full border-[3px] border-white bg-[#023e7d] shadow-[0_6px_16px_rgba(2,62,125,0.28)]"
               style={{
                 left: hoverPoint.x,
                 top: hoverPoint.y,
@@ -319,7 +319,7 @@ const PriceHistoryChart = ({ price }) => {
               }}
             />
             <div
-              className="pointer-events-none absolute rounded-md border border-[#D7ECE7] bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-[0_10px_22px_rgba(15,23,42,0.12)]"
+              className="pointer-events-none absolute rounded-md border border-[#7d8597] bg-white dark:bg-[#001845] px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 shadow-[0_10px_22px_rgba(15,23,42,0.12)]"
               style={{
                 left: Math.min(
                   Math.max(hoverPoint.x + 12, 8),
@@ -343,8 +343,8 @@ const PriceHistoryChart = ({ price }) => {
             onClick={() => setActiveRange(range)}
             className={`rounded-full px-4 py-2 text-sm font-bold transition-colors duration-200 ${
               activeRange === range ?
-                "bg-[#D7ECE7] text-[#105F68]"
-              : "text-slate-700 hover:bg-[#F4FBF9]"
+                "bg-[#7d8597] text-[#023e7d]"
+              : "text-slate-700 dark:text-slate-200 hover:bg-[#f1f5f9]"
             }`}
           >
             {range}
@@ -436,14 +436,14 @@ const UnlistedShareDetailPage = () => {
   if (!share && !isLoading) {
     return (
       <main className="min-h-screen bg-[#F7FEFC] px-5 py-20">
-        <div className="mx-auto max-w-3xl rounded-[28px] border border-[#D7ECE7] bg-white p-8 text-center shadow-[0_14px_38px_rgba(16,95,104,0.08)]">
-          <h1 className="text-3xl font-bold text-slate-800">Share not found</h1>
-          <p className="mt-3 text-slate-500">
+        <div className="mx-auto max-w-3xl rounded-[28px] border border-[#7d8597] bg-white dark:bg-[#001845] p-8 text-center shadow-[0_14px_38px_rgba(2,62,125,0.08)]">
+          <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">Share not found</h1>
+          <p className="mt-3 text-slate-500 dark:text-slate-400">
             Upload this company in the unlisted shares sheet, then try again.
           </p>
           <Link
             to="/unlisted-shares"
-            className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-[#105F68] px-5 py-3 text-sm font-bold text-white"
+            className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-[#023e7d] px-5 py-3 text-sm font-bold text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Unlisted Shares
@@ -461,7 +461,7 @@ const UnlistedShareDetailPage = () => {
         <div className="mx-auto max-w-6xl">
           <Link
             to="/unlisted-shares"
-            className="inline-flex items-center gap-2 text-sm font-bold text-[#105F68]"
+            className="inline-flex items-center gap-2 text-sm font-bold text-[#023e7d]"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Unlisted Shares
@@ -469,9 +469,9 @@ const UnlistedShareDetailPage = () => {
 
           <div className="mt-8 grid items-start gap-6 lg:grid-cols-[1fr_330px]">
             <div className="space-y-6">
-              <div className="rounded-[32px] border border-[#D7ECE7] bg-white/90 p-7 shadow-[0_18px_42px_rgba(16,95,104,0.09)] backdrop-blur-sm md:p-9">
+              <div className="rounded-[32px] border border-[#7d8597] bg-white/90 dark:bg-[#001845]/90 90 p-7 shadow-[0_18px_42px_rgba(2,62,125,0.09)] backdrop-blur-sm md:p-9">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-                  <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl border border-[#CBE7E1] bg-[#F4FBF9] text-2xl font-black text-[#105F68]">
+                  <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl border border-[#5c677d] bg-[#f1f5f9] text-2xl font-black text-[#023e7d]">
                     {share?.logoUrl ?
                       <img
                         src={share.logoUrl}
@@ -481,13 +481,13 @@ const UnlistedShareDetailPage = () => {
                     : getInitials(share?.company)}
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#3A9295]">
+                    <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0353a4]">
                       {share?.sector || "Unlisted Share"}
                     </p>
-                    <h1 className="mt-2 text-3xl font-black leading-tight text-slate-800 md:text-5xl">
+                    <h1 className="mt-2 text-3xl font-black leading-tight text-slate-800 dark:text-slate-100 md:text-5xl">
                       {share?.company}
                     </h1>
-                    <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-500">
+                    <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-500 dark:text-slate-400">
                       {share?.description ||
                         `${share?.company} unlisted shares information sourced from the latest Index Money upload.`}
                     </p>
@@ -495,30 +495,30 @@ const UnlistedShareDetailPage = () => {
                 </div>
 
                 <div className="mt-8 grid gap-4 md:grid-cols-3">
-                  <div className="rounded-2xl bg-[#F4FBF9] p-5">
-                    <BadgeIndianRupee className="h-5 w-5 text-[#3A9295]" />
+                  <div className="rounded-2xl bg-[#f1f5f9] p-5">
+                    <BadgeIndianRupee className="h-5 w-5 text-[#0353a4]" />
                     <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
                       Price
                     </p>
-                    <p className="mt-2 text-2xl font-black text-[#105F68]">
+                    <p className="mt-2 text-2xl font-black text-[#023e7d]">
                       {share?.price}
                     </p>
                   </div>
-                  <div className="rounded-2xl bg-[#F4FBF9] p-5">
-                    <Building2 className="h-5 w-5 text-[#3A9295]" />
+                  <div className="rounded-2xl bg-[#f1f5f9] p-5">
+                    <Building2 className="h-5 w-5 text-[#0353a4]" />
                     <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
                       Minimum
                     </p>
-                    <p className="mt-2 text-lg font-black text-slate-800">
+                    <p className="mt-2 text-lg font-black text-slate-800 dark:text-slate-100">
                       {share?.minimumInvestment}
                     </p>
                   </div>
-                  <div className="rounded-2xl bg-[#F4FBF9] p-5">
-                    <Landmark className="h-5 w-5 text-[#3A9295]" />
+                  <div className="rounded-2xl bg-[#f1f5f9] p-5">
+                    <Landmark className="h-5 w-5 text-[#0353a4]" />
                     <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
                       Status
                     </p>
-                    <p className="mt-2 text-lg font-black text-slate-800">
+                    <p className="mt-2 text-lg font-black text-slate-800 dark:text-slate-100">
                       {share?.status}
                     </p>
                   </div>
@@ -530,34 +530,34 @@ const UnlistedShareDetailPage = () => {
               <PriceHistoryChart price={share?.price} />
             </div>
 
-            <aside className="sticky top-24 rounded-[24px] border border-[#D7ECE7] bg-white p-6 shadow-[0_16px_34px_rgba(15,23,42,0.12)]">
+            <aside className="sticky top-24 rounded-[24px] border border-[#7d8597] bg-white dark:bg-[#001845] p-6 shadow-[0_16px_34px_rgba(15,23,42,0.12)]">
               <h2 className="text-lg font-black leading-snug text-slate-900">
                 {share?.company}
               </h2>
-              <div className="my-6 border-t border-dashed border-slate-200" />
+              <div className="my-6 border-t border-dashed border-slate-200 dark:border-white/10" />
 
               <div className="space-y-5 text-sm">
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-slate-500">Price per unit</span>
+                  <span className="text-slate-500 dark:text-slate-400">Price per unit</span>
                   <span className="font-bold text-slate-950">
                     {formatCurrency(pricePerUnit)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="inline-flex items-center gap-1 text-slate-500">
+                  <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">
                     Settlement period
                     <Info className="h-3.5 w-3.5 text-slate-400" />
                   </span>
-                  <span className="font-bold text-slate-800">29 Jun 2026</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100">29 Jun 2026</span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-slate-500">Min. units</span>
-                  <span className="font-bold text-slate-800">
+                  <span className="text-slate-500 dark:text-slate-400">Min. units</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100">
                     {minimumUnits}
                   </span>
                 </div>
-                <div className="flex items-center justify-between gap-4 border-b border-dashed border-slate-200 pb-4">
-                  <span className="text-slate-500">No. of units to buy</span>
+                <div className="flex items-center justify-between gap-4 border-b border-dashed border-slate-200 dark:border-white/10 pb-4">
+                  <span className="text-slate-500 dark:text-slate-400">No. of units to buy</span>
                   <div className="flex items-center gap-3">
                     <button
                       type="button"
@@ -568,11 +568,11 @@ const UnlistedShareDetailPage = () => {
                       }
                       disabled={selectedUnits <= minimumUnits}
                       aria-label="Decrease units"
-                      className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors duration-200 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+                      className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233] disabled:cursor-not-allowed disabled:opacity-45"
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </button>
-                    <span className="min-w-6 text-center font-bold text-slate-800">
+                    <span className="min-w-6 text-center font-bold text-slate-800 dark:text-slate-100">
                       {selectedUnits}
                     </span>
                     <button
@@ -583,14 +583,14 @@ const UnlistedShareDetailPage = () => {
                         )
                       }
                       aria-label="Increase units"
-                      className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors duration-200 hover:bg-slate-50"
+                      className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233]"
                     >
                       <Plus className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-slate-500">Final amount</span>
+                  <span className="text-slate-500 dark:text-slate-400">Final amount</span>
                   <span className="text-xl font-black text-slate-950">
                     {formatCurrency(finalAmount)}
                   </span>
@@ -601,7 +601,7 @@ const UnlistedShareDetailPage = () => {
                 href={`https://wa.me/919216180043?text=${investText}`}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-7 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#3A9295] to-[#105F68] px-5 py-3.5 text-sm font-black text-white shadow-[0_12px_22px_rgba(16,95,104,0.22)] transition duration-200 hover:-translate-y-0.5"
+                className="mt-7 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#0353a4] to-[#023e7d] px-5 py-3.5 text-sm font-black text-white shadow-[0_12px_22px_rgba(2,62,125,0.22)] transition duration-200 hover:-translate-y-0.5"
               >
                 Invest Now
               </a>
@@ -609,7 +609,7 @@ const UnlistedShareDetailPage = () => {
                 href={`https://wa.me/919216180043?text=${whatsappText}`}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-3 inline-flex w-full items-center justify-center rounded-full border border-[#CBE7E1] px-5 py-3 text-sm font-bold text-[#105F68] transition-colors duration-200 hover:bg-[#F4FBF9]"
+                className="mt-3 inline-flex w-full items-center justify-center rounded-full border border-[#5c677d] px-5 py-3 text-sm font-bold text-[#023e7d] transition-colors duration-200 hover:bg-[#f1f5f9]"
               >
                 Ask a Question
               </a>
@@ -623,10 +623,10 @@ const UnlistedShareDetailPage = () => {
         className="relative px-5 pb-16 md:px-8"
       >
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_0.9fr]">
-          <div className="rounded-[30px] border border-[#D7ECE7] bg-white/90 p-7 shadow-[0_14px_38px_rgba(16,95,104,0.08)]">
+          <div className="rounded-[30px] border border-[#7d8597] bg-white/90 dark:bg-[#001845]/90 90 p-7 shadow-[0_14px_38px_rgba(2,62,125,0.08)]">
             <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-[#3A9295]" />
-              <h2 className="text-2xl font-black text-slate-800">
+              <FileText className="h-5 w-5 text-[#0353a4]" />
+              <h2 className="text-2xl font-black text-slate-800 dark:text-slate-100">
                 Fundamentals
               </h2>
             </div>
@@ -634,12 +634,12 @@ const UnlistedShareDetailPage = () => {
               {fundamentals.map((item) => (
                 <div
                   key={item.label}
-                  className="rounded-2xl border border-[#E1F1EE] bg-[#FBFEFD] p-4"
+                  className="rounded-2xl border border-[#7d8597] bg-[#f8fafc] p-4"
                 >
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
                     {item.label}
                   </p>
-                  <p className="mt-2 text-lg font-black text-slate-800">
+                  <p className="mt-2 text-lg font-black text-slate-800 dark:text-slate-100">
                     {item.value}
                   </p>
                 </div>
@@ -648,18 +648,18 @@ const UnlistedShareDetailPage = () => {
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-[30px] border border-[#D7ECE7] bg-white/90 p-7 shadow-[0_14px_38px_rgba(16,95,104,0.08)]">
-              <h2 className="text-2xl font-black text-slate-800">
+            <div className="rounded-[30px] border border-[#7d8597] bg-white/90 dark:bg-[#001845]/90 90 p-7 shadow-[0_14px_38px_rgba(2,62,125,0.08)]">
+              <h2 className="text-2xl font-black text-slate-800 dark:text-slate-100">
                 About Company
               </h2>
-              <p className="mt-4 text-sm leading-relaxed text-slate-600">
+              <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                 {share?.aboutCompany ||
                   "Add an About Company column in the uploaded sheet to show a richer company profile here."}
               </p>
             </div>
 
-            <div className="rounded-[30px] border border-[#D7ECE7] bg-white/90 p-7 shadow-[0_14px_38px_rgba(16,95,104,0.08)]">
-              <h2 className="text-2xl font-black text-slate-800">
+            <div className="rounded-[30px] border border-[#7d8597] bg-white/90 dark:bg-[#001845]/90 90 p-7 shadow-[0_14px_38px_rgba(2,62,125,0.08)]">
+              <h2 className="text-2xl font-black text-slate-800 dark:text-slate-100">
                 Strengths & Risks
               </h2>
               <div className="mt-5 grid gap-5">
@@ -672,7 +672,7 @@ const UnlistedShareDetailPage = () => {
                     ).map((item) => (
                       <p
                         key={item}
-                        className="flex gap-2 text-sm text-slate-600"
+                        className="flex gap-2 text-sm text-slate-600 dark:text-slate-300"
                       >
                         <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                         {item}
@@ -689,7 +689,7 @@ const UnlistedShareDetailPage = () => {
                     ).map((item) => (
                       <p
                         key={item}
-                        className="flex gap-2 text-sm text-slate-600"
+                        className="flex gap-2 text-sm text-slate-600 dark:text-slate-300"
                       >
                         <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                         {item}

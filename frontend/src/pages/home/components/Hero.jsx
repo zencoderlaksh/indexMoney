@@ -24,7 +24,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 const inputBase =
   "w-full bg-white border rounded-xl px-4 py-3 pl-10 text-sm text-slate-800 placeholder-slate-400 outline-none transition-all duration-200";
 const inputNormal =
-  "border-slate-200 focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20";
+  "border-slate-200 focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20";
 const inputError =
   "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-200";
 
@@ -51,7 +51,7 @@ const GridBg = () => (
         <path
           d="M 48 0 L 0 0 0 48"
           fill="none"
-          stroke="#105F68"
+          stroke="#023e7d"
           strokeWidth="1"
         />
       </pattern>
@@ -151,13 +151,13 @@ const Hero = () => {
       <div
         className="pointer-events-none absolute -right-32 -top-32 h-[700px] w-[700px] rounded-full opacity-30"
         style={{
-          background: "radial-gradient(circle, #C8E6E2 0%, transparent 65%)",
+          background: "radial-gradient(circle, #7d8597 0%, transparent 65%)",
         }}
       />
       <div
         className="pointer-events-none absolute bottom-0 -left-20 h-[500px] w-[500px] rounded-full opacity-20"
         style={{
-          background: "radial-gradient(circle, #9ED5D1 0%, transparent 65%)",
+          background: "radial-gradient(circle, #5c677d 0%, transparent 65%)",
         }}
       />
 
@@ -168,8 +168,8 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#9ED5D1] bg-[#C8E6E2]/60 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#105F68]">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[#63C1BB]" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#5c677d] bg-[#7d8597]/60 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#023e7d]">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-[#0466c8]" />
               Professional Index & F&O Advisory
             </span>
           </motion.div>
@@ -185,7 +185,7 @@ const Hero = () => {
               <span
                 className="bg-clip-text text-transparent"
                 style={{
-                  backgroundImage: "linear-gradient(135deg, #3A9295, #105F68)",
+                  backgroundImage: "linear-gradient(135deg, #0353a4, #023e7d)",
                 }}
               >
                 Rasta Kam Logon Ko Milta Hai.
@@ -223,7 +223,7 @@ const Hero = () => {
                 key={text}
                 className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm"
               >
-                <Icon className="h-3.5 w-3.5 text-[#3A9295]" strokeWidth={2} />
+                <Icon className="h-3.5 w-3.5 text-[#0353a4]" strokeWidth={2} />
                 {text}
               </span>
             ))}
@@ -239,12 +239,12 @@ const Hero = () => {
               onClick={openWhatsApp}
               whileHover={{
                 scale: 1.03,
-                boxShadow: "0 12px 32px rgba(58,146,149,0.35)",
+                boxShadow: "0 12px 32px rgba(3,83,164,0.35)",
               }}
               whileTap={{ scale: 0.97 }}
               className="flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200"
               style={{
-                background: "linear-gradient(135deg, #3A9295, #105F68)",
+                background: "linear-gradient(135deg, #0353a4, #023e7d)",
               }}
             >
               <MessageCircle className="h-4 w-4" />
@@ -255,7 +255,7 @@ const Hero = () => {
               onClick={goToPastPerformance}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-2 rounded-xl border-2 border-[#9ED5D1] px-7 py-3.5 text-sm font-bold text-[#105F68] transition-all duration-200 hover:border-[#63C1BB] hover:bg-[#C8E6E2]/30"
+              className="flex items-center justify-center gap-2 rounded-xl border-2 border-[#5c677d] px-7 py-3.5 text-sm font-bold text-[#023e7d] transition-all duration-200 hover:border-[#0466c8] hover:bg-[#7d8597]/30"
             >
               <BarChart3 className="h-4 w-4" />
               View Today&apos;s Performance
@@ -314,7 +314,7 @@ const Hero = () => {
                   event.preventDefault();
                   goToPastPerformance();
                 }}
-                className="inline-flex items-center gap-1 text-sm font-semibold text-[#105F68] transition-colors duration-200 hover:text-[#3A9295]"
+                className="inline-flex items-center gap-1 text-sm font-semibold text-[#023e7d] transition-colors duration-200 hover:text-[#0353a4]"
               >
                 See full details
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -434,11 +434,11 @@ const Hero = () => {
                 <input
                   type="checkbox"
                   {...register("agreePolicy")}
-                  className="mt-1 h-4 w-4 rounded border-slate-300 text-[#3A9295] focus:ring-[#3A9295]"
+                  className="mt-1 h-4 w-4 rounded border-slate-300 text-[#0353a4] focus:ring-[#0353a4]"
                 />
                 <span>
                   I agree to the{" "}
-                  <span className="font-semibold text-[#105F68]">
+                  <span className="font-semibold text-[#023e7d]">
                     privacy policy
                   </span>
                   .
@@ -449,9 +449,9 @@ const Hero = () => {
               <motion.button
                 type="submit"
                 disabled={isSubmitting}
-                whileHover={{ scale: 1.02, backgroundColor: "#3A9295" }}
+                whileHover={{ scale: 1.02, backgroundColor: "#0353a4" }}
                 whileTap={{ scale: 0.98 }}
-                className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#63C1BB] py-3.5 text-sm font-semibold text-white shadow-md shadow-[#63C1BB]/25 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0466c8] py-3.5 text-sm font-semibold text-white shadow-md shadow-[#0466c8]/25 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">

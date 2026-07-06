@@ -56,7 +56,7 @@ const subjectOptions = [
 ];
 
 const inputBase =
-  "w-full rounded-2xl border border-white/10 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/30";
+  "w-full rounded-2xl border border-white/10 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/30";
 
 const ContactPage = () => {
   const [form, setForm] = useState({
@@ -105,7 +105,7 @@ const ContactPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
-            className="inline-flex items-center gap-2 rounded-full border border-[#BFE5DE] bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#105F68] shadow-sm backdrop-blur-sm"
+            className="inline-flex items-center gap-2 rounded-full border border-[#BFE5DE] bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#023e7d] shadow-sm backdrop-blur-sm"
           >
             <Sparkles className="h-3.5 w-3.5" />
             Contact Us
@@ -121,7 +121,7 @@ const ContactPage = () => {
             <span
               className="bg-clip-text text-transparent"
               style={{
-                backgroundImage: "linear-gradient(135deg, #3A9295, #105F68)",
+                backgroundImage: "linear-gradient(135deg, #0353a4, #023e7d)",
               }}
             >
               Index Money
@@ -143,11 +143,11 @@ const ContactPage = () => {
             transition={{ duration: 0.4, delay: 0.2 }}
             className="mt-6 flex items-center justify-center gap-2 text-sm font-medium text-slate-500"
           >
-            <Link to="/" className="transition-colors hover:text-[#105F68]">
+            <Link to="/" className="transition-colors hover:text-[#023e7d]">
               Home
             </Link>
             <span>&gt;</span>
-            <span className="text-[#105F68]">Contact Us</span>
+            <span className="text-[#023e7d]">Contact Us</span>
           </motion.div>
         </div>
       </section>
@@ -161,9 +161,9 @@ const ContactPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: index * 0.08 }}
-              className="rounded-[28px] border border-[#CBE7E1] bg-white/80 p-6 shadow-[0_14px_40px_rgba(16,95,104,0.08)] backdrop-blur-sm"
+              className="rounded-[28px] border border-[#5c677d] bg-white/80 p-6 shadow-[0_14px_40px_rgba(2,62,125,0.08)] backdrop-blur-sm"
             >
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#C8E6E2] to-[#63C1BB] text-[#105F68]">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7d8597] to-[#0466c8] text-[#023e7d]">
                 <Icon className="h-5 w-5" strokeWidth={2.2} />
               </div>
               <h2 className="text-xl font-bold text-slate-800">{title}</h2>
@@ -183,10 +183,10 @@ const ContactPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mx-auto max-w-3xl rounded-[32px] border border-white/10 bg-[#0F2830]/96 p-8 shadow-[0_24px_80px_rgba(15,40,48,0.35)] md:p-10"
+          className="mx-auto max-w-3xl rounded-[32px] border border-white/10 bg-[#001233]/96 p-8 shadow-[0_24px_80px_rgba(15,40,48,0.35)] md:p-10"
         >
           <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8DD4CC]">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#0466c8]">
               Contact Form
             </p>
             <h2 className="mt-3 text-3xl font-bold text-white">
@@ -279,7 +279,7 @@ const ContactPage = () => {
 
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#63C1BB] to-[#3A9295] px-5 py-3.5 text-sm font-bold text-white shadow-[0_16px_30px_rgba(58,146,149,0.26)] transition-transform duration-200 hover:scale-[1.01]"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#0466c8] to-[#0353a4] px-5 py-3.5 text-sm font-bold text-white shadow-[0_16px_30px_rgba(3,83,164,0.26)] transition-transform duration-200 hover:scale-[1.01]"
             >
               Submit Message
               <ArrowRight className="h-4 w-4" />
@@ -299,7 +299,7 @@ const ContactPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45 }}
-          className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-5 rounded-[30px] border border-[#9FE2B3] bg-gradient-to-r from-[#1E8F5A] to-[#107D52] px-6 py-7 text-center text-white shadow-[0_20px_50px_rgba(16,125,82,0.25)] md:flex-row md:text-left"
+          className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-5 rounded-[30px] border border-[#0466c8] bg-gradient-to-r from-[#1E8F5A] to-[#023e7d] px-6 py-7 text-center text-white shadow-[0_20px_50px_rgba(4,102,200,0.25)] md:flex-row md:text-left"
         >
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.26em] text-white/75">
@@ -316,7 +316,7 @@ const ContactPage = () => {
             href={whatsappLink}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-[#107D52] shadow-lg transition-transform duration-200 hover:scale-[1.02]"
+            className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-[#023e7d] shadow-lg transition-transform duration-200 hover:scale-[1.02]"
           >
             Chat With Us on WhatsApp
             <ArrowRight className="h-4 w-4" />
@@ -331,10 +331,10 @@ const ContactPage = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45 }}
-            className="rounded-[28px] border border-[#CBE7E1] bg-white/85 p-7 shadow-[0_14px_38px_rgba(16,95,104,0.08)] backdrop-blur-sm"
+            className="rounded-[28px] border border-[#5c677d] bg-white/85 p-7 shadow-[0_14px_38px_rgba(2,62,125,0.08)] backdrop-blur-sm"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E9F7F3] text-[#105F68]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f1f5f9] text-[#023e7d]">
                 <Building2 className="h-5 w-5" strokeWidth={2.1} />
               </div>
               <div>
@@ -353,7 +353,7 @@ const ContactPage = () => {
                   key={point}
                   className="rounded-2xl border border-slate-100 bg-slate-50/80 p-4"
                 >
-                  <Clock3 className="h-5 w-5 text-[#3A9295]" strokeWidth={2.1} />
+                  <Clock3 className="h-5 w-5 text-[#0353a4]" strokeWidth={2.1} />
                   <p className="mt-3 text-sm font-semibold leading-relaxed text-slate-700">
                     {point}
                   </p>
@@ -395,9 +395,9 @@ const ContactPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45 }}
-          className="mx-auto max-w-5xl rounded-[34px] border border-[#CBE7E1] bg-white/85 px-6 py-8 text-center shadow-[0_16px_42px_rgba(16,95,104,0.08)] backdrop-blur-sm md:px-10 md:py-10"
+          className="mx-auto max-w-5xl rounded-[34px] border border-[#5c677d] bg-white/85 px-6 py-8 text-center shadow-[0_16px_42px_rgba(2,62,125,0.08)] backdrop-blur-sm md:px-10 md:py-10"
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#3A9295]">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#0353a4]">
             Final CTA
           </p>
           <h2 className="mt-3 text-3xl font-bold text-slate-800 md:text-4xl">
@@ -411,13 +411,13 @@ const ContactPage = () => {
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               to="/#plans-section"
-              className="inline-flex items-center gap-2 rounded-2xl border border-[#9ED5D1] bg-white px-5 py-3 text-sm font-bold text-[#105F68] transition-colors duration-200 hover:bg-[#EAF8F4]"
+              className="inline-flex items-center gap-2 rounded-2xl border border-[#5c677d] bg-white px-5 py-3 text-sm font-bold text-[#023e7d] transition-colors duration-200 hover:bg-[#f1f5f9]"
             >
               View Subscription Plans
             </Link>
             <Link
               to="/signup"
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(58,146,149,0.22)]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#0353a4] to-[#023e7d] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(3,83,164,0.22)]"
             >
               Start Free Trial
               <ArrowRight className="h-4 w-4" />

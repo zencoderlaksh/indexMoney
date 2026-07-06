@@ -8,6 +8,9 @@ const subscriptionRoutes = require("./subscriptionRoutes");
 const unlistedRoutes = require("./unlistedRoutes");
 const blogRoutes = require("./blogRoutes");
 const dematAccountRoutes = require("./dematAccountRoutes");
+const videoRoutes = require("./videoRoutes");
+const researchRoutes = require("./researchRoutes");
+const mediaRoutes = require("./mediaRoutes");
 
 const router = express.Router();
 
@@ -21,6 +24,9 @@ router.use("/unlisted", unlistedRoutes);
 router.use("/blogs", blogRoutes);
 router.use("/demat-accounts", dematAccountRoutes);
 router.use("/demat-account", dematAccountRoutes);
+router.use("/videos", videoRoutes);
+router.use("/research", researchRoutes);
+router.use("/media", mediaRoutes);
 
 router.get("/health", (req, res) => {
   res.json({ status: "ok" });

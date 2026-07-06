@@ -147,13 +147,13 @@ const ServicesTable = ({ title, description, rows, showPayNow }) => (
 
     <div className="mt-8 overflow-hidden rounded-[30px] border border-[#123e46] bg-[linear-gradient(180deg,#11343b_0%,#0a1f24_100%)] shadow-[0_24px_60px_rgba(9,30,34,0.28)]">
       <table className="min-w-full">
-        <thead className="bg-[linear-gradient(90deg,rgba(99,193,187,0.18)_0%,rgba(16,95,104,0.45)_100%)]">
+        <thead className="bg-[linear-gradient(90deg,rgba(99,193,187,0.18)_0%,rgba(2,62,125,0.45)_100%)]">
           <tr>
             {tableHeaders.map((header) => (
               <th
                 key={header}
                 scope="col"
-                className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-[#CBE7E1]"
+                className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-[#5c677d]"
               >
                 {header}
               </th>
@@ -183,7 +183,7 @@ const ServicesTable = ({ title, description, rows, showPayNow }) => (
         <div className="border-t border-white/10 bg-white/[0.04] px-5 py-5">
           <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#9ED5D1]">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5c677d]">
                 Ready to Subscribe
               </p>
               <p className="mt-2 text-sm text-slate-200">
@@ -192,7 +192,7 @@ const ServicesTable = ({ title, description, rows, showPayNow }) => (
             </div>
             <Link
               to="/pay-now"
-              className="inline-flex items-center gap-2 rounded-2xl bg-[#63C1BB] px-5 py-3 text-sm font-bold text-[#082127] transition-colors duration-200 hover:bg-[#79d1cb]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-[#0466c8] px-5 py-3 text-sm font-bold text-[#082127] transition-colors duration-200 hover:bg-[#79d1cb]"
             >
               Pay Now
               <ArrowRight className="h-4 w-4" />
@@ -217,7 +217,7 @@ const ServicesPage = () => {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
-            className="inline-flex items-center gap-2 rounded-full border border-[#BEE3DC] bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#105F68] shadow-sm backdrop-blur-sm"
+            className="inline-flex items-center gap-2 rounded-full border border-[#33415c] bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#023e7d] shadow-sm backdrop-blur-sm"
           >
             <Sparkles className="h-3.5 w-3.5" />
             Services
@@ -233,7 +233,7 @@ const ServicesPage = () => {
             <span
               className="bg-clip-text text-transparent"
               style={{
-                backgroundImage: "linear-gradient(135deg, #3A9295, #105F68)",
+                backgroundImage: "linear-gradient(135deg, #0353a4, #023e7d)",
               }}
             >
               Disciplined Traders
@@ -254,14 +254,14 @@ const ServicesPage = () => {
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               to="/pay-now"
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(58,146,149,0.22)]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#0353a4] to-[#023e7d] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(3,83,164,0.22)]"
             >
               View Payment Page
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 rounded-2xl border border-[#9ED5D1] bg-white px-5 py-3 text-sm font-bold text-[#105F68] transition-colors duration-200 hover:bg-[#EAF8F4]"
+              className="inline-flex items-center gap-2 rounded-2xl border border-[#5c677d] bg-white px-5 py-3 text-sm font-bold text-[#023e7d] transition-colors duration-200 hover:bg-[#f1f5f9]"
             >
               Contact for Custom Package
             </Link>
@@ -272,7 +272,7 @@ const ServicesPage = () => {
       <section className="relative px-5 py-8 md:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0353a4]">
               Why Choose Us
             </p>
             <h2 className="mt-3 text-3xl font-bold text-slate-800 md:text-4xl">
@@ -288,9 +288,9 @@ const ServicesPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.42, delay: index * 0.07 }}
-                className="rounded-[28px] border border-[#CBE7E1] bg-white/85 p-6 shadow-[0_14px_38px_rgba(16,95,104,0.08)] backdrop-blur-sm"
+                className="rounded-[28px] border border-[#5c677d] bg-white/85 p-6 shadow-[0_14px_38px_rgba(2,62,125,0.08)] backdrop-blur-sm"
               >
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#C8E6E2] to-[#63C1BB] text-[#105F68]">
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7d8597] to-[#0466c8] text-[#023e7d]">
                   <Icon className="h-5 w-5" strokeWidth={2.2} />
                 </div>
                 <h3 className="text-xl font-bold text-slate-800">{title}</h3>
@@ -307,7 +307,7 @@ const ServicesPage = () => {
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 flex flex-col items-center justify-between gap-4 md:flex-row">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0353a4]">
                 Plans
               </p>
               <h2 className="mt-3 text-3xl font-bold text-slate-800 md:text-4xl">
@@ -321,8 +321,8 @@ const ServicesPage = () => {
                 onClick={() => setActivePlan("options")}
                 className={`rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${
                   activePlan === "options"
-                    ? "bg-[#105F68] text-white shadow-md"
-                    : "text-[#105F68] hover:bg-[#EAF8F4]"
+                    ? "bg-[#023e7d] text-white shadow-md"
+                    : "text-[#023e7d] hover:bg-[#f1f5f9]"
                 }`}
               >
                 Options
@@ -332,8 +332,8 @@ const ServicesPage = () => {
                 onClick={() => setActivePlan("futures")}
                 className={`rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${
                   activePlan === "futures"
-                    ? "bg-[#105F68] text-white shadow-md"
-                    : "text-[#105F68] hover:bg-[#EAF8F4]"
+                    ? "bg-[#023e7d] text-white shadow-md"
+                    : "text-[#023e7d] hover:bg-[#f1f5f9]"
                 }`}
               >
                 Futures
@@ -362,7 +362,7 @@ const ServicesPage = () => {
       <section className="relative px-5 py-8 md:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0353a4]">
               How It Works
             </p>
             <h2 className="mt-3 text-3xl font-bold text-slate-800 md:text-4xl">
@@ -378,10 +378,10 @@ const ServicesPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
-                className="rounded-[26px] border border-[#CBE7E1] bg-white/85 p-6 shadow-[0_12px_34px_rgba(16,95,104,0.07)] backdrop-blur-sm"
+                className="rounded-[26px] border border-[#5c677d] bg-white/85 p-6 shadow-[0_12px_34px_rgba(2,62,125,0.07)] backdrop-blur-sm"
               >
                 <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[#E7F7F5] text-[#105F68]">
+                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[#E7F7F5] text-[#023e7d]">
                     <Icon className="h-5 w-5" />
                   </div>
                   <div>
@@ -394,7 +394,7 @@ const ServicesPage = () => {
                   </div>
                 </div>
                 <div className="mt-4 flex items-center gap-2 text-xs font-medium text-slate-500">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#C8E6E2] text-[#105F68]">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#7d8597] text-[#023e7d]">
                     {index + 1}
                   </span>
                   <span>Step {index + 1}</span>
@@ -411,11 +411,11 @@ const ServicesPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.42 }}
-          className="mx-auto max-w-6xl rounded-[30px] border border-[#CBE7E1] bg-white/85 px-6 py-8 shadow-[0_16px_42px_rgba(16,95,104,0.08)] backdrop-blur-sm md:px-10"
+          className="mx-auto max-w-6xl rounded-[30px] border border-[#5c677d] bg-white/85 px-6 py-8 shadow-[0_16px_42px_rgba(2,62,125,0.08)] backdrop-blur-sm md:px-10"
         >
           <div className="flex flex-col items-center justify-between gap-5 text-center md:flex-row md:text-left">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0353a4]">
                 Next Step
               </p>
               <h2 className="mt-3 text-3xl font-bold text-slate-800">
@@ -430,13 +430,13 @@ const ServicesPage = () => {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
                 to="/contact"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#9ED5D1] bg-white px-5 py-3 text-sm font-bold text-[#105F68] transition-colors duration-200 hover:bg-[#EAF8F4]"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#5c677d] bg-white px-5 py-3 text-sm font-bold text-[#023e7d] transition-colors duration-200 hover:bg-[#f1f5f9]"
               >
                 Talk to Support
               </Link>
               <Link
                 to="/signup"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(58,146,149,0.22)]"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#0353a4] to-[#023e7d] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(3,83,164,0.22)]"
               >
                 Start Free Trial
                 <ArrowRight className="h-4 w-4" />

@@ -157,7 +157,7 @@ const TradeCard = ({ trade, cardIndex, onViewDetails }) => {
         <button
           type="button"
           onClick={() => onViewDetails(trade)}
-          className="inline-flex items-center gap-1 rounded-full bg-[#E7F7F5] px-4 py-2 text-xs font-semibold text-[#105F68] transition-colors hover:bg-[#d6efeb]"
+          className="inline-flex items-center gap-1 rounded-full bg-[#E7F7F5] px-4 py-2 text-xs font-semibold text-[#023e7d] transition-colors hover:bg-[#d6efeb]"
         >
           View Full Details
           <ExternalLink className="h-3.5 w-3.5" />

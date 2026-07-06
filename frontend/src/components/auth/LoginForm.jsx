@@ -11,7 +11,7 @@ import { useAuthStore } from "../../stores/authStore";
 const inputBase =
   "w-full bg-white border rounded-xl px-4 py-3 pl-10 text-sm text-slate-800 placeholder-slate-400 outline-none transition-all duration-200";
 const inputNormal =
-  "border-slate-200 focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/20";
+  "border-slate-200 focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20";
 const inputError =
   "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-200";
 
@@ -113,7 +113,7 @@ const LoginForm = ({ onSuccess }) => {
       <div className="flex justify-end -mt-2">
         <button
           type="button"
-          className="text-xs text-[#3A9295] hover:text-[#105F68] font-medium transition-colors"
+          className="text-xs text-[#0353a4] hover:text-[#023e7d] font-medium transition-colors"
         >
           Forgot password?
         </button>
@@ -123,9 +123,9 @@ const LoginForm = ({ onSuccess }) => {
       <motion.button
         type="submit"
         disabled={isSubmitting}
-        whileHover={{ scale: 1.02, backgroundColor: "#3A9295" }}
+        whileHover={{ scale: 1.02, backgroundColor: "#0353a4" }}
         whileTap={{ scale: 0.98 }}
-        className="w-full flex items-center justify-center gap-2 bg-[#63C1BB] text-white font-semibold text-sm py-3.5 rounded-xl shadow-md shadow-[#63C1BB]/25 transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-2 bg-[#0466c8] text-white font-semibold text-sm py-3.5 rounded-xl shadow-md shadow-[#0466c8]/25 transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {isSubmitting ?
           <span className="flex items-center gap-2">

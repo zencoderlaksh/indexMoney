@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
   BadgeIndianRupee,
+  Boxes,
   Building2,
   CheckCircle2,
   ClipboardCheck,
@@ -18,6 +19,8 @@ import {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
+const MotionArticle = motion.article;
+
 const WhatsAppIcon = ({ className = "" }) => (
   <svg
     viewBox="0 0 32 32"
@@ -30,38 +33,38 @@ const WhatsAppIcon = ({ className = "" }) => (
   </svg>
 );
 
-const bulletPoints = [
-  "Pre-IPO Companies",
-  "Private Limited Companies",
-  "Growth Stage Businesses",
-];
+// const bulletPoints = [
+//   "Pre-IPO Companies",
+//   "Private Limited Companies",
+//   "Growth Stage Businesses",
+// ];
 
-const serviceCards = [
-  {
-    icon: Building2,
-    title: "Share Availability Assistance",
-    description:
-      "We help you discover live seller-side availability across select private market opportunities.",
-  },
-  {
-    icon: BadgeIndianRupee,
-    title: "Transparent Indicative Pricing",
-    description:
-      "Indicative rates are shared clearly so you can evaluate opportunities with realistic expectations.",
-  },
-  {
-    icon: FileCheck2,
-    title: "Documentation Support",
-    description:
-      "From onboarding to transaction paperwork, we guide you through the required documentation flow.",
-  },
-  {
-    icon: ClipboardCheck,
-    title: "Transfer Coordination",
-    description:
-      "We coordinate the operational steps involved in completing eligible off-market share transfers.",
-  },
-];
+// const serviceCards = [
+//   {
+//     icon: Building2,
+//     title: "Share Availability Assistance",
+//     description:
+//       "We help you discover live seller-side availability across select private market opportunities.",
+//   },
+//   {
+//     icon: BadgeIndianRupee,
+//     title: "Transparent Indicative Pricing",
+//     description:
+//       "Indicative rates are shared clearly so you can evaluate opportunities with realistic expectations.",
+//   },
+//   {
+//     icon: FileCheck2,
+//     title: "Documentation Support",
+//     description:
+//       "From onboarding to transaction paperwork, we guide you through the required documentation flow.",
+//   },
+//   {
+//     icon: ClipboardCheck,
+//     title: "Transfer Coordination",
+//     description:
+//       "We coordinate the operational steps involved in completing eligible off-market share transfers.",
+//   },
+// ];
 
 const fallbackOpportunities = [
   {
@@ -113,7 +116,7 @@ const steps = [
 ];
 
 const inputBase =
-  "w-full rounded-2xl border border-[#D7ECE7] bg-white px-4 py-3 text-sm text-slate-700 outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/25";
+  "w-full rounded-2xl border border-[#7d8597] dark:border-white/10 bg-white dark:bg-[#001845] dark:bg-[#001233] px-4 py-3 text-sm text-slate-700 dark:text-slate-200 dark:text-slate-100 outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/25";
 
 const createSlug = (value) =>
   String(value || "")
@@ -136,14 +139,17 @@ const getDetailPath = (item) => {
   return `/unlisted-shares/${code}/${slug}`;
 };
 
-const getFundamentalPreview = (item) =>
-  [
-    { label: "Market Cap", value: item.marketCap },
-    { label: "ISIN", value: item.isin },
-    { label: "Face Value", value: item.faceValue },
-  ].filter((detail) => detail.value);
+// const getFundamentalPreview = (item) =>
+//   [
+//     { label: "Market Cap", value: item.marketCap },
+//     { label: "ISIN", value: item.isin },
+//     { label: "Face Value", value: item.faceValue },
+//   ].filter((detail) => detail.value);
 
 const UnlistedSharesPage = () => {
+  const location = useLocation();
+  const isCatalogPage = location.pathname === "/unlisted-shares";
+
   const [form, setForm] = useState({
     fullName: "",
     mobileNumber: "",
@@ -153,10 +159,37 @@ const UnlistedSharesPage = () => {
     message: "",
   });
   const [opportunities, setOpportunities] = useState(fallbackOpportunities);
-  const [sheetMeta, setSheetMeta] = useState({
-    title: "Indicative Opportunities Snapshot",
-    sourceFileName: "",
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showAllNewArrivals, setShowAllNewArrivals] = useState(false);
+  const [blogs, setBlogs] = useState([]);
+
+  const itemsPerPage = 12;
+  const totalPages = Math.ceil(opportunities.length / itemsPerPage);
+  const displayedOpportunities = React.useMemo(() => {
+    return opportunities.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  }, [opportunities, currentPage]);
+
+  const newArrivals = React.useMemo(() => {
+    return opportunities.slice().reverse();
+  }, [opportunities]);
+
+  const sectorsData = React.useMemo(() => {
+    const map = {};
+    opportunities.forEach((o) => {
+      const sec = o.sector || "Other Sectors";
+      if (!map[sec]) map[sec] = [];
+      map[sec].push(o);
+    });
+    return Object.entries(map).map(([name, items]) => ({
+      name,
+      count: items.length,
+    })).sort((a, b) => b.count - a.count).slice(0, 8); // Top 8 sectors for home
+  }, [opportunities]);
+
+  // const [sheetMeta, setSheetMeta] = useState({
+  //   title: "Indicative Opportunities Snapshot",
+  //   sourceFileName: "",
+  // });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({
     kind: "",
@@ -183,11 +216,11 @@ const UnlistedSharesPage = () => {
 
         if (latestUpload?.opportunities?.length) {
           setOpportunities(latestUpload.opportunities);
-          setSheetMeta({
-            title:
-              latestUpload.title?.trim() || "Indicative Opportunities Snapshot",
-            sourceFileName: latestUpload.sourceFileName || "",
-          });
+          // setSheetMeta({
+          //   title:
+          //     latestUpload.title?.trim() || "Indicative Opportunities Snapshot",
+          //   sourceFileName: latestUpload.sourceFileName || "",
+          // });
         }
       } catch (error) {
         if (error.name !== "AbortError") {
@@ -196,7 +229,23 @@ const UnlistedSharesPage = () => {
       }
     };
 
+    const loadBlogs = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/blogs`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) return;
+        const payload = await response.json();
+        if (payload?.data) {
+          setBlogs(Array.isArray(payload.data) ? payload.data.slice(0, 3) : []);
+        }
+      } catch {
+        // ignore
+      }
+    };
+
     loadUnlistedOpportunities();
+    loadBlogs();
 
     return () => controller.abort();
   }, []);
@@ -251,88 +300,150 @@ const UnlistedSharesPage = () => {
 
   return (
     <div className="relative overflow-hidden bg-transparent">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(200,230,226,0.42),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(158,213,209,0.20),transparent_34%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(4,102,200,0.12),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(3,83,164,0.10),transparent_34%)]" />
 
-      <section className="relative px-5 pb-10 pt-14 md:px-8 md:pt-18">
-        <div className="mx-auto max-w-5xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-            className="inline-flex items-center gap-2 rounded-full border border-[#BEE3DC] bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#105F68] shadow-sm backdrop-blur-sm"
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            Unlisted Shares
-          </motion.div>
+      {!isCatalogPage && (
+        <section className="relative px-5 pb-10 pt-14 md:px-8 md:pt-18">
+          <div className="mx-auto max-w-7xl grid gap-12 lg:grid-cols-[1fr_420px] xl:grid-cols-[1.1fr_480px] items-center">
+            
+            {/* Left Column */}
+            <div className="text-left">
+              <motion.div
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45 }}
+                className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#023e7d]"
+              >
+                <div className="h-[2px] w-6 bg-[#0466c8]" />
+                Sharing India's Unlisted Shares Information • Since 2018
+              </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.48, delay: 0.08 }}
-            className="mt-5 text-4xl font-extrabold leading-tight text-slate-800 md:text-5xl lg:text-6xl"
-          >
-            Invest in Unlisted and{" "}
-            <span
-              className="bg-clip-text text-transparent"
-              style={{
-                backgroundImage: "linear-gradient(135deg, #3A9295, #105F68)",
-              }}
+              <motion.h1
+                initial={{ opacity: 0, y: 22 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.48, delay: 0.08 }}
+                className="mt-6 text-4xl font-extrabold leading-[1.1] text-slate-800 dark:text-slate-100 md:text-5xl lg:text-6xl lg:leading-[1.15]"
+              >
+                Your clear view of India's{" "}
+                <span className="italic text-[#023e7d]">unlisted</span> & pre-IPO shares.
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.14 }}
+                className="mt-6 text-base leading-relaxed text-slate-600 dark:text-slate-300 md:text-lg"
+              >
+                Browse India's widest list of unlisted, pre-IPO and ESOP shares, with
+                researched company data and indicative prices. When you're ready,
+                we help connect buyers and sellers.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.2 }}
+                className="mt-8 flex flex-wrap items-center gap-4"
+              >
+                <a
+                  href="#opportunities-grid"
+                  className="rounded-2xl bg-[#0353a4] hover:bg-[#023e7d] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#0353a4]/20 transition-all hover:scale-[1.02]"
+                >
+                  Explore unlisted shares
+                </a>
+                <a
+                  href="#unlisted-inquiry-form"
+                  className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] hover:bg-slate-50 dark:hover:bg-white/5 px-6 py-3.5 text-sm font-bold text-slate-800 dark:text-slate-100 transition-all hover:scale-[1.02]"
+                >
+                  Submit Inquiry
+                </a>
+              </motion.div>
+            </div>
+
+            {/* Right Column (Preview Card) */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.45, delay: 0.1 }}
+              className="rounded-[30px] border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 90 shadow-[0_16px_42px_rgba(2,62,125,0.06)] backdrop-blur-sm"
             >
-              Pre-IPO Opportunities
-            </span>
-          </motion.h1>
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 px-6 py-5">
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0353a4]">
+                  Today's Indicative Prices
+                </span>
+                <span className="text-[10px] font-medium text-slate-400">
+                  REF • {new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                </span>
+              </div>
+              
+              <div className="flex flex-col">
+                {opportunities.slice(0, 3).map((item, idx) => (
+                  <div key={item.code || idx} className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/5 last:border-b-0 hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233] transition-colors">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="h-10 w-10 shrink-0 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1">
+                        {item.logoUrl ? (
+                          <img src={item.logoUrl} alt={item.company} className="h-full w-full object-contain" />
+                        ) : (
+                          <span className="text-[10px] font-bold text-[#023e7d]">{getInitials(item.company)}</span>
+                        )}
+                      </div>
+                      <div className="flex flex-col min-w-0 pr-2">
+                        <span className="text-[13px] font-bold text-slate-800 dark:text-slate-100 line-clamp-1">{item.company}</span>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">{item.sector}</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end shrink-0 pl-2 border-l border-slate-100 dark:border-white/5">
+                      <span className="text-[15px] font-bold text-slate-800 dark:text-slate-100">{item.price}</span>
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8]">
+                        Indicative
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.14 }}
-            className="mx-auto mt-5 max-w-3xl text-lg leading-relaxed text-slate-600"
-          >
-            Private Market Investment Assistance and Facilitation
-          </motion.p>
+              <div className="bg-slate-50 dark:bg-[#001233] px-6 py-4 border-t border-slate-100 dark:border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Rates are indicative, not an offer to deal.
+                </span>
+                <button 
+                  onClick={() => {
+                    document.getElementById("opportunities-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  className="text-[12px] font-semibold text-[#0353a4] hover:text-[#023e7d] flex items-center gap-1 group shrink-0"
+                >
+                  See full list 
+                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                </button>
+              </div>
+            </motion.div>
 
-          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a
-              href="#unlisted-inquiry-form"
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(58,146,149,0.22)]"
-            >
-              Submit Inquiry
-              <ArrowRight className="h-4 w-4" />
-            </a>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 rounded-2xl border border-[#9ED5D1] bg-white px-5 py-3 text-sm font-bold text-[#105F68] transition-colors duration-200 hover:bg-[#EAF8F4]"
-            >
-              Contact Now
-            </Link>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <section className="relative px-3 pb-4 sm:px-5 md:px-8">
-        <div className="mx-auto max-w-6xl overflow-hidden rounded-[22px] border border-[#CBE7E1] bg-white/90 shadow-[0_14px_38px_rgba(16,95,104,0.08)] backdrop-blur-sm sm:rounded-[30px]">
-          <div className="border-b border-slate-100 px-4 py-5 sm:px-6">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#3A9295] sm:text-xs sm:tracking-[0.24em]">
-              Available Opportunities
-            </p>
-            <h2 className="mt-2 text-xl font-bold leading-tight text-slate-800 sm:text-2xl">
-              {sheetMeta.title}
-            </h2>
-            {sheetMeta.sourceFileName ?
-              <p className="mt-2 break-words text-[10px] font-medium uppercase tracking-[0.12em] text-slate-400 sm:text-xs sm:tracking-[0.18em]">
-                Source file: {sheetMeta.sourceFileName}
+      <section id="opportunities-grid" className={`relative px-3 pb-4 sm:px-5 md:px-8 ${isCatalogPage ? "pt-24 md:pt-28" : ""}`}>
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 90 shadow-[0_14px_38px_rgba(2,62,125,0.04)] backdrop-blur-sm sm:rounded-[30px]">
+          
+          <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
+                {isCatalogPage ? "ALL SHARES" : "TOP PICKS"}
               </p>
-            : null}
+              <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
+                {isCatalogPage ? "Unlisted & pre-IPO shares" : "Popular unlisted shares"}
+              </h2>
+              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+                {isCatalogPage 
+                  ? `${opportunities.length} companies tracked. Prices shown are indicative and for information only.` 
+                  : "The most-followed names with investors this month. Prices shown are indicative and for information only."
+                }
+              </p>
+            </div>
           </div>
 
-          <div className="grid min-w-0 gap-4 p-3 sm:gap-5 sm:p-5 md:grid-cols-2 xl:grid-cols-3">
-            {opportunities.map((item, index) => {
-              const whatsappText = encodeURIComponent(
-                `Hi Index Money, I want to buy shares in ${item.company}. Please connect me.`,
-              );
-              const whatsappRowLink = `${whatsappLink}?text=${whatsappText}`;
-              const fundamentals = getFundamentalPreview(item);
-
+          <div className="grid min-w-0 gap-6 p-4 sm:p-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" key={currentPage}>
+            {displayedOpportunities.map((item, index) => {
               return (
                 <motion.article
                   key={`${item.company}-${item.sector}`}
@@ -340,241 +451,352 @@ const UnlistedSharesPage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.35, delay: index * 0.04 }}
-                  className="group flex min-w-0 flex-col rounded-[20px] border border-[#D7ECE7] bg-gradient-to-br from-white via-[#FBFEFD] to-[#EFFAF7] p-4 shadow-[0_14px_34px_rgba(16,95,104,0.08)] transition duration-300 hover:-translate-y-1 hover:border-[#91D8CD] hover:shadow-[0_20px_44px_rgba(16,95,104,0.14)] sm:min-h-[360px] sm:rounded-[28px] sm:p-5"
+                  className="group flex min-w-0 flex-col rounded-[24px] border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] p-5 shadow-[0_10px_30px_rgba(2,62,125,0.03)] hover:shadow-[0_20px_40px_rgba(2,62,125,0.07)] transition-all duration-300 hover:-translate-y-1 hover:border-[#0466c8]"
                 >
-                  <div className="flex min-w-0 items-start justify-between gap-3">
-                    <div className="flex min-w-0 flex-1 items-center gap-3">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[#CBE7E1] bg-white text-base font-black text-[#105F68] shadow-sm sm:h-14 sm:w-14 sm:text-lg">
-                        {item.logoUrl ?
-                          <img
-                            src={item.logoUrl}
-                            alt={`${item.company} logo`}
-                            className="h-full w-full object-cover"
-                          />
-                        : getInitials(item.company)}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-[#3A9295] sm:text-xs sm:tracking-[0.18em]">
-                          {item.sector}
-                        </p>
-                        <h3 className="mt-1 line-clamp-2 text-base font-bold leading-snug text-slate-800 sm:text-lg">
-                          {item.company}
-                        </h3>
-                      </div>
+                  {/* Top Row: Logo, Name, Sector */}
+                  <div className="flex items-start gap-3.5 min-w-0">
+                    <div className="h-12 w-12 shrink-0 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1.5">
+                      {item.logoUrl ? (
+                        <img src={item.logoUrl} alt={item.company} className="h-full w-full object-contain" />
+                      ) : (
+                        <span className="text-sm font-bold text-[#023e7d]">{getInitials(item.company)}</span>
+                      )}
                     </div>
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 line-clamp-2 leading-snug group-hover:text-[#0353a4] transition-colors">
+                        {item.company}
+                      </h3>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">{item.sector}</span>
+                    </div>
+                  </div>
 
-                    <span
-                      className={`max-w-[92px] shrink-0 truncate rounded-full px-2.5 py-1 text-[10px] font-bold sm:max-w-[118px] sm:px-3 sm:text-xs ${
-                        item.status === "Available" ?
-                          "bg-emerald-50 text-emerald-700"
-                        : "bg-amber-50 text-amber-700"
-                      }`}
-                    >
-                      {item.badge || item.status}
+                  {/* Middle Row: Price & 15D pill */}
+                  <div className="mt-6 pt-5 border-t border-slate-100 dark:border-white/5 flex items-end justify-between">
+                    <div className="flex flex-col">
+                      <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{item.price}</span>
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8] mt-0.5">
+                        Indicative
+                      </span>
+                    </div>
+                    <span className="rounded-full bg-slate-100 dark:bg-white/10 px-2.5 py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 shrink-0">
+                      {item.faceValue && item.faceValue !== "Upload face value" ? `FV ${item.faceValue}` : "15D"}
                     </span>
                   </div>
 
-                  {item.description ?
-                    <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-slate-500">
-                      {item.description}
-                    </p>
-                  : null}
-
-                  <div className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3">
-                    <div className="min-w-0 rounded-2xl border border-[#E1F1EE] bg-white p-3 sm:p-4">
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400 sm:text-xs sm:tracking-[0.14em]">
-                        Indicative Price
-                      </p>
-                      <p className="mt-2 truncate text-lg font-black text-[#105F68] sm:text-xl">
-                        {item.price}
-                      </p>
-                    </div>
-                    <div className="min-w-0 rounded-2xl border border-[#E1F1EE] bg-white p-3 sm:p-4">
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400 sm:text-xs sm:tracking-[0.14em]">
-                        Minimum
-                      </p>
-                      <p className="mt-2 truncate text-sm font-bold text-slate-800">
-                        {item.minimumInvestment}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 min-h-[92px] rounded-2xl bg-[#F4FBF9] p-3 sm:p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#3A9295] sm:text-xs sm:tracking-[0.18em]">
-                      Fundamentals
-                    </p>
-                    {fundamentals.length ?
-                      <div className="mt-3 space-y-2">
-                        {fundamentals.map((detail) => (
-                          <div
-                            key={detail.label}
-                            className="flex min-w-0 items-center justify-between gap-3 text-xs"
-                          >
-                            <span className="min-w-0 truncate text-slate-500">
-                              {detail.label}
-                            </span>
-                            <span className="max-w-[54%] truncate font-bold text-slate-800 sm:max-w-[58%]">
-                              {detail.value}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    : <p className="mt-3 text-sm leading-relaxed text-slate-500">
-                        Upload fundamentals columns to show market cap, ISIN,
-                        face value and more.
-                      </p>
-                    }
-                  </div>
-
-                  <div className="mt-auto flex min-w-0 items-center gap-2.5 pt-5 sm:gap-3">
+                  {/* Bottom Row: Enquire & Details Buttons */}
+                  <div className="mt-6 flex items-center gap-3 pt-2">
+                    <button
+                      onClick={() => {
+                        setForm((prev) => ({ ...prev, interestedCompany: item.company }));
+                        document.getElementById("unlisted-inquiry-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }}
+                      className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#001233] rounded-xl transition-colors duration-200"
+                    >
+                      Enquire
+                    </button>
                     <Link
                       to={getDetailPath(item)}
-                      className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-3 py-3 text-xs font-bold text-white shadow-[0_12px_24px_rgba(58,146,149,0.18)] transition duration-200 hover:-translate-y-0.5 sm:px-4 sm:text-sm"
+                      className="px-4 py-2.5 text-center text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-[#0353a4] border border-slate-200 dark:border-white/10 hover:border-[#0353a4] bg-white dark:bg-[#001845] rounded-xl transition-colors duration-200"
                     >
-                      View details
-                      <ArrowRight className="h-4 w-4" />
+                      Details
                     </Link>
-                    <a
-                      href={whatsappRowLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`Chat with Index Money about ${item.company} on WhatsApp`}
-                      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#63C1BB] bg-[#EAF8F4] text-[#105F68] transition-colors duration-200 hover:bg-[#d4f0ea] sm:h-12 sm:w-12"
-                    >
-                      <WhatsAppIcon className="h-5 w-5" />
-                    </a>
                   </div>
                 </motion.article>
               );
             })}
           </div>
 
-          <div className="border-t border-slate-100 px-4 py-4 text-xs leading-relaxed text-slate-500 sm:px-6 sm:text-sm">
+          {totalPages > 1 && (
+            <div className="border-t border-slate-100 dark:border-white/5 py-6 flex items-center justify-center gap-2">
+              <button
+                onClick={() => {
+                  setCurrentPage((p) => Math.max(1, p - 1));
+                  document.getElementById("opportunities-grid")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-xs font-bold rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001233] hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                Previous
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => {
+                    setCurrentPage(page);
+                    document.getElementById("opportunities-grid")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className={`w-9 h-9 text-xs font-bold rounded-xl transition-all ${
+                    currentPage === page
+                      ? "bg-[#0353a4] text-white shadow-md shadow-[#0353a4]/20 border border-[#0353a4]"
+                      : "border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001233] hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => {
+                  setCurrentPage((p) => Math.min(totalPages, p + 1));
+                  document.getElementById("opportunities-grid")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-xs font-bold rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001233] hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          )}
+
+          <div className="border-t border-slate-100 dark:border-white/5 px-4 py-4 text-xs leading-relaxed text-slate-500 dark:text-slate-400 sm:px-6 sm:text-sm">
             *Prices and fundamentals are indicative and will be updated from the
             backend upload.
           </div>
         </div>
       </section>
 
-      <section className="relative px-5 py-8 md:px-8">
-        <div className="mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[1fr_1.05fr]">
-          <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45 }}
-            className="relative overflow-hidden rounded-[32px] border border-[#CBE7E1] bg-gradient-to-br from-[#F6FEFC] via-white to-[#E9F7F3] p-8 shadow-[0_18px_42px_rgba(16,95,104,0.08)]"
-          >
-            <div className="pointer-events-none absolute right-0 top-0 h-52 w-52 rounded-full bg-[#C8E6E2]/45 blur-3xl" />
-            <div className="relative">
-              <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#105F68] to-[#3A9295] text-white shadow-lg">
-                <Landmark className="h-6 w-6" strokeWidth={2.1} />
+      {/* New Arrivals Section */}
+      {!isCatalogPage && (
+        <section id="new-arrivals-grid" className="relative px-3 pb-4 sm:px-5 md:px-8 mt-12">
+          <div className="mx-auto max-w-7xl overflow-hidden rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 90 shadow-[0_14px_38px_rgba(2,62,125,0.04)] backdrop-blur-sm sm:rounded-[30px]">
+            
+            <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
+                  FRESH ADDITIONS
+                </p>
+                <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
+                  New arrivals
+                </h2>
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+                  Recently added names. Research the company, then contact us when you're ready.
+                </p>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-white/80 bg-white/80 p-5 backdrop-blur-sm">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#3A9295]">
-                    Private Market
-                  </p>
-                  <p className="mt-2 text-lg font-bold text-slate-800">
-                    Access curated off-market opportunities
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-white/80 bg-white/80 p-5 backdrop-blur-sm">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#3A9295]">
-                    Investor Support
-                  </p>
-                  <p className="mt-2 text-lg font-bold text-slate-800">
-                    Coordinated assistance through each step
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 rounded-3xl border border-[#D9ECE8] bg-[#0F2830] p-6 text-white">
-                <div className="flex items-center gap-3">
-                  <TrendingUp className="h-5 w-5 text-[#8DD4CC]" />
-                  <p className="text-sm font-semibold text-[#D7F4EE]">
-                    Select private opportunities may become future public market
-                    candidates.
-                  </p>
-                </div>
-              </div>
+              
+              <button 
+                onClick={() => setShowAllNewArrivals(!showAllNewArrivals)}
+                className="hidden md:inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] px-4 py-2 text-xs font-semibold text-[#0353a4] hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233] transition-colors"
+              >
+                {showAllNewArrivals ? "Show less" : "View all"} <ArrowRight className="h-3 w-3" />
+              </button>
             </div>
-          </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45, delay: 0.08 }}
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
-              What Are Unlisted Shares?
-            </p>
-            <h2 className="mt-3 text-3xl font-bold text-slate-800 md:text-4xl">
-              What Are Unlisted Shares?
-            </h2>
-            <p className="mt-5 text-base leading-relaxed text-slate-600 md:text-lg">
-              Unlisted shares are equity shares of companies that are not traded
-              on public stock exchanges. These may include pre-IPO businesses,
-              private companies, and growth-stage firms where transactions
-              typically happen through private market facilitation and
-              off-market transfer processes.
-            </p>
+            <div className="grid min-w-0 gap-6 p-4 sm:p-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {(showAllNewArrivals ? newArrivals : newArrivals.slice(0, 4)).map((item, index) => {
+                return (
+                  <motion.article
+                    key={`new-${item.company}-${item.sector}`}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.35, delay: index * 0.04 }}
+                    className="group flex min-w-0 flex-col rounded-[24px] border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] p-5 shadow-[0_10px_30px_rgba(2,62,125,0.03)] hover:shadow-[0_20px_40px_rgba(2,62,125,0.07)] transition-all duration-300 hover:-translate-y-1 hover:border-[#0466c8]"
+                  >
+                    {/* Top Row: Logo, Name, Sector */}
+                    <div className="flex items-start gap-3.5 min-w-0">
+                      <div className="h-12 w-12 shrink-0 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1.5">
+                        {item.logoUrl ? (
+                          <img src={item.logoUrl} alt={item.company} className="h-full w-full object-contain" />
+                        ) : (
+                          <span className="text-sm font-bold text-[#023e7d]">{getInitials(item.company)}</span>
+                        )}
+                      </div>
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 line-clamp-2 leading-snug group-hover:text-[#0353a4] transition-colors">
+                          {item.company}
+                        </h3>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">{item.sector}</span>
+                      </div>
+                    </div>
 
-            <div className="mt-6 space-y-3">
-              {bulletPoints.map((point) => (
-                <div key={point} className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EAF8F4] text-[#3A9295]">
-                    <CheckCircle2 className="h-4 w-4" />
-                  </span>
-                  <span className="font-medium text-slate-700">{point}</span>
-                </div>
+                    {/* Middle Row: Price & 15D pill */}
+                    <div className="mt-6 pt-5 border-t border-slate-100 dark:border-white/5 flex items-end justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{item.price}</span>
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8] mt-0.5">
+                          Indicative
+                        </span>
+                      </div>
+                      <span className="rounded-full bg-slate-100 dark:bg-white/10 px-2.5 py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 shrink-0">
+                        {item.faceValue && item.faceValue !== "Upload face value" ? `FV ${item.faceValue}` : "15D"}
+                      </span>
+                    </div>
+
+                    {/* Bottom Row: Enquire & Details Buttons */}
+                    <div className="mt-6 flex items-center gap-3 pt-2">
+                      <button
+                        onClick={() => {
+                          setForm((prev) => ({ ...prev, interestedCompany: item.company }));
+                          document.getElementById("unlisted-inquiry-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }}
+                        className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#001233] rounded-xl transition-colors duration-200"
+                      >
+                        Enquire
+                      </button>
+                      <Link
+                        to={getDetailPath(item)}
+                        className="px-4 py-2.5 text-center text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-[#0353a4] border border-slate-200 dark:border-white/10 hover:border-[#0353a4] bg-white dark:bg-[#001845] rounded-xl transition-colors duration-200"
+                      >
+                        Details
+                      </Link>
+                    </div>
+                  </motion.article>
+                );
+              })}
+            </div>
+
+            {!showAllNewArrivals && newArrivals.length > 4 && (
+              <div className="pb-8 flex justify-center">
+                <button
+                  onClick={() => setShowAllNewArrivals(true)}
+                  className="inline-flex items-center gap-2 rounded-full bg-[#0353a4] hover:bg-[#023e7d] px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:scale-[1.02]"
+                >
+                  View All New Arrivals
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Top Sectors Section */}
+      {!isCatalogPage && (
+        <section id="homepage-sectors" className="relative px-3 pb-4 sm:px-5 md:px-8 mt-12">
+          <div className="mx-auto max-w-7xl overflow-hidden rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 90 shadow-[0_14px_38px_rgba(2,62,125,0.04)] backdrop-blur-sm sm:rounded-[30px]">
+            
+            <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
+                  EXPLORE
+                </p>
+                <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
+                  Top sectors in the unlisted market
+                </h2>
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+                  Navigate the corners of the private market shaping India's next listings.
+                </p>
+              </div>
+              
+              <Link 
+                to="/sectors"
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] px-4 py-2 text-xs font-semibold text-[#0353a4] hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233] transition-colors"
+              >
+                All sectors <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+
+            <div className="grid min-w-0 gap-5 p-5 sm:p-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {sectorsData.map((sec) => {
+                return (
+                  <Link
+                    key={`home-sec-${sec.name}`}
+                    to={`/sectors?sector=${encodeURIComponent(sec.name)}`}
+                    className="group rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] p-5 shadow-[0_4px_12px_rgba(0,18,51,0.02)] hover:shadow-[0_16px_32px_rgba(0,18,51,0.05)] hover:border-[#0466c8] transition-all duration-300 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 dark:bg-[#001233] text-[#0353a4] group-hover:bg-[#0466c8]/10 group-hover:text-[#0466c8] transition-all">
+                        <Boxes className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-[#0353a4] transition-colors">
+                          {sec.name}
+                        </h3>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          {sec.count} {sec.count === 1 ? "share" : "shares"}
+                        </p>
+                      </div>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-[#0466c8] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Knowledge Center Section */}
+      {!isCatalogPage && blogs.length > 0 && (
+        <section id="homepage-knowledge-center" className="relative px-3 pb-4 sm:px-5 md:px-8 mt-12">
+          <div className="mx-auto max-w-7xl overflow-hidden rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 90 shadow-[0_14px_38px_rgba(2,62,125,0.04)] backdrop-blur-sm sm:rounded-[30px]">
+            
+            <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
+                  KNOWLEDGE CENTRE
+                </p>
+                <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
+                  Unlisted shares, explained
+                </h2>
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+                  Research, IPO buzz and market notes — from our research team. For information only, not advice.
+                </p>
+              </div>
+              
+              <Link 
+                to="/knowledge-center"
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] px-4 py-2 text-xs font-semibold text-[#0353a4] hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233] transition-colors"
+              >
+                View all <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+
+            <div className="grid min-w-0 gap-6 p-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {blogs.map((blog) => (
+                <MotionArticle
+                  key={blog.id || blog.slug}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4 }}
+                  className="overflow-hidden rounded-[24px] border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-[0_10px_30px_rgba(2,62,125,0.02)] hover:shadow-[0_20px_40px_rgba(2,62,125,0.06)] hover:border-[#0466c8] transition-all duration-300 flex flex-col"
+                >
+                  {blog.coverImageUrl ? (
+                    <img
+                      src={blog.coverImageUrl}
+                      alt={blog.title}
+                      className="h-56 w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-56 items-center justify-center bg-gradient-to-br from-[#ebf4f8] to-[#7d8597]/20 px-6 text-center">
+                      <span className="text-base font-bold text-[#023e7d]">{blog.title}</span>
+                    </div>
+                  )}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                      <span>{new Date(blog.publishedAt || blog.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                      <span>•</span>
+                      <span className="text-[#0466c8]">{blog.category || "RESEARCH"}</span>
+                    </div>
+                    <h3 className="text-xl font-bold leading-tight text-slate-800 dark:text-slate-100 line-clamp-2 hover:text-[#0353a4] transition-colors">
+                      <Link to={`/knowledge-center/${blog.slug}`}>{blog.title}</Link>
+                    </h3>
+                    <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-500 dark:text-slate-400 flex-1">
+                      {blog.excerpt}
+                    </p>
+                    <Link
+                      to={`/knowledge-center/${blog.slug}`}
+                      className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#023e7d] hover:text-[#0353a4]"
+                    >
+                      Read Article <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                </MotionArticle>
               ))}
             </div>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       <section className="relative px-5 py-8 md:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
-              Our Services
-            </p>
-            <h2 className="mt-3 text-3xl font-bold text-slate-800 md:text-4xl">
-              End-to-End Assistance for Private Market Transactions
-            </h2>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            {serviceCards.map(({ icon: Icon, title, description }, index) => (
-              <motion.div
-                key={title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: index * 0.08 }}
-                className="rounded-[28px] border border-[#CBE7E1] bg-white/85 p-6 shadow-[0_14px_38px_rgba(16,95,104,0.08)] backdrop-blur-sm"
-              >
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#C8E6E2] to-[#63C1BB] text-[#105F68]">
-                  <Icon className="h-5 w-5" strokeWidth={2.2} />
-                </div>
-                <h3 className="text-xl font-bold text-slate-800">{title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                  {description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="relative px-5 py-8 md:px-8">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-8 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0353a4]">
               How It Works
             </p>
-            <h2 className="mt-3 text-3xl font-bold text-slate-800 md:text-4xl">
+            <h2 className="mt-3 text-3xl font-bold text-slate-800 dark:text-slate-100 md:text-4xl">
               Simple Process, Guided Support
             </h2>
           </div>
@@ -587,12 +809,12 @@ const UnlistedSharesPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
-                className="rounded-[26px] border border-[#CBE7E1] bg-white/85 p-6 text-center shadow-[0_12px_34px_rgba(16,95,104,0.07)] backdrop-blur-sm"
+                className="rounded-[26px] border border-[#5c677d] bg-white/90 dark:bg-[#001845]/90 85 p-6 text-center shadow-[0_12px_34px_rgba(2,62,125,0.07)] backdrop-blur-sm"
               >
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#3A9295] to-[#105F68] text-base font-bold text-white">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0353a4] to-[#023e7d] text-base font-bold text-white">
                   {index + 1}
                 </div>
-                <p className="mt-4 text-base font-semibold leading-relaxed text-slate-800">
+                <p className="mt-4 text-base font-semibold leading-relaxed text-slate-800 dark:text-slate-100">
                   {step}
                 </p>
               </motion.div>
@@ -611,15 +833,15 @@ const UnlistedSharesPage = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45 }}
-            className="rounded-[30px] border border-[#CBE7E1] bg-white/90 p-7 shadow-[0_16px_42px_rgba(16,95,104,0.08)] backdrop-blur-sm md:p-8"
+            className="rounded-[30px] border border-[#5c677d] bg-white/90 dark:bg-[#001845]/90 90 p-7 shadow-[0_16px_42px_rgba(2,62,125,0.08)] backdrop-blur-sm md:p-8"
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3A9295]">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0353a4]">
               Inquiry Form
             </p>
-            <h2 className="mt-3 text-3xl font-bold text-slate-800">
+            <h2 className="mt-3 text-3xl font-bold text-slate-800 dark:text-slate-100">
               Tell Us Your Interest
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-slate-600">
+            <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
               Share your requirement and our team will respond with available
               options, indicative pricing, and next steps.
             </p>
@@ -699,13 +921,13 @@ const UnlistedSharesPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#3A9295] to-[#105F68] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(58,146,149,0.22)] disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#0353a4] to-[#023e7d] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(3,83,164,0.22)] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 Submit Inquiry
                 <Send className="h-4 w-4" />
               </button>
 
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 This inquiry is now saved separately in MongoDB for the Unlisted
                 Shares page.
               </p>
@@ -717,9 +939,9 @@ const UnlistedSharesPage = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: 0.08 }}
-            className="rounded-[30px] border border-[#9FE2B3] bg-gradient-to-br from-[#1F905A] to-[#0E7A52] p-7 text-white shadow-[0_16px_42px_rgba(16,125,82,0.24)]"
+            className="rounded-[30px] border border-[#0466c8] bg-gradient-to-br from-[#0353a4] to-[#023e7d] p-7 text-white shadow-[0_16px_42px_rgba(4,102,200,0.24)]"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 dark:bg-[#001845]/90 15">
               <MessageCircle className="h-5 w-5" />
             </div>
             <h3 className="mt-5 text-2xl font-bold">WhatsApp Quick Connect</h3>
@@ -732,13 +954,13 @@ const UnlistedSharesPage = () => {
               href={whatsappLink}
               target="_blank"
               rel="noreferrer"
-              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-[#107D52]"
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white dark:bg-[#001845] px-5 py-3 text-sm font-bold text-[#023e7d]"
             >
               <WhatsAppIcon className="h-4 w-4" />
               Chat on WhatsApp
             </a>
 
-            <div className="mt-6 rounded-2xl bg-white/10 p-4">
+            <div className="mt-6 rounded-2xl bg-white/90 dark:bg-[#001845]/90 10 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
                 Support Window
               </p>
@@ -747,7 +969,7 @@ const UnlistedSharesPage = () => {
               </p>
             </div>
 
-            <div className="mt-4 rounded-2xl bg-white/10 p-4">
+            <div className="mt-4 rounded-2xl bg-white/90 dark:bg-[#001845]/90 10 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
                 Best Use Case
               </p>
@@ -772,8 +994,8 @@ const UnlistedSharesPage = () => {
               <ShieldAlert className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-slate-800">Disclaimer</h2>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600 md:text-base">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Disclaimer</h2>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300 md:text-base">
                 Index Money provides facilitation support in unlisted share
                 transactions. We do not guarantee listing, returns, or price
                 appreciation. Investments in unlisted securities carry higher

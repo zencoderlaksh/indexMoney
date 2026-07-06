@@ -58,7 +58,7 @@ const BlogContent = ({ content }) => {
 
   return (
     <div
-      className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-p:leading-8 prose-a:text-[#105F68]"
+      className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-p:leading-8 prose-a:text-[#023e7d]"
       dangerouslySetInnerHTML={{ __html: htmlContent }}
     />
   );
@@ -70,7 +70,7 @@ const BlogCard = ({ blog }) => (
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ duration: 0.4 }}
-    className="overflow-hidden rounded-[28px] border border-[#D7ECE7] bg-white shadow-[0_14px_36px_rgba(16,95,104,0.08)]"
+    className="overflow-hidden rounded-[28px] border border-[#7d8597] bg-white dark:bg-[#001845] shadow-[0_14px_36px_rgba(2,62,125,0.08)]"
   >
     {blog.coverImageUrl ?
       <img
@@ -78,8 +78,8 @@ const BlogCard = ({ blog }) => (
         alt={blog.title}
         className="h-56 w-full object-cover"
       />
-    : <div className="flex h-56 items-center justify-center bg-gradient-to-br from-[#E7F7F5] to-[#C8E6E2] px-6 text-center">
-        <span className="text-lg font-bold text-[#105F68]">{blog.title}</span>
+    : <div className="flex h-56 items-center justify-center bg-gradient-to-br from-[#E7F7F5] to-[#7d8597] px-6 text-center">
+        <span className="text-lg font-bold text-[#023e7d]">{blog.title}</span>
       </div>
     }
     <div className="p-6">
@@ -93,14 +93,14 @@ const BlogCard = ({ blog }) => (
       <h2 className="text-2xl font-bold leading-tight text-slate-900">
         {blog.title}
       </h2>
-      <p className="mt-3 line-clamp-3 text-sm leading-7 text-slate-600">
+      <p className="mt-3 line-clamp-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
         {blog.excerpt}
       </p>
       <Link
-        to={`/blogs/${blog.slug}`}
-        className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#105F68]"
+        to={`/knowledge-center/${blog.slug}`}
+        className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#023e7d]"
       >
-        Read Blog <ArrowRight className="h-4 w-4" />
+        Read Article <ArrowRight className="h-4 w-4" />
       </Link>
     </div>
   </motion.article>
@@ -150,7 +150,7 @@ const BlogsPage = () => {
   React.useEffect(() => {
     const siteUrl = window.location.origin;
     const pageTitle =
-      activeBlog?.metaTitle || activeBlog?.title || "Blogs | Index Money";
+      activeBlog?.metaTitle || activeBlog?.title || "Knowledge Center | Index Money";
     const description =
       activeBlog?.metaDescription ||
       activeBlog?.excerpt ||
@@ -167,7 +167,7 @@ const BlogsPage = () => {
     if (activeBlog?.coverImageUrl)
       setMetaTag("og:image", activeBlog.coverImageUrl, "property");
     setCanonical(
-      activeBlog ? `${siteUrl}/blogs/${activeBlog.slug}` : `${siteUrl}/blogs`,
+      activeBlog ? `${siteUrl}/knowledge-center/${activeBlog.slug}` : `${siteUrl}/knowledge-center`,
     );
 
     const existingScript = document.getElementById("blog-json-ld");
@@ -190,7 +190,7 @@ const BlogsPage = () => {
         publisher: { "@type": "Organization", name: "Index Money" },
         datePublished: activeBlog.publishedAt,
         dateModified: activeBlog.updatedAt,
-        mainEntityOfPage: `${siteUrl}/blogs/${activeBlog.slug}`,
+        mainEntityOfPage: `${siteUrl}/knowledge-center/${activeBlog.slug}`,
       });
       document.head.appendChild(script);
     }
@@ -201,24 +201,24 @@ const BlogsPage = () => {
       <main className="bg-[#F7FBFA] px-5 py-12 md:px-8 md:py-16">
         <div className="mx-auto max-w-4xl">
           <Link
-            to="/blogs"
-            className="mb-8 inline-flex items-center gap-2 text-sm font-bold text-[#105F68]"
+            to="/knowledge-center"
+            className="mb-8 inline-flex items-center gap-2 text-sm font-bold text-[#023e7d]"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Blogs
+            Back to Knowledge Center
           </Link>
 
           {loading ?
-            <div className="rounded-[28px] border border-[#D7ECE7] bg-white p-10 text-center text-slate-500">
-              Loading blog...
+            <div className="rounded-[28px] border border-[#7d8597] bg-white dark:bg-[#001845] p-10 text-center text-slate-500 dark:text-slate-400">
+              Loading article...
             </div>
           : error || !activeBlog ?
-            <div className="rounded-[28px] border border-amber-200 bg-white p-10 text-center text-amber-700">
-              {error || "Blog not found."}
+            <div className="rounded-[28px] border border-amber-200 bg-white dark:bg-[#001845] p-10 text-center text-amber-700">
+              {error || "Article not found."}
             </div>
           : <article>
               <header className="mb-8">
-                <div className="mb-5 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#3A9295]">
+                <div className="mb-5 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#0353a4]">
                   <span className="inline-flex items-center gap-1.5">
                     <CalendarDays className="h-3.5 w-3.5" />
                     {formatDate(activeBlog.publishedAt || activeBlog.createdAt)}
@@ -232,7 +232,7 @@ const BlogsPage = () => {
                 <h1 className="text-4xl font-extrabold leading-tight text-slate-900 md:text-6xl">
                   {activeBlog.title}
                 </h1>
-                <p className="mt-5 text-lg leading-8 text-slate-600">
+                <p className="mt-5 text-lg leading-8 text-slate-600 dark:text-slate-300">
                   {activeBlog.excerpt}
                 </p>
               </header>
@@ -245,7 +245,7 @@ const BlogsPage = () => {
                 />
               : null}
 
-              <section className="rounded-[30px] border border-[#D7ECE7] bg-white p-6 shadow-[0_14px_36px_rgba(16,95,104,0.08)] md:p-9">
+              <section className="rounded-[30px] border border-[#7d8597] bg-white dark:bg-[#001845] p-6 shadow-[0_14px_36px_rgba(2,62,125,0.08)] md:p-9">
                 <BlogContent content={activeBlog.content} />
               </section>
             </article>
@@ -258,25 +258,24 @@ const BlogsPage = () => {
   return (
     <main className="bg-[#F7FBFA] px-5 py-12 md:px-8 md:py-16">
       <section className="mx-auto max-w-5xl text-center">
-        <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#3A9295]">
-          Index Money Blogs
+        <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#0353a4]">
+          Knowledge Center
         </p>
         <h1 className="mt-4 text-4xl font-extrabold text-slate-900 md:text-6xl">
-          Market insights, investing guides, and practical finance education
+          Unlisted shares, explained
         </h1>
-        <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-slate-600">
-          Read published articles from Index Money on market awareness, trading
-          discipline, unlisted shares, and long-term investing decisions.
+        <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-slate-600 dark:text-slate-300">
+          Research, IPO buzz and market notes — from our research team. For information only, not advice.
         </p>
       </section>
 
       <section className="mx-auto mt-10 max-w-6xl">
         {loading ?
-          <div className="rounded-[28px] border border-[#D7ECE7] bg-white p-10 text-center text-slate-500">
-            Loading blogs...
+          <div className="rounded-[28px] border border-[#7d8597] bg-white dark:bg-[#001845] p-10 text-center text-slate-500 dark:text-slate-400">
+            Loading articles...
           </div>
         : error ?
-          <div className="rounded-[28px] border border-amber-200 bg-white p-10 text-center text-amber-700">
+          <div className="rounded-[28px] border border-amber-200 bg-white dark:bg-[#001845] p-10 text-center text-amber-700">
             {error}
           </div>
         : blogs.length ?
@@ -285,13 +284,13 @@ const BlogsPage = () => {
               <BlogCard key={blog.id || blog.slug} blog={blog} />
             ))}
           </div>
-        : <div className="rounded-[28px] border border-[#D7ECE7] bg-white p-10 text-center">
+        : <div className="rounded-[28px] border border-[#7d8597] bg-white dark:bg-[#001845] p-10 text-center">
             <SearchX className="mx-auto h-10 w-10 text-slate-300" />
-            <h2 className="mt-4 text-xl font-bold text-slate-800">
-              No blogs published yet
+            <h2 className="mt-4 text-xl font-bold text-slate-800 dark:text-slate-100">
+              No articles published yet
             </h2>
-            <p className="mt-2 text-sm text-slate-500">
-              Published blogs from the admin dashboard will appear here.
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              Published articles from the admin dashboard will appear here.
             </p>
           </div>
         }

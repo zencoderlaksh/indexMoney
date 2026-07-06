@@ -9,17 +9,17 @@ import { IMAGES } from "../../constants/images";
 /* ── Background decoration ─────────────────────────────────────────────────── */
 const BgDecor = () => (
   <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-    <div className="absolute inset-0 bg-gradient-to-br from-[#C8E6E2]/40 via-white to-[#9ED5D1]/30" />
+    <div className="absolute inset-0 bg-gradient-to-br from-[#7d8597]/40 via-white to-[#5c677d]/30" />
     <div
       className="absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full opacity-25"
       style={{
-        background: "radial-gradient(circle, #63C1BB 0%, transparent 70%)",
+        background: "radial-gradient(circle, #0466c8 0%, transparent 70%)",
       }}
     />
     <div
       className="absolute -bottom-40 -right-40 w-[640px] h-[640px] rounded-full opacity-15"
       style={{
-        background: "radial-gradient(circle, #3A9295 0%, transparent 70%)",
+        background: "radial-gradient(circle, #0353a4 0%, transparent 70%)",
       }}
     />
     <svg
@@ -31,7 +31,7 @@ const BgDecor = () => (
           <path
             d="M 40 0 L 0 0 0 40"
             fill="none"
-            stroke="#105F68"
+            stroke="#023e7d"
             strokeWidth="1"
           />
         </pattern>
@@ -54,8 +54,8 @@ const ProgressSteps = ({ current = 0 }) => (
           <div className="flex flex-col items-center gap-1">
             <div
               className={`flex items-center justify-center w-7 h-7 rounded-full border-2 transition-all duration-300 ${
-                done ? "bg-[#63C1BB] border-[#63C1BB]"
-                : active ? "bg-white border-[#63C1BB]"
+                done ? "bg-[#0466c8] border-[#0466c8]"
+                : active ? "bg-white border-[#0466c8]"
                 : "bg-white border-white/40"
               }`}
             >
@@ -65,9 +65,9 @@ const ProgressSteps = ({ current = 0 }) => (
                   strokeWidth={2.5}
                 />
               : <Circle
-                  className={`w-3 h-3 ${active ? "text-[#63C1BB]" : "text-white/40"}`}
+                  className={`w-3 h-3 ${active ? "text-[#0466c8]" : "text-white/40"}`}
                   strokeWidth={2.5}
-                  fill={active ? "#63C1BB" : "none"}
+                  fill={active ? "#0466c8" : "none"}
                 />
               }
             </div>
@@ -80,7 +80,7 @@ const ProgressSteps = ({ current = 0 }) => (
           {i < steps.length - 1 && (
             <div
               className={`flex-1 h-[2px] mx-2 mb-5 rounded-full transition-all duration-300 ${
-                i < current ? "bg-[#63C1BB]" : "bg-white/20"
+                i < current ? "bg-[#0466c8]" : "bg-white/20"
               }`}
               style={{ minWidth: 32 }}
             />
@@ -117,7 +117,7 @@ const SignupPage = () => {
         className="w-full max-w-[460px] bg-white rounded-2xl shadow-xl shadow-slate-200/70 border border-slate-100 overflow-hidden"
       >
         {/* Brand strip */}
-        <div className="bg-gradient-to-r from-[#105F68] to-[#3A9295] px-8 pt-6 pb-5 text-center">
+        <div className="bg-gradient-to-r from-[#023e7d] to-[#0353a4] px-8 pt-6 pb-5 text-center">
           <button
             onClick={() => navigate("/")}
             className="inline-flex items-center justify-center group"
@@ -147,7 +147,7 @@ const SignupPage = () => {
             Already have an account?{" "}
             <button
               onClick={() => navigate("/login")}
-              className="text-[#3A9295] font-semibold hover:text-[#105F68] transition-colors"
+              className="text-[#0353a4] font-semibold hover:text-[#023e7d] transition-colors"
             >
               Login
             </button>
@@ -155,7 +155,7 @@ const SignupPage = () => {
 
           <div className="flex items-center justify-center gap-1.5 mt-4">
             <ShieldCheck
-              className="w-3.5 h-3.5 text-[#63C1BB]"
+              className="w-3.5 h-3.5 text-[#0466c8]"
               strokeWidth={2}
             />
             <p className="text-[11px] text-slate-400">

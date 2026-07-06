@@ -82,7 +82,7 @@ const MissionVisionSection = () => {
                 className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E7F7F5] text-[#105F68]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E7F7F5] text-[#023e7d]">
                     <Icon className="h-5 w-5" />
                   </div>
                   <div>

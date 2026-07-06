@@ -77,14 +77,14 @@ const Breadcrumb = () => (
   <nav className="mb-8 flex items-center gap-1.5 text-xs text-slate-400">
     <Link
       to="/"
-      className="flex items-center gap-1 transition-colors hover:text-[#105F68]"
+      className="flex items-center gap-1 transition-colors hover:text-[#023e7d]"
     >
       <Home className="h-3 w-3" /> Home
     </Link>
     <ChevronRight className="h-3 w-3" />
     <span className="text-slate-400">Subscription</span>
     <ChevronRight className="h-3 w-3" />
-    <span className="font-semibold text-[#105F68]">Checkout</span>
+    <span className="font-semibold text-[#023e7d]">Checkout</span>
   </nav>
 );
 
@@ -123,7 +123,7 @@ const PlanSummary = ({ plan }) => {
     >
       <div
         className="flex flex-col gap-5 rounded-2xl p-6 shadow-xl"
-        style={{ background: "linear-gradient(135deg, #105F68, #3A9295)" }}
+        style={{ background: "linear-gradient(135deg, #023e7d, #0353a4)" }}
       >
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/15">
@@ -158,13 +158,13 @@ const PlanSummary = ({ plan }) => {
         </ul>
       </div>
 
-      <div className="flex items-start gap-3 rounded-xl border border-[#9ED5D1] bg-[#C8E6E2]/50 p-4">
+      <div className="flex items-start gap-3 rounded-xl border border-[#5c677d] bg-[#7d8597]/50 p-4">
         <Shield
-          className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#105F68]"
+          className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#023e7d]"
           strokeWidth={2}
         />
         <div>
-          <p className="text-sm font-bold text-[#105F68]">
+          <p className="text-sm font-bold text-[#023e7d]">
             7-Day Money-Back Guarantee
           </p>
           <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
@@ -207,13 +207,13 @@ const SuccessModal = ({ plan, onClose }) => {
         <div
           className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full"
           style={{
-            background: "radial-gradient(circle, #C8E6E2 0%, transparent 70%)",
+            background: "radial-gradient(circle, #7d8597 0%, transparent 70%)",
           }}
         />
         <div
           className="pointer-events-none absolute -bottom-12 -left-12 h-36 w-36 rounded-full"
           style={{
-            background: "radial-gradient(circle, #9ED5D1 0%, transparent 70%)",
+            background: "radial-gradient(circle, #5c677d 0%, transparent 70%)",
           }}
         />
 
@@ -227,7 +227,7 @@ const SuccessModal = ({ plan, onClose }) => {
             delay: 0.15,
           }}
           className="relative mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full"
-          style={{ background: "linear-gradient(135deg, #3A9295, #105F68)" }}
+          style={{ background: "linear-gradient(135deg, #0353a4, #023e7d)" }}
         >
           <PartyPopper className="h-9 w-9 text-white" strokeWidth={2} />
         </motion.div>
@@ -253,7 +253,7 @@ const SuccessModal = ({ plan, onClose }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
-          className="mb-5 text-base font-bold text-[#105F68]"
+          className="mb-5 text-base font-bold text-[#023e7d]"
         >
           {plan?.title}
         </motion.p>
@@ -261,7 +261,7 @@ const SuccessModal = ({ plan, onClose }) => {
         <div className="mb-5 h-1.5 overflow-hidden rounded-full bg-slate-100">
           <motion.div
             className="h-full rounded-full"
-            style={{ background: "linear-gradient(90deg, #63C1BB, #105F68)" }}
+            style={{ background: "linear-gradient(90deg, #0466c8, #023e7d)" }}
             initial={{ width: "0%" }}
             animate={{ width: "100%" }}
             transition={{ duration: 3, ease: "linear" }}
@@ -355,7 +355,7 @@ const SubscriptionPage = () => {
   };
 
   const inputBase =
-    "w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-700 outline-none transition-all duration-200 placeholder-slate-400 focus:border-[#63C1BB] focus:ring-2 focus:ring-[#63C1BB]/40";
+    "w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-700 outline-none transition-all duration-200 placeholder-slate-400 focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/40";
   const labelBase =
     "mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600";
 
@@ -369,23 +369,23 @@ const SubscriptionPage = () => {
         ) : null}
       </AnimatePresence>
 
-      <div className="min-h-screen bg-gradient-to-br from-[#C8E6E2]/20 via-white to-[#9ED5D1]/10">
+      <div className="min-h-screen bg-gradient-to-br from-[#7d8597]/20 via-white to-[#5c677d]/10">
         <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 shadow-sm backdrop-blur-md">
           <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 md:px-8">
             <Link to="/" className="flex items-center gap-2">
               <span
                 className="flex h-8 w-8 items-center justify-center rounded-xl"
                 style={{
-                  background: "linear-gradient(135deg, #105F68, #3A9295)",
+                  background: "linear-gradient(135deg, #023e7d, #0353a4)",
                 }}
               >
                 <TrendingUp className="h-4 w-4 text-white" strokeWidth={2.5} />
               </span>
               <span className="text-sm font-bold text-slate-800">
-                Index<span className="text-[#3A9295]">Money</span>
+                Index<span className="text-[#0353a4]">Money</span>
               </span>
             </Link>
-            <div className="flex items-center gap-2 rounded-full border border-[#9ED5D1] bg-[#C8E6E2]/60 px-3 py-1.5 text-xs font-bold text-[#105F68]">
+            <div className="flex items-center gap-2 rounded-full border border-[#5c677d] bg-[#7d8597]/60 px-3 py-1.5 text-xs font-bold text-[#023e7d]">
               <Sparkles className="h-3.5 w-3.5" />
               Secure Checkout
             </div>
@@ -423,7 +423,7 @@ const SubscriptionPage = () => {
                   <h2 className="text-lg font-extrabold text-slate-900">
                     Payment Details
                   </h2>
-                  <span className="rounded-full bg-[#C8E6E2]/40 px-3 py-1 text-xs font-semibold text-[#105F68]">
+                  <span className="rounded-full bg-[#7d8597]/40 px-3 py-1 text-xs font-semibold text-[#023e7d]">
                     {selectedPlan ? selectedPlan.title : "Select a plan"}
                   </span>
                 </div>
@@ -433,8 +433,8 @@ const SubscriptionPage = () => {
                 </p>
 
                 {selectedPlan ? (
-                  <div className="mt-4 rounded-2xl border border-[#CBE7E1] bg-[#F5FCFB] p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#3A9295]">
+                  <div className="mt-4 rounded-2xl border border-[#5c677d] bg-[#F5FCFB] p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0353a4]">
                       Selected Plan Summary
                     </p>
                     <p className="mt-2 text-lg font-bold text-slate-900">
@@ -443,7 +443,7 @@ const SubscriptionPage = () => {
                     <p className="mt-1 text-sm text-slate-500">
                       {selectedPlan.description}
                     </p>
-                    <p className="mt-3 text-sm font-semibold text-[#105F68]">
+                    <p className="mt-3 text-sm font-semibold text-[#023e7d]">
                       Price: {selectedPlan.price} / month
                     </p>
                   </div>
@@ -630,7 +630,7 @@ const SubscriptionPage = () => {
                           setErrors((p) => ({ ...p, screenshot: "" }));
                           setServerError("");
                         }}
-                        className="w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-[#C8E6E2]/50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#105F68]"
+                        className="w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-[#7d8597]/50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#023e7d]"
                       />
                       {errors.screenshot ? (
                         <p className="mt-1 text-xs text-red-500">{errors.screenshot}</p>
@@ -645,7 +645,7 @@ const SubscriptionPage = () => {
                     whileTap={!processing ? { scale: 0.98 } : {}}
                     className="flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-extrabold text-white transition-all duration-200 disabled:opacity-80"
                     style={{
-                      background: "linear-gradient(135deg, #3A9295, #105F68)",
+                      background: "linear-gradient(135deg, #0353a4, #023e7d)",
                     }}
                   >
                     {processing ? (
@@ -692,7 +692,7 @@ const SubscriptionPage = () => {
                   href={whatsappLink}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#9ED5D1] bg-white px-5 py-3 text-sm font-bold text-[#105F68] transition-colors duration-200 hover:bg-[#EAF8F4]"
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#5c677d] bg-white px-5 py-3 text-sm font-bold text-[#023e7d] transition-colors duration-200 hover:bg-[#f1f5f9]"
                 >
                   Share on WhatsApp
                 </a>

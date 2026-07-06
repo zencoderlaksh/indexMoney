@@ -21,7 +21,7 @@ const features = [
     icon: TrendingUp,
     title: "High Accuracy Technical Analysis",
     description: "No guesswork - only data-driven trades",
-    iconBg: "linear-gradient(135deg, #A7E2DA, #63C1BB)",
+    iconBg: "linear-gradient(135deg, #A7E2DA, #0466c8)",
     glow: "rgba(99,193,187,0.18)",
   },
   {
@@ -35,8 +35,8 @@ const features = [
     icon: MessageCircle,
     title: "Live Market Support on WhatsApp",
     description: "Instant updates & trade management help",
-    iconBg: "linear-gradient(135deg, #2F7C84, #105F68)",
-    glow: "rgba(16,95,104,0.22)",
+    iconBg: "linear-gradient(135deg, #2F7C84, #023e7d)",
+    glow: "rgba(2,62,125,0.22)",
   },
 ];
 
@@ -70,7 +70,7 @@ const Trust = () => (
       className="pointer-events-none absolute inset-0 opacity-[0.06]"
       style={{
         backgroundImage:
-          "linear-gradient(rgba(16,95,104,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(16,95,104,0.12) 1px, transparent 1px)",
+          "linear-gradient(rgba(2,62,125,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(2,62,125,0.12) 1px, transparent 1px)",
         backgroundSize: "48px 48px",
       }}
     />
@@ -83,7 +83,7 @@ const Trust = () => (
         transition={{ duration: 0.55 }}
         className="mb-14 text-center"
       >
-        <span className="mb-3 inline-block rounded-full border border-[#B9E2DB] bg-white/70 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#105F68] shadow-sm">
+        <span className="mb-3 inline-block rounded-full border border-[#B9E2DB] bg-white/70 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#023e7d] shadow-sm">
           Why Index Money
         </span>
         <h2 className="mx-auto max-w-5xl text-3xl font-extrabold leading-tight text-slate-800 md:text-4xl lg:text-5xl">
@@ -91,7 +91,7 @@ const Trust = () => (
           <span
             className="bg-clip-text text-transparent"
             style={{
-              backgroundImage: "linear-gradient(135deg, #3A9295, #105F68)",
+              backgroundImage: "linear-gradient(135deg, #0353a4, #023e7d)",
             }}
           >
             Index Money
@@ -115,10 +115,10 @@ const Trust = () => (
             variants={cardVariants}
             whileHover={{
               y: -8,
-              boxShadow: `0 24px 48px ${glow}, 0 12px 28px rgba(16,95,104,0.10)`,
+              boxShadow: `0 24px 48px ${glow}, 0 12px 28px rgba(2,62,125,0.10)`,
             }}
             transition={{ type: "spring", stiffness: 280, damping: 22 }}
-            className="group rounded-[26px] border border-[#B8DCD7] bg-white/80 p-6 shadow-[0_12px_30px_rgba(16,95,104,0.10)] backdrop-blur-sm"
+            className="group rounded-[26px] border border-[#B8DCD7] bg-white/80 p-6 shadow-[0_12px_30px_rgba(2,62,125,0.10)] backdrop-blur-sm"
           >
             <div
               className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl shadow-sm"
@@ -142,7 +142,7 @@ const Trust = () => (
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.55, delay: 0.15 }}
-        className="mt-8 rounded-[26px] border border-[#CFE7E2] bg-white/85 px-4 py-4 shadow-[0_12px_30px_rgba(16,95,104,0.08)] backdrop-blur-sm"
+        className="mt-8 rounded-[26px] border border-[#CFE7E2] bg-white/85 px-4 py-4 shadow-[0_12px_30px_rgba(2,62,125,0.08)] backdrop-blur-sm"
       >
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
           {stats.map(({ icon: Icon, label }, index) => (
@@ -152,7 +152,7 @@ const Trust = () => (
                 index < stats.length - 1 ? "lg:border-r lg:border-slate-200" : ""
               }`}
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EAF8F4] text-[#3A9295]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#0353a4]">
                 <Icon className="h-5 w-5" strokeWidth={2.2} />
               </span>
               <span className="text-lg font-semibold leading-tight text-slate-700">
