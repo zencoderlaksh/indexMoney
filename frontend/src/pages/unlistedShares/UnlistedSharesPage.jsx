@@ -17,6 +17,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 
+import WhatsAppModal from "../../components/WhatsAppModal";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 const MotionArticle = motion.article;
@@ -162,6 +164,9 @@ const UnlistedSharesPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showAllNewArrivals, setShowAllNewArrivals] = useState(false);
   const [blogs, setBlogs] = useState([]);
+  
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState("");
 
   const itemsPerPage = 12;
   const totalPages = Math.ceil(opportunities.length / itemsPerPage);
@@ -487,8 +492,8 @@ const UnlistedSharesPage = () => {
                   <div className="mt-6 flex items-center gap-3 pt-2">
                     <button
                       onClick={() => {
-                        setForm((prev) => ({ ...prev, interestedCompany: item.company }));
-                        document.getElementById("unlisted-inquiry-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        setSelectedCompany(item.company);
+                        setIsWhatsAppModalOpen(true);
                       }}
                       className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#001233] rounded-xl transition-colors duration-200"
                     >
@@ -626,13 +631,13 @@ const UnlistedSharesPage = () => {
                     {/* Bottom Row: Enquire & Details Buttons */}
                     <div className="mt-6 flex items-center gap-3 pt-2">
                       <button
-                        onClick={() => {
-                          setForm((prev) => ({ ...prev, interestedCompany: item.company }));
-                          document.getElementById("unlisted-inquiry-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                        }}
-                        className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#001233] rounded-xl transition-colors duration-200"
-                      >
-                        Enquire
+                      onClick={() => {
+                        setSelectedCompany(item.company);
+                        setIsWhatsAppModalOpen(true);
+                      }}
+                      className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#001233] rounded-xl transition-colors duration-200"
+                    >
+                      Enquire
                       </button>
                       <Link
                         to={getDetailPath(item)}
@@ -798,6 +803,12 @@ const UnlistedSharesPage = () => {
             </p>
             <h2 className="mt-3 text-3xl font-bold text-slate-800 dark:text-slate-100 md:text-4xl">
               Simple Process, Guided Support
+
+      <WhatsAppModal 
+        isOpen={isWhatsAppModalOpen} 
+        onClose={() => setIsWhatsAppModalOpen(false)} 
+        companyName={selectedCompany} 
+      />
             </h2>
           </div>
 

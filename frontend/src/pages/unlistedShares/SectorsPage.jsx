@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Boxes, ArrowRight, ArrowLeft, Send } from "lucide-react";
+import WhatsAppModal from "../../components/WhatsAppModal";
 
 const MotionArticle = motion.article;
 
@@ -38,6 +39,9 @@ const SectorsPage = () => {
   const [opportunities, setOpportunities] = useState(fallbackOpportunities);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedSector = searchParams.get("sector");
+  
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState("");
 
   const [form, setForm] = useState({
     fullName: "",
@@ -207,8 +211,8 @@ const SectorsPage = () => {
                     <div className="mt-6 flex items-center gap-3 pt-2">
                       <button
                         onClick={() => {
-                          setForm((prev) => ({ ...prev, interestedCompany: item.company }));
-                          document.getElementById("inquiry-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          setSelectedCompany(item.company);
+                          setIsWhatsAppModalOpen(true);
                         }}
                         className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#001233] rounded-xl transition-colors duration-200"
                       >
@@ -291,6 +295,11 @@ const SectorsPage = () => {
           </div>
         )}
 
+        <WhatsAppModal 
+          isOpen={isWhatsAppModalOpen} 
+          onClose={() => setIsWhatsAppModalOpen(false)} 
+          companyName={selectedCompany} 
+        />
       </div>
     </div>
   );

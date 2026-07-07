@@ -1,19 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  Wallet,
-  Zap,
-  Headphones,
-  CheckCircle2,
-  User,
-  Phone,
-  Mail,
-} from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
+import { Wallet, Zap, Headphones, ArrowRight } from "lucide-react";
 import dematAccountReference from "../../../assets/demat-account-reference.svg";
-import { dematAccountSchema } from "../../../schemas/dematAccountSchema";
-import { useDematAccountStore } from "../../../stores/dematAccountStore";
 
 const benefits = [
   {
@@ -47,30 +36,8 @@ const itemVariants = {
   },
 };
 
-const inputBase =
-  "w-full rounded-xl border bg-white px-4 py-3 pl-10 text-sm text-slate-800 outline-none transition-all duration-200 placeholder:text-slate-400";
-const inputNormal =
-  "border-teal-100 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20";
-const inputError =
-  "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-200";
-
-const FieldError = ({ message }) =>
-  message ? <p className="mt-1.5 text-xs text-red-500">{message}</p> : null;
-
 const DematPromoSection = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({ resolver: zodResolver(dematAccountSchema) });
-  const { isSubmitting, serverError, successMessage, submitDematAccount } =
-    useDematAccountStore();
-
-  const onSubmit = async (data) => {
-    const submitted = await submitDematAccount(data);
-    if (submitted) reset();
-  };
+  const navigate = useNavigate();
 
   return (
     <section id="demat-account" className="scroll-mt-24 overflow-hidden bg-transparent py-16 md:py-20">
@@ -113,85 +80,18 @@ const DematPromoSection = () => {
               ))}
             </div>
 
-            <motion.div
-              variants={itemVariants}
-              className="rounded-3xl border border-teal-100 bg-white p-5 shadow-sm"
-            >
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div>
-                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-500">
-                    Full Name
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="text"
-                      {...register("fullName")}
-                      className={`${inputBase} ${errors.fullName ? inputError : inputNormal}`}
-                      placeholder="Enter full name"
-                    />
-                  </div>
-                  <FieldError message={errors.fullName?.message} />
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-500">
-                      Mobile Number
-                    </label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                      <input
-                        type="tel"
-                        {...register("mobileNumber")}
-                        className={`${inputBase} ${errors.mobileNumber ? inputError : inputNormal}`}
-                        placeholder="10 digit mobile number"
-                      />
-                    </div>
-                    <FieldError message={errors.mobileNumber?.message} />
-                  </div>
-
-                  <div>
-                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-500">
-                      Email ID
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                      <input
-                        type="email"
-                        {...register("email")}
-                        className={`${inputBase} ${errors.email ? inputError : inputNormal}`}
-                        placeholder="Enter email address"
-                      />
-                    </div>
-                    <FieldError message={errors.email?.message} />
-                  </div>
-                </div>
-
-                {serverError ? (
-                  <p className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
-                    {serverError}
-                  </p>
-                ) : null}
-                {successMessage ? (
-                  <p className="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                    {successMessage}
-                  </p>
-                ) : null}
-
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  whileHover={{
-                    scale: isSubmitting ? 1 : 1.03,
-                    boxShadow: "0 8px 30px rgba(13,148,136,0.30)",
-                  }}
-                  whileTap={{ scale: isSubmitting ? 1 : 0.97 }}
-                  className="inline-flex w-full items-center justify-center rounded-xl bg-teal-600 px-7 py-3.5 text-sm font-semibold text-white shadow-md transition-colors duration-200 hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {isSubmitting ? "Submitting..." : "Submit"}
-                </motion.button>
-              </form>
+            <motion.div variants={itemVariants}>
+              <motion.button
+                onClick={() => navigate("/signup")}
+                whileHover={{
+                  scale: 1.03,
+                  boxShadow: "0 8px 30px rgba(13,148,136,0.30)",
+                }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex w-full md:w-auto items-center justify-center gap-2 rounded-xl bg-teal-600 px-8 py-4 text-sm font-semibold text-white shadow-md transition-colors duration-200 hover:bg-teal-700"
+              >
+                Start Demat Journey <ArrowRight className="h-4 w-4" />
+              </motion.button>
             </motion.div>
           </motion.div>
 
@@ -206,10 +106,10 @@ const DematPromoSection = () => {
               <div className="mb-4 flex items-center justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
-                    Reference Preview
+                    Preview
                   </p>
                   <p className="mt-1 text-lg font-bold text-slate-800">
-                    Demat Account Creation Screen
+                    Demat Dashboard
                   </p>
                 </div>
                 <div className="rounded-full bg-teal-500 px-3 py-1.5 text-xs font-bold text-white shadow-lg">
@@ -220,24 +120,9 @@ const DematPromoSection = () => {
               <div className="overflow-hidden rounded-2xl border border-slate-100 bg-slate-50">
                 <img
                   src={dematAccountReference}
-                  alt="Reference screenshot for demat account opening page"
+                  alt="Reference screenshot for demat account"
                   className="h-auto w-full object-cover"
                 />
-              </div>
-
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                {[
-                  "Submit basic details and our team will contact the user for account opening assistance.",
-                  "Full name, mobile number, and email are validated before the request is saved.",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-start gap-2 rounded-2xl bg-[#F7FBFB] px-4 py-3 text-sm text-slate-600"
-                  >
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-teal-600" />
-                    <span>{item}</span>
-                  </div>
-                ))}
               </div>
             </div>
           </motion.div>

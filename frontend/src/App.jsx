@@ -2,10 +2,13 @@ import React, { useEffect } from "react";
 import AppRoutes from "./appRoutes/AppRoutes";
 import BottomConsultationBar from "./components/BottomConsultationBar";
 import { useThemeStore } from "./stores/themeStore";
+import { useLocation } from "react-router-dom";
 import Lenis from "lenis";
 
 const App = () => {
   const initTheme = useThemeStore((state) => state.initTheme);
+  const location = useLocation();
+  const isAuthPage = ["/login", "/signup", "/verify-otp"].includes(location.pathname);
 
   useEffect(() => {
     initTheme();
@@ -34,7 +37,7 @@ const App = () => {
   return (
     <div>
       <AppRoutes />
-      <BottomConsultationBar />
+      {!isAuthPage && <BottomConsultationBar />}
     </div>
   );
 };

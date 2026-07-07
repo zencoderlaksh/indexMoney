@@ -66,13 +66,7 @@ const Header = () => {
 
   const openDematForm = () => {
     setMobileOpen(false);
-    navigate("/#demat-account");
-    window.setTimeout(() => {
-      document.getElementById("demat-account")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 80);
+    navigate("/signup");
   };
 
   return (

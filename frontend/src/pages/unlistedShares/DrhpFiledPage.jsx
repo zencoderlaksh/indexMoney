@@ -10,6 +10,8 @@ import {
   MessageCircle,
 } from "lucide-react";
 
+import WhatsAppModal from "../../components/WhatsAppModal";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 const WhatsAppIcon = ({ className = "" }) => (
@@ -70,6 +72,9 @@ const DrhpFiledPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({ kind: "", text: "" });
+  
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState("");
 
   const whatsappLink = "https://wa.me/919216180043";
 
@@ -234,8 +239,8 @@ const DrhpFiledPage = () => {
                   <div className="mt-6 flex items-center gap-3 pt-2">
                     <button
                       onClick={() => {
-                        setForm((prev) => ({ ...prev, interestedCompany: item.company }));
-                        document.getElementById("unlisted-inquiry-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        setSelectedCompany(item.company);
+                        setIsWhatsAppModalOpen(true);
                       }}
                       className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#001233] rounded-xl transition-colors duration-200"
                     >
@@ -464,6 +469,12 @@ const DrhpFiledPage = () => {
           </div>
         </motion.div>
       </section>
+
+      <WhatsAppModal 
+        isOpen={isWhatsAppModalOpen} 
+        onClose={() => setIsWhatsAppModalOpen(false)} 
+        companyName={selectedCompany} 
+      />
     </div>
   );
 };

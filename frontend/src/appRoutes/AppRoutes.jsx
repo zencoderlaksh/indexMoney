@@ -4,6 +4,7 @@ import Home from "../pages/home/Home";
 import About from "../pages/about/About";
 import SignupPage from "../pages/auth/SignupPage";
 import LoginPage from "../pages/auth/LoginPage";
+import VerifyOtpPage from "../pages/auth/VerifyOtpPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import SubscriptionPage from "../pages/subscription/SubscriptionPage";
@@ -54,6 +55,7 @@ const AppRoutes = () => {
       {/* Auth pages — no header/footer */}
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/verify-otp" element={<VerifyOtpPage />} />
 
       {/* Protected dashboard */}
       <Route

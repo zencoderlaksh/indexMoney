@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
-
-const SCHEDULER_URL = "https://scheduler.zoom.us/neha-soni-agquvd";
+import WhatsAppModal from "./WhatsAppModal";
 
 const BottomConsultationBar = () => {
   const [isVisible, setIsVisible] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!isVisible) return null;
 
@@ -15,14 +15,12 @@ const BottomConsultationBar = () => {
           Book a free consultation with our experts
         </p>
 
-        <a
-          href={SCHEDULER_URL}
-          target="_blank"
-          rel="noreferrer"
+        <button
+          onClick={() => setIsModalOpen(true)}
           className="inline-flex w-fit items-center justify-center rounded-full bg-white px-6 py-2.5 text-sm font-bold text-[#023e7d] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[#f1f5f9]"
         >
           Book now
-        </a>
+        </button>
       </div>
 
       <button
@@ -33,6 +31,11 @@ const BottomConsultationBar = () => {
       >
         <X className="h-5 w-5" />
       </button>
+      
+      <WhatsAppModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 };
