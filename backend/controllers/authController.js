@@ -51,31 +51,45 @@ const sendOtp = async (req, res, next) => {
     user.otpExpiresAt = expiresAt;
     await user.save();
 
-    // Send the OTP using Nodemailer if configured
-    if (config.smtpHost && config.smtpUser) {
-      const transporter = nodemailer.createTransport({
-        host: config.smtpHost,
-        port: config.smtpPort,
-        secure: config.smtpPort == 465, 
-        auth: {
-          user: config.smtpUser,
-          pass: config.smtpPass,
+    // Send the OTP using Brevo API (bypasses Render SMTP blocks)
+    if (config.smtpPass) {
+      // The user provided the Brevo API Key as SMTP_PASS or we can expect it there.
+      // Wait, let's use the provided API key explicitly.
+      const apiKey = process.env.BREVO_API_KEY || config.smtpPass;
+      
+      const emailPayload = {
+        sender: {
+          name: "Index Money",
+          email: config.smtpFrom || "infoindexmoney@gmail.com"
         },
-      });
-
-      await transporter.sendMail({
-        from: `"Index Money" <${config.smtpFrom}>`,
-        to: normalizedEmail,
+        to: [
+          { email: normalizedEmail }
+        ],
         subject: "Your Login OTP - Index Money",
-        html: `
+        htmlContent: `
           <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
             <h2 style="color: #0353a4;">Welcome to Index Money</h2>
             <p>Your One-Time Password (OTP) for login/signup is:</p>
             <h1 style="color: #023e7d; font-size: 36px; letter-spacing: 4px;">${generatedOtp}</h1>
             <p style="color: #666; font-size: 14px;">This OTP is valid for 10 minutes. Please do not share it with anyone.</p>
           </div>
-        `,
+        `
+      };
+
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "api-key": apiKey
+        },
+        body: JSON.stringify(emailPayload)
       });
+
+      if (!response.ok) {
+        const errData = await response.text();
+        throw new Error(`Brevo API Error: ${errData}`);
+      }
       console.log(`✉️ Email OTP sent to ${normalizedEmail}`);
     } else {
       // Log the OTP (Simulating SMS/Email sending if no SMTP configured)
