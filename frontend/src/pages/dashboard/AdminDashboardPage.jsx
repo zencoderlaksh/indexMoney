@@ -413,7 +413,7 @@ const TableCard = ({
   </section>
 );
 
-const DashboardPage = () => {
+const AdminDashboardPage = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
@@ -2563,4 +2563,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default AdminDashboardPage;

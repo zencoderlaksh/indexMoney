@@ -147,7 +147,7 @@ const Header = () => {
               <>
                 {isAdmin ? (
                   <motion.button
-                    onClick={() => navigate("/dashboard")}
+                    onClick={() => navigate("/admin")}
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.97 }}
                     className="text-sm font-semibold text-white border border-white/20 hover:border-white/40 hover:bg-white/10 px-4 py-2 rounded-xl transition-colors duration-200"
@@ -155,6 +155,14 @@ const Header = () => {
                     Admin Dashboard
                   </motion.button>
                 ) : null}
+                <motion.button
+                  onClick={() => navigate("/dashboard")}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="text-sm font-semibold text-[#0353a4] bg-white border border-white/20 hover:bg-slate-100 px-4 py-2 rounded-xl transition-colors duration-200"
+                >
+                  Dashboard
+                </motion.button>
                 <motion.button
                   onClick={handleLogout}
                   whileHover={{
@@ -270,7 +278,7 @@ const Header = () => {
                     {isAdmin ? (
                       <button
                         onClick={() => {
-                          navigate("/dashboard");
+                          navigate("/admin");
                           setMobileOpen(false);
                         }}
                         className="w-full py-2.5 text-sm font-semibold text-[#0353a4] dark:text-white border border-[#7d8597] dark:border-white/20 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition-colors duration-200"
@@ -278,6 +286,15 @@ const Header = () => {
                         Admin Dashboard
                       </button>
                     ) : null}
+                    <button
+                      onClick={() => {
+                        navigate("/dashboard");
+                        setMobileOpen(false);
+                      }}
+                      className="w-full py-2.5 text-sm font-semibold text-[#0353a4] dark:text-white border border-[#7d8597] dark:border-white/20 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition-colors duration-200"
+                    >
+                      Dashboard
+                    </button>
                     <button
                       onClick={handleLogout}
                       className="w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#0466c8] to-[#0353a4] rounded-xl"

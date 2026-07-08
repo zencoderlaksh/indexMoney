@@ -5,7 +5,9 @@ import About from "../pages/about/About";
 import SignupPage from "../pages/auth/SignupPage";
 import LoginPage from "../pages/auth/LoginPage";
 import VerifyOtpPage from "../pages/auth/VerifyOtpPage";
-import DashboardPage from "../pages/dashboard/DashboardPage";
+import AdminDashboardPage from "../pages/dashboard/AdminDashboardPage";
+import DashboardLayout from "../pages/dashboard/DashboardLayout";
+import ProfilePage from "../pages/dashboard/ProfilePage";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import SubscriptionPage from "../pages/subscription/SubscriptionPage";
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
@@ -57,15 +59,29 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/verify-otp" element={<VerifyOtpPage />} />
 
-      {/* Protected dashboard */}
+      {/* Admin dashboard */}
       <Route
-        path="/dashboard"
+        path="/admin"
         element={
           <ProtectedRoute adminOnly>
-            <DashboardPage />
+            <AdminDashboardPage />
           </ProtectedRoute>
         }
       />
+
+      {/* User Dashboard */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="profile" replace />} />
+        {/* We will add more tabs later (overview, portfolio, kyc) */}
+        <Route path="profile" element={<ProfilePage />} />
+      </Route>
 
       {/* Legacy /auth redirect */}
       <Route path="/auth" element={<Navigate to="/signup" replace />} />
