@@ -91,10 +91,11 @@ const migrateLegacyData = async () => {
         for (const upload of oldUploads) {
           const trades = upload.trades || [];
           for (const trade of trades) {
-            const exists = await PerformanceTrade.findOne({ tradeId: trade.tradeId });
+            const safeTradeId = trade.tradeId || new mongoose.Types.ObjectId().toString();
+            const exists = await PerformanceTrade.findOne({ tradeId: safeTradeId });
             if (!exists) {
               await PerformanceTrade.create({
-                tradeId: trade.tradeId,
+                tradeId: safeTradeId,
                 date: trade.date,
                 index: trade.index,
                 callType: trade.callType,
