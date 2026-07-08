@@ -11,7 +11,8 @@ module.exports = {
   adminEmail: (process.env.ADMIN_EMAIL || "").trim().toLowerCase(),
   // SMTP credentials for Nodemailer
   smtpHost: process.env.SMTP_HOST || "",
-  smtpPort: process.env.SMTP_PORT || 465,
+  smtpPort: Number(process.env.SMTP_PORT) || 465,
   smtpUser: process.env.SMTP_USER || "",
   smtpPass: process.env.SMTP_PASS || "",
+  smtpFrom: process.env.SMTP_FROM || process.env.SMTP_USER || "",
 };

@@ -64,7 +64,7 @@ const sendOtp = async (req, res, next) => {
       });
 
       await transporter.sendMail({
-        from: `"Index Money" <${config.smtpUser}>`,
+        from: `"Index Money" <${config.smtpFrom}>`,
         to: normalizedEmail,
         subject: "Your Login OTP - Index Money",
         html: `
