@@ -497,7 +497,6 @@ const DashboardPage = () => {
   });
 
   const [usersData, setUsersData] = React.useState([]);
-  const [enquiryData, setEnquiryData] = React.useState([]);
   const [dematAccountData, setDematAccountData] = React.useState([]);
   const [adminDataLoading, setAdminDataLoading] = React.useState(true);
   const [adminDataStatus, setAdminDataStatus] = React.useState({
@@ -586,34 +585,27 @@ const DashboardPage = () => {
     try {
       setAdminDataLoading(true);
       setAdminDataStatus({ kind: "", text: "" });
-      const [usersRes, enquiriesRes, dematAccountsRes] = await Promise.all([
+      const [usersRes, dematAccountsRes] = await Promise.all([
         fetch(`${API_BASE}/users`, { headers: authHeaders }),
-        fetch(`${API_BASE}/enquiries`, { headers: authHeaders }),
         fetch(`${API_BASE}/demat-accounts`, { headers: authHeaders }),
       ]);
-      const [usersJson, enquiriesJson, dematAccountsJson] = await Promise.all([
+      const [usersJson, dematAccountsJson] = await Promise.all([
         usersRes.json().catch(() => ({})),
-        enquiriesRes.json().catch(() => ({})),
         dematAccountsRes.json().catch(() => ({})),
       ]);
-      if (!usersRes.ok || !enquiriesRes.ok || !dematAccountsRes.ok) {
+      if (!usersRes.ok || !dematAccountsRes.ok) {
         throw new Error(
           usersJson?.error ||
-            enquiriesJson?.error ||
             dematAccountsJson?.error ||
             "Unable to load admin data",
         );
       }
       setUsersData(Array.isArray(usersJson?.data) ? usersJson.data : []);
-      setEnquiryData(
-        Array.isArray(enquiriesJson?.data) ? enquiriesJson.data : [],
-      );
       setDematAccountData(
         Array.isArray(dematAccountsJson?.data) ? dematAccountsJson.data : [],
       );
     } catch (error) {
       setUsersData([]);
-      setEnquiryData([]);
       setDematAccountData([]);
       setAdminDataStatus({
         kind: "error",
@@ -1197,10 +1189,6 @@ const DashboardPage = () => {
     ...entry,
     id: entry.id || entry._id || entry.email,
   }));
-  const enquiryRows = enquiryData.map((entry) => ({
-    ...entry,
-    id: entry._id || `${entry.email}-${entry.createdAt}`,
-  }));
   const dematAccountRows = dematAccountData.map((entry) => ({
     ...entry,
     id: entry._id || `${entry.email}-${entry.createdAt}`,
@@ -1253,7 +1241,7 @@ const DashboardPage = () => {
                 Admin-only content and lead management
               </h1>
               <p className="mt-1.5 text-sm text-white/70">
-                Review registered users and enquiries, export them, and manage
+                Review registered users and demat requests, export them, and manage
                 public website data.
               </p>
             </div>
@@ -1273,13 +1261,7 @@ const DashboardPage = () => {
             value={adminDataLoading ? "..." : usersData.length}
             sub="Accounts in the system"
           />
-          <StatCard
-            icon={ClipboardList}
-            label="Enquiries"
-            value={adminDataLoading ? "..." : enquiryData.length}
-            sub="Leads received"
-            color="#0353a4"
-          />
+
           <StatCard
             icon={FileSpreadsheet}
             label="Demat Leads"
@@ -1350,7 +1332,7 @@ const DashboardPage = () => {
             <div className="grid gap-3">
               {[
                 "Review the users table for new signups.",
-                "Check fresh enquiries and export them as CSV.",
+                "Check demat account requests and export them as CSV.",
                 "Update Today's Results and upload the latest sheets.",
               ].map((item) => (
                 <div
@@ -1423,38 +1405,6 @@ const DashboardPage = () => {
               ]}
             />
           </div>
-
-          <TableCard
-            title="Enquiries"
-            count={enquiryData.length}
-            description="Homepage enquiry submissions appear here in reverse chronological order."
-            rows={enquiryRows}
-            loading={adminDataLoading}
-            onExport={() =>
-              downloadCsv(
-                "indexmoney-enquiries.csv",
-                ["Name", "Email", "Phone", "Plan Type", "Created At"],
-                enquiryData.map((entry) => [
-                  entry.name,
-                  entry.email,
-                  entry.phone,
-                  entry.planType,
-                  fmt(entry.createdAt),
-                ]),
-              )
-            }
-            columns={[
-              { key: "name", label: "Name" },
-              { key: "email", label: "Email" },
-              { key: "phone", label: "Phone" },
-              { key: "planType", label: "Plan" },
-              {
-                key: "createdAt",
-                label: "Received",
-                render: (row) => fmt(row.createdAt),
-              },
-            ]}
-          />
         </div>
 
         <div className="mt-8">

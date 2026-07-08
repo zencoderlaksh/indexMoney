@@ -13,11 +13,7 @@ import {
   TrendingUp,
   User,
 } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
-import { enquirySchema } from "../../../schemas/enquirySchema";
-import { useEnquiryStore } from "../../../stores/enquiryStore";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -90,20 +86,6 @@ const WHATSAPP_LINK =
 const Hero = () => {
   const navigate = useNavigate();
   const [todaysResults, setTodaysResults] = React.useState(fallbackTodaysResults);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({ resolver: zodResolver(enquirySchema) });
-
-  const { isSubmitting, serverError, successMessage, submitEnquiry } =
-    useEnquiryStore();
-
-  const onSubmit = async (data) => {
-    await submitEnquiry(data);
-    reset();
-  };
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -161,16 +143,16 @@ const Hero = () => {
         }}
       />
 
-      <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-start gap-10 px-5 md:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
-        <div className="flex flex-col gap-6">
+      <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-start gap-10 px-5 md:px-8 lg:grid-cols-1 lg:max-w-4xl lg:mx-auto lg:gap-14">
+        <div className="flex flex-col gap-6 lg:items-center lg:text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#5c677d] bg-[#7d8597]/60 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#023e7d]">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[#0466c8]" />
-              Professional Index & F&O Advisory
+            <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#0353a4]">
+              <span className="h-[2px] w-6 bg-[#0353a4]" />
+              SHARING INDIA'S UNLISTED SHARES INFORMATION • SINCE 2018
             </span>
           </motion.div>
 
@@ -179,17 +161,9 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.1 }}
           >
-            <h1 className="max-w-4xl text-4xl font-extrabold leading-[1.06] tracking-tight text-slate-900 sm:text-5xl md:text-6xl lg:text-[3.9rem]">
-              <span className="mr-2">🎯</span>
-              Bazaar Sabko Dikhta Hai,{" "}
-              <span
-                className="bg-clip-text text-transparent"
-                style={{
-                  backgroundImage: "linear-gradient(135deg, #0353a4, #023e7d)",
-                }}
-              >
-                Rasta Kam Logon Ko Milta Hai.
-              </span>
+            <h1 className="max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-tight text-[#1e293b] sm:text-5xl md:text-6xl lg:text-[4.2rem]">
+              Your clear view of India's <br />
+              <span className="italic text-[#0353a4]">unlisted</span> & pre-IPO shares.
             </h1>
           </motion.div>
 
@@ -197,9 +171,9 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.18 }}
-            className="max-w-2xl text-lg leading-relaxed text-slate-600"
+            className="max-w-2xl text-lg leading-relaxed text-slate-600 lg:mx-auto"
           >
-            Nifty, BankNifty, Sensex ki daily calls aur Pre-IPO Unlisted Shares — dono ek expert ki nazar se.
+            India's Most Trusted Platform for Unlisted & Pre-IPO Shares
           </motion.p>
 
           <motion.div
@@ -216,7 +190,7 @@ const Hero = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.26 }}
-            className="flex flex-wrap gap-3"
+            className="flex flex-wrap gap-3 lg:justify-center"
           >
             {trustBadges.map(({ icon: Icon, text }) => (
               <span
@@ -233,7 +207,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.32 }}
-            className="flex flex-col gap-3 sm:flex-row"
+            className="flex flex-col gap-3 sm:flex-row lg:justify-center"
           >
             <motion.button
               onClick={openWhatsApp}
@@ -321,174 +295,9 @@ const Hero = () => {
               </a>
             </div>
           </motion.div>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.65, delay: 0.2, ease: "easeOut" }}
-          className="relative"
-        >
-          <div className="relative rounded-3xl border border-white bg-white/85 p-6 shadow-2xl shadow-slate-200/60 backdrop-blur-md">
-            <div className="mb-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-                Free Trial
-              </p>
-              <p className="mt-0.5 text-2xl font-extrabold text-slate-800">
-                Start Your Free Trial - Get Today&apos;s Live Call on WhatsApp
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-                Fill your details below to unlock instant WhatsApp access to
-                today&apos;s live market call.
-              </p>
             </div>
-
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-4"
-              noValidate
-            >
-              {serverError && (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                  {serverError}
-                </div>
-              )}
-
-              {successMessage && (
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                  {successMessage}
-                </div>
-              )}
-
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="John Doe"
-                    autoComplete="name"
-                    {...register("name")}
-                    className={`${inputBase} ${errors.name ? inputError : inputNormal}`}
-                  />
-                </div>
-                <FieldError message={errors.name?.message} />
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Email address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="email"
-                    placeholder="you@example.com"
-                    autoComplete="email"
-                    {...register("email")}
-                    className={`${inputBase} ${errors.email ? inputError : inputNormal}`}
-                  />
-                </div>
-                <FieldError message={errors.email?.message} />
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Phone number
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="tel"
-                    placeholder="10-digit number"
-                    autoComplete="tel"
-                    maxLength={10}
-                    {...register("phone")}
-                    className={`${inputBase} ${errors.phone ? inputError : inputNormal}`}
-                  />
-                </div>
-                <FieldError message={errors.phone?.message} />
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Choose your plan
-                </label>
-                <select
-                  {...register("planType")}
-                  className={`${inputBase} ${errors.planType ? inputError : inputNormal}`}
-                >
-                  <option value="">Select plan</option>
-                  {planOptions.map((plan) => (
-                    <option key={plan} value={plan}>
-                      {plan}
-                    </option>
-                  ))}
-                </select>
-                <FieldError message={errors.planType?.message} />
-              </div>
-
-              <label className="flex items-start gap-2 text-sm text-slate-600">
-                <input
-                  type="checkbox"
-                  {...register("agreePolicy")}
-                  className="mt-1 h-4 w-4 rounded border-slate-300 text-[#0353a4] focus:ring-[#0353a4]"
-                />
-                <span>
-                  I agree to the{" "}
-                  <span className="font-semibold text-[#023e7d]">
-                    privacy policy
-                  </span>
-                  .
-                </span>
-              </label>
-              <FieldError message={errors.agreePolicy?.message} />
-
-              <motion.button
-                type="submit"
-                disabled={isSubmitting}
-                whileHover={{ scale: 1.02, backgroundColor: "#0353a4" }}
-                whileTap={{ scale: 0.98 }}
-                className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0466c8] py-3.5 text-sm font-semibold text-white shadow-md shadow-[#0466c8]/25 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center gap-2">
-                    <svg
-                      className="h-4 w-4 animate-spin"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v8H4z"
-                      />
-                    </svg>
-                    Sending...
-                  </span>
-                ) : (
-                  <>
-                    Get Free Call Now <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
-              </motion.button>
-
-              <p className="-mt-1 text-center text-xs text-slate-500">
-                Instant WhatsApp Access | No Spam
-              </p>
-            </form>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

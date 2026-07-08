@@ -12,9 +12,9 @@ const VerifyOtpPage = () => {
   const inputRefs = useRef([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const login = useAuthStore((s) => s.login);
+  const setSession = useAuthStore((s) => s.setSession);
 
-  const identifier = location.state?.email || location.state?.mobile;
+  const identifier = location.state?.email;
   const isEmail = !!location.state?.email;
 
   useEffect(() => {
@@ -76,7 +76,6 @@ const VerifyOtpPage = () => {
     try {
       const payload = { otp: otpValue };
       if (isEmail) payload.email = identifier;
-      else payload.mobileNumber = identifier;
 
       const response = await fetch(`${API_BASE}/auth/verify-otp`, {
         method: "POST",
@@ -91,7 +90,7 @@ const VerifyOtpPage = () => {
       }
 
       // Success
-      login(data.data, data.token);
+      setSession(data.data, data.token);
       navigate("/dashboard"); // Or wherever it makes sense to go
     } catch (err) {
       setError(err.message);

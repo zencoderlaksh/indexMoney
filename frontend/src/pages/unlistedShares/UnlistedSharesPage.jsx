@@ -152,14 +152,6 @@ const UnlistedSharesPage = () => {
   const location = useLocation();
   const isCatalogPage = location.pathname === "/unlisted-shares";
 
-  const [form, setForm] = useState({
-    fullName: "",
-    mobileNumber: "",
-    email: "",
-    interestedCompany: "",
-    investmentAmount: "",
-    message: "",
-  });
   const [opportunities, setOpportunities] = useState(fallbackOpportunities);
   const [currentPage, setCurrentPage] = useState(1);
   const [showAllNewArrivals, setShowAllNewArrivals] = useState(false);
@@ -195,12 +187,6 @@ const UnlistedSharesPage = () => {
   //   title: "Indicative Opportunities Snapshot",
   //   sourceFileName: "",
   // });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState({
-    kind: "",
-    text: "",
-  });
-
   const whatsappLink = "https://wa.me/919216180043";
 
   useEffect(() => {
@@ -255,54 +241,6 @@ const UnlistedSharesPage = () => {
     return () => controller.abort();
   }, []);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setSubmitStatus({ kind: "", text: "" });
-
-    try {
-      setIsSubmitting(true);
-
-      const response = await fetch(`${API_BASE}/unlisted/inquiries`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      const payload = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(payload?.error || "Unable to submit inquiry");
-      }
-
-      setForm({
-        fullName: "",
-        mobileNumber: "",
-        email: "",
-        interestedCompany: "",
-        investmentAmount: "",
-        message: "",
-      });
-      setSubmitStatus({
-        kind: "success",
-        text:
-          payload?.message ||
-          "Inquiry submitted successfully. Our team will get back to you soon.",
-      });
-    } catch (error) {
-      setSubmitStatus({
-        kind: "error",
-        text: error.message || "Unable to submit inquiry",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <div className="relative overflow-hidden bg-transparent">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(4,102,200,0.12),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(3,83,164,0.10),transparent_34%)]" />
@@ -355,12 +293,6 @@ const UnlistedSharesPage = () => {
                   className="rounded-2xl bg-[#0353a4] hover:bg-[#023e7d] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#0353a4]/20 transition-all hover:scale-[1.02]"
                 >
                   Explore unlisted shares
-                </a>
-                <a
-                  href="#unlisted-inquiry-form"
-                  className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] hover:bg-slate-50 dark:hover:bg-white/5 px-6 py-3.5 text-sm font-bold text-slate-800 dark:text-slate-100 transition-all hover:scale-[1.02]"
-                >
-                  Submit Inquiry
                 </a>
               </motion.div>
             </div>
@@ -831,164 +763,6 @@ const UnlistedSharesPage = () => {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section
-        id="unlisted-inquiry-form"
-        className="relative px-5 py-8 md:px-8"
-      >
-        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_320px]">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45 }}
-            className="rounded-[30px] border border-[#5c677d] bg-white/90 dark:bg-[#001845]/90 90 p-7 shadow-[0_16px_42px_rgba(2,62,125,0.08)] backdrop-blur-sm md:p-8"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0353a4]">
-              Inquiry Form
-            </p>
-            <h2 className="mt-3 text-3xl font-bold text-slate-800 dark:text-slate-100">
-              Tell Us Your Interest
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              Share your requirement and our team will respond with available
-              options, indicative pricing, and next steps.
-            </p>
-
-            {submitStatus.text ?
-              <div
-                className={`mt-5 rounded-2xl border px-4 py-3 text-sm ${
-                  submitStatus.kind === "success" ?
-                    "border-emerald-200 bg-emerald-50 text-emerald-700"
-                  : "border-amber-200 bg-amber-50 text-amber-700"
-                }`}
-              >
-                {submitStatus.text}
-              </div>
-            : null}
-
-            <form onSubmit={handleSubmit} className="mt-7 space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <input
-                  name="fullName"
-                  type="text"
-                  required
-                  value={form.fullName}
-                  onChange={handleChange}
-                  className={inputBase}
-                  placeholder="Full Name"
-                />
-                <input
-                  name="mobileNumber"
-                  type="tel"
-                  required
-                  value={form.mobileNumber}
-                  onChange={handleChange}
-                  className={inputBase}
-                  placeholder="Mobile Number"
-                />
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={handleChange}
-                  className={inputBase}
-                  placeholder="Email"
-                />
-                <input
-                  name="interestedCompany"
-                  type="text"
-                  value={form.interestedCompany}
-                  onChange={handleChange}
-                  className={inputBase}
-                  placeholder="Interested Company"
-                />
-              </div>
-
-              <input
-                name="investmentAmount"
-                type="text"
-                value={form.investmentAmount}
-                onChange={handleChange}
-                className={inputBase}
-                placeholder="Investment Amount"
-              />
-
-              <textarea
-                name="message"
-                rows={5}
-                value={form.message}
-                onChange={handleChange}
-                className={`${inputBase} resize-none`}
-                placeholder="Message"
-              />
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#0353a4] to-[#023e7d] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(3,83,164,0.22)] disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                Submit Inquiry
-                <Send className="h-4 w-4" />
-              </button>
-
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                This inquiry is now saved separately in MongoDB for the Unlisted
-                Shares page.
-              </p>
-            </form>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45, delay: 0.08 }}
-            className="rounded-[30px] border border-[#0466c8] bg-gradient-to-br from-[#0353a4] to-[#023e7d] p-7 text-white shadow-[0_16px_42px_rgba(4,102,200,0.24)]"
-          >
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 dark:bg-[#001845]/90 15">
-              <MessageCircle className="h-5 w-5" />
-            </div>
-            <h3 className="mt-5 text-2xl font-bold">WhatsApp Quick Connect</h3>
-            <p className="mt-3 text-sm leading-relaxed text-white/80">
-              Need faster coordination? Connect with our support team directly
-              on WhatsApp for inquiry assistance.
-            </p>
-
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white dark:bg-[#001845] px-5 py-3 text-sm font-bold text-[#023e7d]"
-            >
-              <WhatsAppIcon className="h-4 w-4" />
-              Chat on WhatsApp
-            </a>
-
-            <div className="mt-6 rounded-2xl bg-white/90 dark:bg-[#001845]/90 10 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
-                Support Window
-              </p>
-              <p className="mt-2 text-sm font-medium text-white">
-                Market days: 9:00 AM - 6:00 PM
-              </p>
-            </div>
-
-            <div className="mt-4 rounded-2xl bg-white/90 dark:bg-[#001845]/90 10 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
-                Best Use Case
-              </p>
-              <p className="mt-2 text-sm font-medium text-white">
-                Quick availability checks and next-step coordination
-              </p>
-            </div>
-          </motion.div>
         </div>
       </section>
 

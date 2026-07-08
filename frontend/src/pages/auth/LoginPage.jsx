@@ -5,7 +5,7 @@ import AuthLayout from "./AuthLayout";
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 const LoginPage = () => {
-  const [method, setMethod] = useState("email"); // "email" or "mobile"
+  const [method, setMethod] = useState("email"); // forced to email
   const [identifier, setIdentifier] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,9 +20,11 @@ const LoginPage = () => {
       const payload = {};
       if (method === "email") {
         payload.email = identifier;
-      } else {
-        payload.mobileNumber = identifier;
       }
+      // Mobile logic removed:
+      // else {
+      //   payload.mobileNumber = identifier;
+      // }
 
       const response = await fetch(`${API_BASE}/auth/send-otp`, {
         method: "POST",
@@ -61,6 +63,7 @@ const LoginPage = () => {
           Enter your email or mobile. If you're already an Index Money customer, we'll link your existing portfolio.
         </p>
 
+        {/* Mobile toggle removed for now
         <div className="flex bg-white/5 rounded-xl p-1 mb-6 border border-white/10">
           <button
             type="button"
@@ -89,18 +92,19 @@ const LoginPage = () => {
             Mobile
           </button>
         </div>
+        */}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
             <label className="block text-sm text-white/80 mb-2">
-              {method === "email" ? "Email address" : "Mobile number"}
+              Email address
             </label>
             <input
-              type={method === "email" ? "email" : "tel"}
+              type="email"
               required
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              placeholder={method === "email" ? "you@example.com" : "10-digit mobile"}
+              placeholder="you@example.com"
               className="w-full bg-[#001233] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#00f5ff] transition-colors"
             />
           </div>

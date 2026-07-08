@@ -1,5 +1,4 @@
 const UnlistedOpportunity = require("../models/unlistedOpportunityModel");
-const UnlistedInquiry = require("../models/unlistedInquiryModel");
 
 const createSlug = (value) =>
   String(value || "")
@@ -94,54 +93,8 @@ const deleteUnlistedOpportunity = async (req, res, next) => {
   }
 };
 
-const createUnlistedInquiry = async (req, res, next) => {
-  try {
-    const {
-      fullName,
-      mobileNumber,
-      email,
-      interestedCompany,
-      investmentAmount,
-      message,
-    } = req.body;
-
-    if (!fullName || !mobileNumber || !email) {
-      return res.status(400).json({
-        error: "Full name, mobile number, and email are required",
-      });
-    }
-
-    const inquiry = await UnlistedInquiry.create({
-      fullName,
-      mobileNumber,
-      email,
-      interestedCompany,
-      investmentAmount,
-      message,
-    });
-
-    res.status(201).json({
-      data: inquiry,
-      message: "Unlisted shares inquiry submitted successfully.",
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
-const listUnlistedInquiries = async (req, res, next) => {
-  try {
-    const inquiries = await UnlistedInquiry.find().sort({ createdAt: -1 });
-    res.json({ data: inquiries });
-  } catch (err) {
-    next(err);
-  }
-};
-
 module.exports = {
-  createUnlistedInquiry,
   getLatestUnlistedOpportunities,
-  listUnlistedInquiries,
   createUnlistedOpportunity,
   updateUnlistedOpportunity,
   deleteUnlistedOpportunity,

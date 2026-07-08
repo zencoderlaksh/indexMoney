@@ -9,4 +9,9 @@ module.exports = {
   jwtSecret: process.env.JWT_SECRET || "indexmoney-secret",
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
   adminEmail: (process.env.ADMIN_EMAIL || "").trim().toLowerCase(),
+  // SMTP credentials for Nodemailer
+  smtpHost: process.env.SMTP_HOST || "",
+  smtpPort: process.env.SMTP_PORT || 465,
+  smtpUser: process.env.SMTP_USER || "",
+  smtpPass: process.env.SMTP_PASS || "",
 };

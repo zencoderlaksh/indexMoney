@@ -67,72 +67,11 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  signup: async (payload) => {
-    set({ isSubmitting: true, error: "" });
-    try {
-      const res = await fetch(`${API_BASE}/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      let json;
-      const contentType = res.headers.get("content-type") || "";
-      if (contentType.includes("application/json")) {
-        json = await res.json();
-      } else {
-        const text = await res.text();
-        json = { error: text };
-      }
-
-      if (!res.ok) {
-        throw new Error(json?.error || "Signup failed");
-      }
-
-      const { data: user, token } = json;
-      localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
-      localStorage.setItem(STORAGE_TOKEN_KEY, token);
-
-      set({ user, token, isSubmitting: false });
-      return user;
-    } catch (err) {
-      set({ error: err.message || "Unable to signup", isSubmitting: false });
-      throw err;
-    }
-  },
-
-  login: async (payload) => {
-    set({ isSubmitting: true, error: "" });
-    try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      let json;
-      const contentType = res.headers.get("content-type") || "";
-      if (contentType.includes("application/json")) {
-        json = await res.json();
-      } else {
-        const text = await res.text();
-        json = { error: text };
-      }
-
-      if (!res.ok) {
-        throw new Error(json?.error || "Login failed");
-      }
-
-      const { data: user, token } = json;
-      localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
-      localStorage.setItem(STORAGE_TOKEN_KEY, token);
-
-      set({ user, token, isSubmitting: false });
-      return user;
-    } catch (err) {
-      set({ error: err.message || "Unable to login", isSubmitting: false });
-      throw err;
-    }
+  setSession: (user, token) => {
+    if (!user || !token) return;
+    localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
+    localStorage.setItem(STORAGE_TOKEN_KEY, token);
+    set({ user, token, error: "", isSubmitting: false });
   },
 
   logout: () => {

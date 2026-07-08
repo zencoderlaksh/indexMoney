@@ -62,7 +62,7 @@ const WhatsAppModal = ({ isOpen, onClose, companyName = "" }) => {
                   Chat with our team
                 </h3>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  Pick a specialist — your enquiry is prefilled on WhatsApp.
+                  Pick a specialist to start a conversation on WhatsApp.
                 </p>
               </div>
             </div>
@@ -97,7 +97,7 @@ const WhatsAppModal = ({ isOpen, onClose, companyName = "" }) => {
             </div>
 
             <div className="mt-6 text-center text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
-              Opens WhatsApp. An enquiry starts a conversation with our team — it is not an order.
+              Opens WhatsApp. Starting a conversation with our team is not an order.
             </div>
           </motion.div>
         </div>

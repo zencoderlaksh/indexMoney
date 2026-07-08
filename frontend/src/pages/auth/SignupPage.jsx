@@ -16,7 +16,7 @@ const SignupPage = () => {
     firstName: "",
     lastName: "",
     email: initialEmail,
-    mobileNumber: initialMobile,
+    // mobileNumber: initialMobile,
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +48,7 @@ const SignupPage = () => {
       navigate("/verify-otp", { 
         state: { 
           email: form.email, 
-          mobile: form.mobileNumber 
+          // mobile: form.mobileNumber 
         } 
       });
     } catch (err) {
@@ -112,6 +112,7 @@ const SignupPage = () => {
           />
         </div>
 
+        {/* Mobile removed
         <div className="mb-6">
           <label className="block text-sm text-white/80 mb-2">Mobile (optional)</label>
           <input
@@ -123,6 +124,7 @@ const SignupPage = () => {
             className="w-full bg-[#001233] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#48cae4] transition-colors"
           />
         </div>
+        */}
 
         {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
 
