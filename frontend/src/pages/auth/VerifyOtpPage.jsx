@@ -91,7 +91,12 @@ const VerifyOtpPage = () => {
 
       // Success
       setSession(data.data, data.token);
-      navigate("/dashboard"); // Or wherever it makes sense to go
+      
+      if (data.data.isAdmin) {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       setError(err.message);
     } finally {
