@@ -10,6 +10,7 @@ const dematAccountRoutes = require("./dematAccountRoutes");
 const videoRoutes = require("./videoRoutes");
 const researchRoutes = require("./researchRoutes");
 const mediaRoutes = require("./mediaRoutes");
+const partnerRoutes = require("./partnerRoutes");
 
 const router = express.Router();
 
@@ -21,10 +22,10 @@ router.use("/subscriptions", subscriptionRoutes);
 router.use("/unlisted", unlistedRoutes);
 router.use("/blogs", blogRoutes);
 router.use("/demat-accounts", dematAccountRoutes);
-router.use("/demat-account", dematAccountRoutes);
 router.use("/videos", videoRoutes);
 router.use("/research", researchRoutes);
 router.use("/media", mediaRoutes);
+router.use("/partners", partnerRoutes);
 
 router.get("/health", (req, res) => {
   res.json({ status: "ok" });

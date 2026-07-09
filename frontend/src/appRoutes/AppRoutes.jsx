@@ -24,6 +24,8 @@ import MediaPage from "../pages/media/MediaPage";
 import ServicesPage from "../pages/services/ServicesPage";
 import PastPerformancePage from "../pages/pastPerformance/PastPerformancePage";
 import BlogsPage from "../pages/blogs/BlogsPage";
+import PartnerPage from "../pages/partner/PartnerPage";
+import OfficialBankAccountsPage from "../pages/legal/OfficialBankAccountsPage";
 
 const AppRoutes = () => {
   return (
@@ -49,6 +51,8 @@ const AppRoutes = () => {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/partner" element={<PartnerPage />} />
+        <Route path="/official-bank-accounts" element={<OfficialBankAccountsPage />} />
       </Route>
 
       {/* Subscription checkout — no header, standalone page */}
