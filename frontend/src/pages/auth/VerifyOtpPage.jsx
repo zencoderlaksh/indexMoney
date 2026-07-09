@@ -92,11 +92,8 @@ const VerifyOtpPage = () => {
       // Success
       setSession(data.data, data.token);
       
-      if (data.data.isAdmin) {
-        navigate("/admin");
-      } else {
-        navigate("/dashboard");
-      }
+      // Always redirect to home page, nav bar handles dashboard access
+      navigate("/");
     } catch (err) {
       setError(err.message);
     } finally {
