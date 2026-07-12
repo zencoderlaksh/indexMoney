@@ -155,15 +155,15 @@ const SectorsPage = () => {
         {/* Hero Section */}
         <div className="mb-12">
           <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
-            {selectedSector ? "SECTOR PROFILE" : "EXPLORE INDUSTRIES"}
+            {selectedSector ? "SECTOR PROFILE" : "EXPLORE BY INDUSTRY"}
           </span>
           <h1 className="mt-2 text-3xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-4xl">
-            {selectedSector ? selectedSector : "Sectors in the unlisted market"}
+            {selectedSector ? selectedSector : "Industries Driving India's Growth"}
           </h1>
           <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-2xl text-sm sm:text-base">
             {selectedSector
               ? `Browse unlisted and pre-IPO shares categorized under the ${selectedSector} industry.`
-              : "Discover companies by their respective sectors and navigate the corners of the private market."}
+              : "Discover Unlisted & Pre-IPO companies across India's fastest-growing sectors. Explore investment opportunities by industry and identify businesses shaping tomorrow's economy."}
           </p>
         </div>
 

@@ -364,14 +364,14 @@ const UnlistedSharesPage = () => {
           <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col items-center justify-center text-center gap-4">
             <div className="flex flex-col items-center">
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
-                {isCatalogPage ? "ALL SHARES" : "CURATED FOR INVESTORS"}
+                {isCatalogPage ? "INVESTMENT OPPORTUNITIES" : "CURATED FOR INVESTORS"}
               </p>
               <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
-                {isCatalogPage ? "Unlisted & pre-IPO shares" : "Discover India's Most Promising Unlisted Companies"}
+                {isCatalogPage ? "India's Largest Collection of Unlisted Shares" : "Discover India's Most Promising Unlisted Companies"}
               </h2>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl text-center">
                 {isCatalogPage 
-                  ? `${opportunities.length} companies tracked. Prices shown are indicative and for information only.` 
+                  ? "Browse verified investment opportunities across India's private market. Compare indicative share prices, research companies, and invest with confidence before they go public." 
                   : "Access exclusive investment opportunities in high-potential private companies across fintech, technology, infrastructure, healthcare, and more."
                 }
               </p>
