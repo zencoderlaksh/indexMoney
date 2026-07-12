@@ -111,10 +111,22 @@ const fallbackOpportunities = [
 ];
 
 const steps = [
-  "Submit Inquiry",
-  "Confirm Availability & Pricing",
-  "Complete Documentation & Payment",
-  "Share Transfer to Demat",
+  {
+    title: "Explore & Enquire",
+    description: "Choose the company you're interested in and submit your enquiry.",
+  },
+  {
+    title: "Confirm Price & Availability",
+    description: "Our experts verify the latest availability and indicative pricing.",
+  },
+  {
+    title: "Complete Documentation & Payment",
+    description: "Finish the required documentation and make a secure payment.",
+  },
+  {
+    title: "Receive Shares in Your Demat Account",
+    description: "The shares are transferred to your Demat account after successful processing.",
+  },
 ];
 
 const inputBase =
@@ -251,24 +263,13 @@ const UnlistedSharesPage = () => {
             
             {/* Left Column */}
             <div className="text-left">
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45 }}
-                className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#023e7d]"
-              >
-                <div className="h-[2px] w-6 bg-[#0466c8]" />
-                Sharing India's Unlisted Shares Information • Since 2018
-              </motion.div>
-
               <motion.h1
                 initial={{ opacity: 0, y: 22 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.48, delay: 0.08 }}
                 className="mt-6 text-4xl font-extrabold leading-[1.1] text-slate-800 dark:text-slate-100 md:text-5xl lg:text-6xl lg:leading-[1.15]"
               >
-                Your clear view of India's{" "}
-                <span className="italic text-[#023e7d]">unlisted</span> & pre-IPO shares.
+                India's Growth. Your Opportunity.
               </motion.h1>
 
               <motion.p
@@ -277,9 +278,7 @@ const UnlistedSharesPage = () => {
                 transition={{ duration: 0.45, delay: 0.14 }}
                 className="mt-6 text-base leading-relaxed text-slate-600 dark:text-slate-300 md:text-lg"
               >
-                Browse India's widest list of unlisted, pre-IPO and ESOP shares, with
-                researched company data and indicative prices. When you're ready,
-                we help connect buyers and sellers.
+                Be part of India's next generation of successful companies by investing before they go public.
               </motion.p>
 
               <motion.div
@@ -362,18 +361,18 @@ const UnlistedSharesPage = () => {
       <section id="opportunities-grid" className={`relative px-3 pb-4 sm:px-5 md:px-8 ${isCatalogPage ? "pt-24 md:pt-28" : ""}`}>
         <div className="mx-auto max-w-7xl overflow-hidden rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 90 shadow-[0_14px_38px_rgba(2,62,125,0.04)] backdrop-blur-sm sm:rounded-[30px]">
           
-          <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <div>
+          <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col items-center justify-center text-center gap-4">
+            <div className="flex flex-col items-center">
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
-                {isCatalogPage ? "ALL SHARES" : "TOP PICKS"}
+                {isCatalogPage ? "ALL SHARES" : "CURATED FOR INVESTORS"}
               </p>
               <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
-                {isCatalogPage ? "Unlisted & pre-IPO shares" : "Popular unlisted shares"}
+                {isCatalogPage ? "Unlisted & pre-IPO shares" : "Discover India's Most Promising Unlisted Companies"}
               </h2>
-              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl text-center">
                 {isCatalogPage 
                   ? `${opportunities.length} companies tracked. Prices shown are indicative and for information only.` 
-                  : "The most-followed names with investors this month. Prices shown are indicative and for information only."
+                  : "Access exclusive investment opportunities in high-potential private companies across fintech, technology, infrastructure, healthcare, and more."
                 }
               </p>
             </div>
@@ -498,16 +497,16 @@ const UnlistedSharesPage = () => {
         <section id="new-arrivals-grid" className="relative px-3 pb-4 sm:px-5 md:px-8 mt-12">
           <div className="mx-auto max-w-7xl overflow-hidden rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 90 shadow-[0_14px_38px_rgba(2,62,125,0.04)] backdrop-blur-sm sm:rounded-[30px]">
             
-            <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-              <div>
+            <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col items-center justify-center text-center gap-4">
+              <div className="flex flex-col items-center">
                 <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
-                  FRESH ADDITIONS
+                  NEW ON INDEXMONEY
                 </p>
                 <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
-                  New arrivals
+                  Fresh Investment Opportunities
                 </h2>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
-                  Recently added names. Research the company, then contact us when you're ready.
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl text-center">
+                  Discover newly available unlisted companies from high-growth sectors across India. Research, compare, and invest with confidence.
                 </p>
               </div>
               
@@ -603,16 +602,16 @@ const UnlistedSharesPage = () => {
         <section id="homepage-sectors" className="relative px-3 pb-4 sm:px-5 md:px-8 mt-12">
           <div className="mx-auto max-w-7xl overflow-hidden rounded-[22px] border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 90 shadow-[0_14px_38px_rgba(2,62,125,0.04)] backdrop-blur-sm sm:rounded-[30px]">
             
-            <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-              <div>
+            <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col items-center justify-center text-center gap-4">
+              <div className="flex flex-col items-center">
                 <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
-                  EXPLORE
+                  MARKET SECTORS
                 </p>
                 <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
-                  Top sectors in the unlisted market
+                  Invest Across India's Fastest-Growing Industries
                 </h2>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
-                  Navigate the corners of the private market shaping India's next listings.
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl text-center">
+                  From emerging technologies to established industries, explore sector-wise investment opportunities in India's unlisted market.
                 </p>
               </div>
               
@@ -731,34 +730,39 @@ const UnlistedSharesPage = () => {
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0353a4]">
-              How It Works
+              YOUR INVESTMENT JOURNEY
             </p>
             <h2 className="mt-3 text-3xl font-bold text-slate-800 dark:text-slate-100 md:text-4xl">
-              Simple Process, Guided Support
-
-      <WhatsAppModal 
-        isOpen={isWhatsAppModalOpen} 
-        onClose={() => setIsWhatsAppModalOpen(false)} 
-        companyName={selectedCompany} 
-      />
+              Your Journey to India's Private Market
             </h2>
+            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+              A secure, transparent, and hassle-free investment experience designed for every Indian investor.
+            </p>
+            <WhatsAppModal 
+              isOpen={isWhatsAppModalOpen} 
+              onClose={() => setIsWhatsAppModalOpen(false)} 
+              companyName={selectedCompany} 
+            />
           </div>
 
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {steps.map((step, index) => (
               <motion.div
-                key={step}
+                key={step.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
-                className="rounded-[26px] border border-[#5c677d] bg-white/90 dark:bg-[#001845]/90 85 p-6 text-center shadow-[0_12px_34px_rgba(2,62,125,0.07)] backdrop-blur-sm"
+                className="rounded-[26px] border border-[#5c677d] bg-white/90 dark:bg-[#001845]/90 85 p-6 text-center shadow-[0_12px_34px_rgba(2,62,125,0.07)] backdrop-blur-sm flex flex-col h-full"
               >
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0353a4] to-[#023e7d] text-base font-bold text-white">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0353a4] to-[#023e7d] text-base font-bold text-white shrink-0">
                   {index + 1}
                 </div>
-                <p className="mt-4 text-base font-semibold leading-relaxed text-slate-800 dark:text-slate-100">
-                  {step}
+                <h3 className="mt-4 text-base font-bold leading-relaxed text-slate-800 dark:text-slate-100">
+                  {step.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300 flex-grow">
+                  {step.description}
                 </p>
               </motion.div>
             ))}

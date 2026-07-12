@@ -1,36 +1,48 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { CheckCircle2, ShieldCheck, TrendingUp } from "lucide-react";
 import { IMAGES } from "../../constants/images";
 
 const AuthLayout = ({ children }) => {
   return (
     <div className="flex min-h-screen bg-[#001233] text-white">
       {/* Left Pane (Branding) */}
-      <div className="hidden lg:flex w-1/2 flex-col px-16 py-12 justify-center border-r border-white/10 relative">
-        <div className="absolute top-12 left-16">
+      <div className="hidden lg:flex w-1/2 flex-col px-16 py-12 border-r border-white/10">
+        {/* Top: Logo */}
+        <div className="mb-auto">
           <Link to="/">
-            <img src={IMAGES.logo} alt="Index Money" className="h-10 w-auto brightness-0 invert" />
+            <img src={IMAGES.logo} alt="Index Money" className="h-5 w-auto brightness-0 invert opacity-90 hover:opacity-100 transition-opacity" />
           </Link>
         </div>
-        
 
-        <h1 className="text-5xl lg:text-6xl font-serif font-bold leading-tight mb-8">
-          Your unlisted <br />
-          portfolio, in focus.
-        </h1>
-        <p className="text-base text-white/80 max-w-md mb-12 leading-relaxed">
-          Track your confirmed holdings and indicative values, view your KYC, and raise a buy or sell enquiry — all in one private, secure dashboard.
-        </p>
-        <div className="flex gap-12 mt-8">
-          <div>
-            <h3 className="text-2xl font-bold mb-2">Indicative Portfolio</h3>
-          </div>
-          <div>
-            <h3 className="text-2xl font-bold mb-2">Secure sign in</h3>
+        {/* Middle: Content */}
+        <div className="my-12">
+          <h1 className="text-4xl lg:text-5xl font-serif font-bold leading-tight mb-6">
+            Your Gateway to <br />
+            India's Private Market.
+          </h1>
+          <p className="text-sm text-white/80 max-w-md mb-8 leading-relaxed">
+            Join thousands of investors exploring India's most promising Unlisted & Pre-IPO companies. Manage your enquiries, track investments, and access exclusive private market opportunities—all from one secure dashboard.
+          </p>
+          
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3 text-white/90">
+              <CheckCircle2 className="h-5 w-5 text-blue-400" />
+              <h3 className="text-base font-medium">Verified Opportunities</h3>
+            </div>
+            <div className="flex items-center gap-3 text-white/90">
+              <ShieldCheck className="h-5 w-5 text-blue-400" />
+              <h3 className="text-base font-medium">Secure Dashboard</h3>
+            </div>
+            <div className="flex items-center gap-3 text-white/90">
+              <TrendingUp className="h-5 w-5 text-blue-400" />
+              <h3 className="text-base font-medium">Expert Guidance</h3>
+            </div>
           </div>
         </div>
 
-        <div className="absolute bottom-12 left-16 text-xs text-white/50">
+        {/* Bottom: Footer */}
+        <div className="mt-auto text-[11px] text-white/40">
           Not a SEBI-recognised platform. Values are indicative only. © IndexMoney
         </div>
       </div>

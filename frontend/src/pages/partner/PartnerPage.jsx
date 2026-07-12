@@ -62,13 +62,13 @@ const PartnerPage = () => {
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
           <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#0353a4]">
-            Partner Program
+            Apply to Join Our Partner Network
           </p>
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-[#001233] mb-4">
-            Become a partner
+            Grow with India's Private Market
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Join our network and let's build something great together. Fill out the form below and our team will get in touch with you shortly.
+            Partner with IndexMoney to help investors access India's leading Unlisted & Pre-IPO opportunities. Earn attractive referral rewards, receive dedicated support, and grow your business with a trusted investment platform
           </p>
         </div>
 

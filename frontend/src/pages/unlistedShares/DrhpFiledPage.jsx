@@ -182,13 +182,13 @@ const DrhpFiledPage = () => {
           <div className="border-b border-slate-100 dark:border-white/5 px-6 py-6 sm:px-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
-                IPO WATCH
+                IPO INSIGHTS
               </p>
               <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
-                DRHP Filed Companies
+                Track India's Upcoming IPO Leaders
               </h2>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
-                Check out the unlisted shares which have filed Draft Red Herring Prospectus (DRHP) with SEBI for their IPO.
+                Monitor private companies that have initiated their IPO journey by filing DRHP with SEBI and explore opportunities before public listing.
               </p>
             </div>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#001233] px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
@@ -308,141 +308,7 @@ const DrhpFiledPage = () => {
         </div>
       </section>
 
-      {/* Inquiry Form */}
-      <section
-        id="unlisted-inquiry-form"
-        className="relative px-5 py-8 md:px-8"
-      >
-        <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[1fr_320px]">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45 }}
-            className="rounded-[30px] border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 shadow-[0_16px_42px_rgba(2,62,125,0.08)] backdrop-blur-sm md:p-8 p-7"
-          >
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0353a4]">
-              Inquiry Form
-            </p>
-            <h2 className="mt-3 text-3xl font-bold text-slate-800 dark:text-slate-100">
-              Tell Us Your Interest
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-              Share your requirement and our team will respond with available
-              options, indicative pricing, and next steps.
-            </p>
 
-            {submitStatus.text ? (
-              <div
-                className={`mt-5 rounded-2xl border px-4 py-3 text-sm ${
-                  submitStatus.kind === "success"
-                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                    : "border-amber-200 bg-amber-50 text-amber-700"
-                }`}
-              >
-                {submitStatus.text}
-              </div>
-            ) : null}
-
-            <form onSubmit={handleSubmit} className="mt-7 space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <input
-                  name="fullName"
-                  type="text"
-                  required
-                  value={form.fullName}
-                  onChange={handleChange}
-                  className={inputBase}
-                  placeholder="Full Name"
-                />
-                <input
-                  name="mobileNumber"
-                  type="tel"
-                  required
-                  value={form.mobileNumber}
-                  onChange={handleChange}
-                  className={inputBase}
-                  placeholder="Mobile Number"
-                />
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={handleChange}
-                  className={inputBase}
-                  placeholder="Email"
-                />
-                <input
-                  name="interestedCompany"
-                  type="text"
-                  value={form.interestedCompany}
-                  onChange={handleChange}
-                  className={inputBase}
-                  placeholder="Interested Company"
-                />
-              </div>
-
-              <input
-                name="investmentAmount"
-                type="text"
-                value={form.investmentAmount}
-                onChange={handleChange}
-                className={inputBase}
-                placeholder="Investment Amount"
-              />
-
-              <textarea
-                name="message"
-                rows={5}
-                value={form.message}
-                onChange={handleChange}
-                className={`${inputBase} resize-none`}
-                placeholder="Message"
-              />
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#0353a4] to-[#023e7d] px-5 py-3 text-sm font-bold text-white shadow-[0_16px_28px_rgba(3,83,164,0.22)] disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                Submit Inquiry
-                <Send className="h-4 w-4" />
-              </button>
-            </form>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45, delay: 0.08 }}
-            className="rounded-[30px] border border-[#0466c8] bg-gradient-to-br from-[#0353a4] to-[#023e7d] p-7 text-white shadow-[0_16px_42px_rgba(4,102,200,0.24)]"
-          >
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15">
-              <MessageCircle className="h-5 w-5" />
-            </div>
-            <h3 className="mt-5 text-2xl font-bold">WhatsApp Quick Connect</h3>
-            <p className="mt-3 text-sm leading-relaxed text-white/80">
-              Need faster coordination? Connect with our support team directly
-              on WhatsApp for inquiry assistance.
-            </p>
-
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-[#023e7d]"
-            >
-              <WhatsAppIcon className="h-4 w-4" />
-              Chat on WhatsApp
-            </a>
-          </motion.div>
-        </div>
-      </section>
 
       {/* Disclaimer */}
       <section className="relative px-5 pb-16 pt-8 md:px-8 md:pb-20">

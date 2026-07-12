@@ -12,7 +12,7 @@ const BottomConsultationBar = () => {
     <div className="fixed inset-x-0 bottom-0 z-[9999] border-t border-[#5c677d]/40 bg-gradient-to-r from-[#001233] via-[#023e7d] to-[#0353a4] px-4 py-4 shadow-[0_-12px_35px_rgba(3,83,164,0.22)] sm:px-8">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 pr-10 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
         <p className="text-sm font-semibold text-white sm:text-base">
-          Book a free consultation with our experts
+          Get personalized guidance for your Unlisted Share investments.
         </p>
 
         <button
