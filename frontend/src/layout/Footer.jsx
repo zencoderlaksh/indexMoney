@@ -13,7 +13,7 @@ const Footer = () => {
               <img
                 src={IMAGES.logo}
                 alt="Index Money"
-                className="h-12 w-36 object-contain object-left filter brightness-0 invert"
+                className="w-56 md:w-64 h-auto object-contain object-left filter brightness-0 invert"
               />
             </Link>
             <p className="text-sm leading-7 text-slate-400 max-w-sm">

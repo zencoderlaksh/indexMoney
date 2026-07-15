@@ -81,7 +81,7 @@ const Header = () => {
           : "bg-[#001233] border-b border-white/10"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-5 md:px-8 h-24 flex items-center justify-between">
           {/* Logo */}
           <Link
             to="/"
@@ -90,8 +90,8 @@ const Header = () => {
             <motion.img
               src={IMAGES.logo}
               alt="Index Money"
-              className="h-12 w-36 object-contain object-left brightness-0 invert"
-              whileHover={{ scale: 1.03 }}
+              className="w-48 md:w-60 h-auto object-contain object-left brightness-0 invert origin-left"
+              whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 380, damping: 22 }}
             />
           </Link>
@@ -247,11 +247,11 @@ const Header = () => {
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
               className="fixed right-0 top-0 bottom-0 z-50 w-72 bg-white shadow-xl flex flex-col"
             >
-              <div className="flex items-center justify-between px-5 h-16 border-b border-slate-100 dark:border-white/10 bg-white dark:bg-[#001845]">
+              <div className="flex items-center justify-between px-5 h-20 border-b border-slate-100 dark:border-white/10 bg-white dark:bg-[#001845]">
                 <img
                   src={IMAGES.logo}
                   alt="Index Money"
-                  className="h-11 w-32 object-contain object-left dark:brightness-0 dark:invert"
+                  className="w-36 h-auto object-contain object-left dark:brightness-0 dark:invert"
                 />
                 <button
                   onClick={() => setMobileOpen(false)}
