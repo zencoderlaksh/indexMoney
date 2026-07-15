@@ -41,11 +41,11 @@ const Footer = () => {
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Company</h3>
             <div className="flex flex-col gap-2.5 text-sm text-slate-400">
-              <Link to="/" className="hover:text-[#0466c8] transition-colors">About us</Link>
+              <Link to="/about" className="hover:text-[#0466c8] transition-colors">About us</Link>
               <Link to="/" className="hover:text-[#0466c8] transition-colors">Our products</Link>
               <Link to="/partner" className="hover:text-[#0466c8] transition-colors">Become a partner</Link>
               <Link to="/official-bank-accounts" className="hover:text-[#0466c8] transition-colors">Official bank accounts</Link>
-              <Link to="/" className="hover:text-[#0466c8] transition-colors">Contact</Link>
+              <Link to="/contact" className="hover:text-[#0466c8] transition-colors">Contact</Link>
             </div>
           </div>
 

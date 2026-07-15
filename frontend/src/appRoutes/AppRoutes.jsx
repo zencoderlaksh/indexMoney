@@ -33,7 +33,7 @@ const AppRoutes = () => {
       {/* Public — with header/footer */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
-        {/* <Route path="/about" element={<About />} /> */}
+        <Route path="/about" element={<About />} />
         {/* <Route path="/services" element={<ServicesPage />} /> */}
         <Route path="/unlisted-shares" element={<UnlistedSharesPage />} />
         <Route path="/unlisted-shares/:code/:slug" element={<UnlistedShareDetailPage />} />
@@ -44,7 +44,7 @@ const AppRoutes = () => {
         <Route path="/research" element={<ResearchPage />} />
         <Route path="/research/:slug" element={<ResearchPage />} />
         <Route path="/media" element={<MediaPage />} />
-        {/* <Route path="/contact" element={<ContactPage />} /> */}
+        <Route path="/contact" element={<ContactPage />} />
         {/* <Route path="/past-performance" element={<PastPerformancePage />} /> */}
         <Route path="/knowledge-center" element={<BlogsPage />} />
         <Route path="/knowledge-center/:slug" element={<BlogsPage />} />
