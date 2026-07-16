@@ -12,7 +12,9 @@ import {
   Minus,
   Plus,
   ShieldAlert,
+  Sparkles,
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -360,6 +362,8 @@ const UnlistedShareDetailPage = () => {
   const [opportunities, setOpportunities] = useState(fallbackOpportunities);
   const [isLoading, setIsLoading] = useState(true);
   const [units, setUnits] = useState(1);
+  const [aiInsights, setAiInsights] = useState(null);
+  const [isAILoading, setIsAILoading] = useState(false);
 
   const token = useAuthStore((s) => s.token);
 
@@ -382,6 +386,28 @@ const UnlistedShareDetailPage = () => {
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchAIInsights = async () => {
+    if (!share?.company) return;
+    setIsAILoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/ai/insights`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ company: share.company }),
+      });
+      const data = await res.json();
+      if (data?.data?.insights) {
+        setAiInsights(data.data.insights);
+      } else {
+        setAiInsights("Failed to fetch insights.");
+      }
+    } catch (err) {
+      setAiInsights("Error loading AI insights.");
+    } finally {
+      setIsAILoading(false);
     }
   };
 
@@ -572,9 +598,14 @@ const UnlistedShareDetailPage = () => {
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </button>
-                    <span className="min-w-6 text-center font-bold text-slate-800 dark:text-slate-100">
-                      {selectedUnits}
-                    </span>
+                    <input
+                      type="number"
+                      min={minimumUnits}
+                      value={units}
+                      onChange={(e) => setUnits(e.target.value === "" ? "" : parseInt(e.target.value, 10) || "")}
+                      onBlur={() => setUnits(Math.max(minimumUnits, parseInt(units, 10) || minimumUnits))}
+                      className="w-16 text-center font-bold text-slate-800 dark:text-slate-100 bg-transparent border-b border-transparent focus:border-slate-300 dark:focus:border-white/30 focus:outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
                     <button
                       type="button"
                       onClick={() =>
@@ -698,6 +729,62 @@ const UnlistedShareDetailPage = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* AI Insights Section */}
+        <div className="mx-auto max-w-6xl mt-6">
+          <div className="rounded-[30px] border border-[#7d8597] bg-gradient-to-br from-white/90 to-blue-50/90 dark:from-[#001845]/90 dark:to-[#001233]/90 p-7 shadow-[0_14px_38px_rgba(2,62,125,0.08)] relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+              <Sparkles className="w-48 h-48 text-[#0353a4]" />
+            </div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="bg-[#0353a4]/10 p-2.5 rounded-xl">
+                    <Sparkles className="h-6 w-6 text-[#0353a4] dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                      AI Insights
+                      <span className="text-[10px] uppercase tracking-wider font-bold bg-[#0353a4] text-white px-2 py-0.5 rounded-full">Gemini</span>
+                    </h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Latest analysis and information powered by Google Gemini</p>
+                  </div>
+                </div>
+                {!aiInsights && !isAILoading && (
+                  <button 
+                    onClick={fetchAIInsights}
+                    className="flex items-center gap-2 bg-[#0353a4] text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-[#023e7d] transition-colors shadow-sm"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Generate Insights
+                  </button>
+                )}
+              </div>
+
+              {isAILoading && (
+                <div className="flex flex-col items-center justify-center py-10 gap-4">
+                  <div className="animate-spin rounded-full h-10 w-10 border-4 border-slate-200 border-t-[#0353a4]"></div>
+                  <p className="text-sm font-semibold text-slate-500 animate-pulse">Analyzing latest market data...</p>
+                </div>
+              )}
+
+              {aiInsights && !isAILoading && (
+                <div className="prose prose-sm sm:prose-base dark:prose-invert prose-blue max-w-none prose-headings:font-bold prose-headings:text-slate-800 dark:prose-headings:text-slate-100 prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-li:text-slate-600 dark:prose-li:text-slate-300">
+                  <ReactMarkdown>{aiInsights}</ReactMarkdown>
+                </div>
+              )}
+              
+              {!aiInsights && !isAILoading && (
+                <div className="bg-white/50 dark:bg-black/20 border border-dashed border-slate-300 dark:border-white/20 rounded-2xl p-8 text-center">
+                  <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                    Click the button above to generate a real-time summary, recent news, and key metrics about {share?.company} using AI.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

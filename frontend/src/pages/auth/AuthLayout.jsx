@@ -11,7 +11,7 @@ const AuthLayout = ({ children }) => {
         {/* Top: Logo */}
         <div className="mb-auto">
           <Link to="/">
-            <img src={IMAGES.logo} alt="Index Money" className="h-5 w-auto brightness-0 invert opacity-90 hover:opacity-100 transition-opacity" />
+            <img src={IMAGES.logo} alt="Index Money" className="h-4 w-auto opacity-90 hover:opacity-100 transition-opacity" />
           </Link>
         </div>
 
@@ -52,12 +52,12 @@ const AuthLayout = ({ children }) => {
         <div className="w-full max-w-sm">
           <div className="lg:hidden absolute top-8 left-8">
             <Link to="/">
-              <img src={IMAGES.logo} alt="Index Money" className="h-8 w-auto brightness-0 invert" />
+              <img src={IMAGES.logo} alt="Index Money" className="h-6 w-auto" />
             </Link>
           </div>
           
           <div className="lg:hidden mb-12 mt-12 flex justify-center">
-             <img src={IMAGES.logo} alt="Index Money" className="h-10 w-auto brightness-0 invert" />
+             <img src={IMAGES.logo} alt="Index Money" className="h-8 w-auto" />
           </div>
 
           {children}

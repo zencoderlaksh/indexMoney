@@ -90,7 +90,7 @@ const Header = () => {
             <motion.img
               src={IMAGES.logo}
               alt="Index Money"
-              className="w-48 md:w-60 h-auto object-contain object-left brightness-0 invert origin-left"
+              className="w-40 md:w-48 h-auto object-contain object-left origin-left"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 380, damping: 22 }}
             />
@@ -251,7 +251,7 @@ const Header = () => {
                 <img
                   src={IMAGES.logo}
                   alt="Index Money"
-                  className="w-36 h-auto object-contain object-left dark:brightness-0 dark:invert"
+                  className="w-32 h-auto object-contain object-left invert hue-rotate-180 dark:invert-0 dark:hue-rotate-0"
                 />
                 <button
                   onClick={() => setMobileOpen(false)}

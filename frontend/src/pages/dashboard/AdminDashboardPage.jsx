@@ -929,7 +929,7 @@ const AdminDashboardPage = () => {
             <img
               src={IMAGES.logo}
               alt="Index Money"
-              className="h-11 w-32 object-contain object-left"
+              className="h-8 w-auto object-contain object-left invert hue-rotate-180"
             />
           </button>
           <div className="flex items-center gap-3">

@@ -1,5 +1,5 @@
-import logo from "@/assets/Finalll_transparent.png";
-import logoIcon from "@/assets/IndxMoneyLogo-cropped.jpeg";
+import logo from "@/assets/FinalLogo.png";
+import logoIcon from "@/assets/FinalLogo.png";
 
 export const IMAGES = {
   logo,
