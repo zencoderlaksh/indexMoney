@@ -1003,7 +1003,7 @@ const AdminDashboardPage = () => {
           <StatCard
             icon={BarChart2}
             label="Today's Results"
-            value={`${todaysResults.length} Rows`}
+            value={`${performanceTrades.filter(t => new Date(t.date).toDateString() === new Date().toDateString()).length} Rows`}
             sub="Daily update block"
             color="#0466c8"
           />
