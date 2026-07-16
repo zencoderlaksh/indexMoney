@@ -14,7 +14,7 @@ const getShareInsights = async (req, res, next) => {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `You are a financial analyst expert. 
 Provide a concise, up-to-date summary and key insights about the unlisted stock / company: "${company}".
