@@ -401,6 +401,8 @@ const UnlistedShareDetailPage = () => {
       const data = await res.json();
       if (data?.data?.insights) {
         setAiInsights(data.data.insights);
+      } else if (data?.error) {
+        setAiInsights(`Error: ${data.error}`);
       } else {
         setAiInsights("Failed to fetch insights.");
       }

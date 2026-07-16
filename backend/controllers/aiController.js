@@ -39,7 +39,7 @@ Format the response in clean, easy-to-read Markdown. Use bullet points and bold 
 
   } catch (error) {
     console.error("Error fetching AI insights:", error);
-    res.status(500).json({ error: "Failed to fetch AI insights. Please try again later." });
+    res.status(500).json({ error: "Failed to fetch AI insights. " + (error.message || "") });
   }
 };
 
