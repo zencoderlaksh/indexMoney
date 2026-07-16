@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const contacts = [
-  { name: "Neha", number: "918000200043", display: "+91 80002 00043", initial: "N" },
+  { name: "Index Money", number: "919216180043", display: "+91 92161 80043", initial: "I" },
 ];
 
 const WhatsAppIcon = ({ className = "" }) => (
