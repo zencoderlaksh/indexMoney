@@ -2,25 +2,45 @@ import React from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { LayoutDashboard, Briefcase, FileCheck, MessageSquare, User } from "lucide-react";
 
-const NAV_ITEMS = [
+import { useAuthStore } from "../../stores/authStore";
+
+const COMMON_NAV = [
   { label: "Overview", path: "/dashboard/overview", icon: LayoutDashboard },
   { label: "Portfolio", path: "/dashboard/portfolio", icon: Briefcase },
   { label: "KYC", path: "/dashboard/kyc", icon: FileCheck },
   { label: "Enquiries", path: "/dashboard/enquiries", icon: MessageSquare },
-  { label: "Profile", path: "/dashboard/profile", icon: User },
+];
+
+const PARTNER_NAV = [
+  { label: "Transactions", path: "/dashboard/transactions", icon: Briefcase },
+  { label: "Invoices", path: "/dashboard/invoices", icon: FileCheck },
 ];
 
 const DashboardLayout = () => {
   const location = useLocation();
+  const { user } = useAuthStore();
+
+  const isPartner = user?.isPartner;
+  const isVerified = user?.partnerStatus === "verified";
+
+  const navItems = isPartner 
+    ? [...COMMON_NAV, ...PARTNER_NAV, { label: "Profile", path: "/dashboard/profile", icon: User }] 
+    : [...COMMON_NAV, { label: "Profile", path: "/dashboard/profile", icon: User }];
 
   return (
     <div className="min-h-screen bg-[#001233] text-white">
       {/* Top Navigation Bar for Dashboard */}
       <div className="border-b border-white/10 bg-[#000d26]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-8 overflow-x-auto no-scrollbar">
-              {NAV_ITEMS.map((item) => {
+          <div className="flex h-16 items-center gap-8">
+            <h1 className="text-xl font-bold text-[#48cae4] hidden md:block">
+              {isPartner ? "Partner Dashboard" : "User Dashboard"}
+              {isPartner && !isVerified && (
+                <span className="ml-2 text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-normal">Pending</span>
+              )}
+            </h1>
+            <div className="flex flex-1 items-center gap-8 overflow-x-auto no-scrollbar">
+              {navItems.map((item) => {
                 const isActive = location.pathname.startsWith(item.path);
                 const Icon = item.icon;
                 return (

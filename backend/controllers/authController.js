@@ -40,7 +40,12 @@ const sendOtp = async (req, res, next) => {
         lastName,
         email: normalizedEmail,
         isAdmin: Boolean(config.adminEmail && normalizedEmail === config.adminEmail),
+        isPartner: req.body.isPartner || false,
       });
+    } else if (req.body.isPartner && !user.isPartner) {
+      // If user exists but is not a partner, and is logging in through partner portal
+      user.isPartner = true;
+      await user.save();
     }
 
     // Generate a 6-digit OTP

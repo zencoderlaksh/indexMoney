@@ -19,6 +19,13 @@ const userSchema = new mongoose.Schema(
     mobileNumber: { type: String, trim: true },
     city: { type: String, trim: true },
     isAdmin: { type: Boolean, default: false },
+    isPartner: { type: Boolean, default: false },
+    partnerStatus: {
+      type: String,
+      enum: ["none", "pending", "verified", "rejected"],
+      default: "none",
+    },
+    partnerPaymentRef: { type: String, trim: true },
     otp: { type: String },
     otpExpiresAt: { type: Date },
   },

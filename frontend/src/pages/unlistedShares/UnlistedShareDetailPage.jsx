@@ -365,7 +365,8 @@ const UnlistedShareDetailPage = () => {
   const [aiInsights, setAiInsights] = useState(null);
   const [isAILoading, setIsAILoading] = useState(false);
 
-  const token = useAuthStore((s) => s.token);
+  const { user, token } = useAuthStore();
+  const isVerifiedPartner = user?.isPartner && user?.partnerStatus === "verified";
 
   const fetchOpportunities = async (signal) => {
     try {
@@ -528,9 +529,14 @@ const UnlistedShareDetailPage = () => {
                     <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
                       Price
                     </p>
-                    <p className="mt-2 text-2xl font-black text-[#023e7d]">
-                      {share?.price}
-                    </p>
+                    <div className="mt-2 flex flex-col">
+                      {isVerifiedPartner && share?.originalPrice && (
+                        <p className="text-sm font-bold text-slate-400 line-through mb-0.5">{share.originalPrice}</p>
+                      )}
+                      <p className="text-2xl font-black text-[#023e7d]">
+                        {share?.price}
+                      </p>
+                    </div>
                   </div>
                   <div className="rounded-2xl bg-[#f1f5f9] p-5">
                     <Building2 className="h-5 w-5 text-[#0353a4]" />
@@ -567,9 +573,14 @@ const UnlistedShareDetailPage = () => {
               <div className="space-y-5 text-sm">
                 <div className="flex items-center justify-between gap-4">
                   <span className="text-slate-500 dark:text-slate-400">Price per unit</span>
-                  <span className="font-bold text-slate-950">
-                    {formatCurrency(pricePerUnit)}
-                  </span>
+                  <div className="flex flex-col items-end">
+                    {isVerifiedPartner && share?.originalPrice && (
+                      <span className="text-[11px] font-bold text-slate-400 line-through mb-0.5">{share.originalPrice}</span>
+                    )}
+                    <span className="font-bold text-slate-950">
+                      {formatCurrency(pricePerUnit)}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center justify-between gap-4">
                   <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">

@@ -67,3 +67,70 @@ exports.updateApplicationStatus = async (req, res) => {
     res.status(500).json({ error: "Server error. Could not update status." });
   }
 };
+
+const User = require("../models/userModel");
+
+// POST /api/partners/submit-payment
+exports.submitPayment = async (req, res) => {
+  try {
+    const { paymentRef } = req.body;
+    
+    if (!paymentRef) {
+      return res.status(400).json({ error: "Payment reference is required." });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user || !user.isPartner) {
+      return res.status(403).json({ error: "Not a valid partner account." });
+    }
+
+    user.partnerPaymentRef = paymentRef;
+    user.partnerStatus = "pending";
+    await user.save();
+
+    res.json({ message: "Payment submitted successfully. Awaiting admin verification." });
+  } catch (error) {
+    console.error("Error submitting partner payment:", error);
+    res.status(500).json({ error: "Server error. Could not submit payment." });
+  }
+};
+
+// GET /api/partners/verifications
+exports.getVerifications = async (req, res) => {
+  try {
+    const partners = await User.find({ isPartner: true }).sort({ createdAt: -1 }).select("-otp -otpExpiresAt -password");
+    res.json({ data: partners });
+  } catch (error) {
+    console.error("Error fetching partner verifications:", error);
+    res.status(500).json({ error: "Server error. Could not fetch verifications." });
+  }
+};
+
+// PATCH /api/partners/verifications/:id/status
+exports.updateVerificationStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    
+    if (!status || !["none", "pending", "verified", "rejected"].includes(status)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { partnerStatus: status },
+      { new: true }
+    ).select("-otp -otpExpiresAt -password");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({
+      message: "Verification status updated successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error updating verification status:", error);
+    res.status(500).json({ error: "Server error. Could not update status." });
+  }
+};

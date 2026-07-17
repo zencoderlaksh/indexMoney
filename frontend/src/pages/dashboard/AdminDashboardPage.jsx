@@ -30,6 +30,7 @@ import VideoManager from "./components/VideoManager";
 import ResearchManager from "./components/ResearchManager";
 import MediaManager from "./components/MediaManager";
 import PartnerManager from "./components/PartnerManager";
+import PartnerVerifications from "./components/PartnerVerifications";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -459,6 +460,7 @@ const AdminDashboardPage = () => {
     company: "",
     sector: "",
     price: "",
+    originalPrice: "",
     minimumInvestment: "",
     status: "Available",
     code: "",
@@ -674,6 +676,7 @@ const AdminDashboardPage = () => {
         company: "",
         sector: "",
         price: "",
+        originalPrice: "",
         minimumInvestment: "",
         status: "Available",
         code: "",
@@ -718,6 +721,7 @@ const AdminDashboardPage = () => {
       company: opp.company || "",
       sector: opp.sector || "",
       price: opp.price || "",
+      originalPrice: opp.originalPrice || "",
       minimumInvestment: opp.minimumInvestment || "",
       status: opp.status || "Available",
       code: opp.code || "",
@@ -770,6 +774,7 @@ const AdminDashboardPage = () => {
           company: "",
           sector: "",
           price: "",
+          originalPrice: "",
           minimumInvestment: "",
           status: "Available",
           code: "",
@@ -1467,6 +1472,17 @@ const AdminDashboardPage = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Original Price (Partner Bulk)</label>
+                  <input
+                    name="originalPrice"
+                    type="text"
+                    value={unlistedForm.originalPrice}
+                    onChange={handleUnlistedChange}
+                    placeholder="e.g. Rs 320"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Min Investment *</label>
                   <input
                     name="minimumInvestment"
@@ -1709,6 +1725,7 @@ const AdminDashboardPage = () => {
                       company: "",
                       sector: "",
                       price: "",
+                      originalPrice: "",
                       minimumInvestment: "",
                       status: "Available",
                       code: "",
@@ -1742,6 +1759,7 @@ const AdminDashboardPage = () => {
                     company: "",
                     sector: "",
                     price: "",
+                    originalPrice: "",
                     minimumInvestment: "",
                     status: "Available",
                     code: "",
@@ -1780,6 +1798,7 @@ const AdminDashboardPage = () => {
                       <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Company</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Sector</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Price</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Orig. Price</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Min. Investment</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Actions</th>
@@ -1806,6 +1825,7 @@ const AdminDashboardPage = () => {
                           </td>
                           <td className="px-4 py-3 text-sm text-slate-700">{opp.sector}</td>
                           <td className="px-4 py-3 text-sm font-semibold text-[#023e7d]">{opp.price}</td>
+                          <td className="px-4 py-3 text-sm text-slate-500">{opp.originalPrice || "-"}</td>
                           <td className="px-4 py-3 text-sm text-slate-700">{opp.minimumInvestment}</td>
                           <td className="px-4 py-3 text-sm text-slate-700">
                             <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-bold ${
@@ -1856,6 +1876,9 @@ const AdminDashboardPage = () => {
           </div>
           <div className="mt-8">
             <ResearchManager authHeaders={authHeaders} />
+          </div>
+          <div className="mt-8">
+            <PartnerVerifications authHeaders={authHeaders} />
           </div>
           <div className="mt-8">
             <PartnerManager authHeaders={authHeaders} />

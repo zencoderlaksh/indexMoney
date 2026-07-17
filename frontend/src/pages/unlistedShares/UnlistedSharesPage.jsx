@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -163,6 +164,8 @@ const getDetailPath = (item) => {
 const UnlistedSharesPage = () => {
   const location = useLocation();
   const isCatalogPage = location.pathname === "/unlisted-shares";
+  const { user } = useAuthStore();
+  const isVerifiedPartner = user?.isPartner && user?.partnerStatus === "verified";
 
   const [opportunities, setOpportunities] = useState(fallbackOpportunities);
   const [currentPage, setCurrentPage] = useState(1);
@@ -329,7 +332,12 @@ const UnlistedSharesPage = () => {
                       </div>
                     </div>
                     <div className="flex flex-col items-end shrink-0 pl-2 border-l border-slate-100 dark:border-white/5">
-                      <span className="text-[15px] font-bold text-slate-800 dark:text-slate-100">{item.price}</span>
+                      <div className="flex flex-col items-end">
+                        {isVerifiedPartner && item.originalPrice && (
+                          <span className="text-[11px] font-bold text-slate-400 line-through mb-0.5">{item.originalPrice}</span>
+                        )}
+                        <span className="text-[15px] font-bold text-slate-800 dark:text-slate-100">{item.price}</span>
+                      </div>
                       <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8]">
                         Indicative
                       </span>
@@ -409,6 +417,9 @@ const UnlistedSharesPage = () => {
                   {/* Middle Row: Price & 15D pill */}
                   <div className="mt-6 pt-5 border-t border-slate-100 dark:border-white/5 flex items-end justify-between">
                     <div className="flex flex-col">
+                      {isVerifiedPartner && item.originalPrice && (
+                        <span className="text-sm font-bold text-slate-400 line-through mb-0.5">{item.originalPrice}</span>
+                      )}
                       <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{item.price}</span>
                       <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8] mt-0.5">
                         Indicative
@@ -549,6 +560,9 @@ const UnlistedSharesPage = () => {
                     {/* Middle Row: Price & 15D pill */}
                     <div className="mt-6 pt-5 border-t border-slate-100 dark:border-white/5 flex items-end justify-between">
                       <div className="flex flex-col">
+                        {isVerifiedPartner && item.originalPrice && (
+                          <span className="text-sm font-bold text-slate-400 line-through mb-0.5">{item.originalPrice}</span>
+                        )}
                         <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{item.price}</span>
                         <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8] mt-0.5">
                           Indicative

@@ -5,6 +5,7 @@ const unlistedOpportunitySchema = new mongoose.Schema(
     company: { type: String, required: true, trim: true },
     sector: { type: String, required: true, trim: true },
     price: { type: String, required: true, trim: true },
+    originalPrice: { type: String, trim: true },
     minimumInvestment: { type: String, required: true, trim: true },
     status: { type: String, required: true, trim: true },
     code: { type: String, trim: true },

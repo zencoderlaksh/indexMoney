@@ -6,9 +6,11 @@ import SignupPage from "../pages/auth/SignupPage";
 import LoginPage from "../pages/auth/LoginPage";
 import VerifyOtpPage from "../pages/auth/VerifyOtpPage";
 import PartnerLoginPage from "../pages/auth/PartnerLoginPage";
+import PartnerSignupPage from "../pages/auth/PartnerSignupPage";
 import AdminDashboardPage from "../pages/dashboard/AdminDashboardPage";
 import DashboardLayout from "../pages/dashboard/DashboardLayout";
 import ProfilePage from "../pages/dashboard/ProfilePage";
+import PlaceholderPage from "../pages/dashboard/PlaceholderPage";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import SubscriptionPage from "../pages/subscription/SubscriptionPage";
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
@@ -64,6 +66,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/verify-otp" element={<VerifyOtpPage />} />
       <Route path="/partner/login" element={<PartnerLoginPage />} />
+      <Route path="/partner/signup" element={<PartnerSignupPage />} />
 
       {/* Admin dashboard */}
       <Route
@@ -85,8 +88,13 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<Navigate to="profile" replace />} />
-        {/* We will add more tabs later (overview, portfolio, kyc) */}
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="overview" element={<PlaceholderPage title="Overview" />} />
+        <Route path="portfolio" element={<PlaceholderPage title="Portfolio" />} />
+        <Route path="kyc" element={<PlaceholderPage title="KYC" />} />
+        <Route path="enquiries" element={<PlaceholderPage title="Enquiries" />} />
+        <Route path="transactions" element={<PlaceholderPage title="Transactions" />} />
+        <Route path="invoices" element={<PlaceholderPage title="Invoices" />} />
       </Route>
 
       {/* Legacy /auth redirect */}
