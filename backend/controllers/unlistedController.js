@@ -39,7 +39,11 @@ const createUnlistedOpportunity = async (req, res, next) => {
       body.code = company.split(/\s+/).map(w => w[0]).join("").toUpperCase();
     }
 
-    const opportunity = await UnlistedOpportunity.create(body);
+    const opportunity = await UnlistedOpportunity.findOneAndUpdate(
+      { slug: body.slug }, // Match based on slug
+      body,
+      { new: true, upsert: true, setDefaultsOnInsert: true, runValidators: true }
+    );
     res.status(201).json({ data: opportunity });
   } catch (err) {
     next(err);

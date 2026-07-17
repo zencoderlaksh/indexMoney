@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 
 const unlistedOpportunitySchema = new mongoose.Schema(
   {
-    company: { type: String, required: true, trim: true },
+    company: { type: String, required: true, trim: true, unique: true },
     sector: { type: String, required: true, trim: true },
     price: { type: String, required: true, trim: true },
     originalPrice: { type: String, trim: true },
     minimumInvestment: { type: String, required: true, trim: true },
     status: { type: String, required: true, trim: true },
     code: { type: String, trim: true },
-    slug: { type: String, trim: true },
+    slug: { type: String, trim: true, unique: true },
     logoUrl: { type: String, trim: true },
     badge: { type: String, trim: true },
     description: { type: String, trim: true },
