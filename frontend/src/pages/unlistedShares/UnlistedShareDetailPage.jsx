@@ -366,7 +366,7 @@ const UnlistedShareDetailPage = () => {
   const [isAILoading, setIsAILoading] = useState(false);
 
   const { user, token } = useAuthStore();
-  const isVerifiedPartner = user?.isPartner && user?.partnerStatus === "verified";
+  const isVerifiedPartner = user?.isPartner && (user?.partnerStatus === "verified" || user?.partnerStatus === "pending");
 
   const fetchOpportunities = async (signal) => {
     try {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
-import { LayoutDashboard, Briefcase, FileCheck, MessageSquare, User } from "lucide-react";
+import { LayoutDashboard, Briefcase, FileCheck, MessageSquare, User, ArrowLeft } from "lucide-react";
 
 import { useAuthStore } from "../../stores/authStore";
 
@@ -58,6 +58,15 @@ const DashboardLayout = () => {
                   </Link>
                 );
               })}
+            </div>
+            <div className="flex-shrink-0 ml-4 hidden sm:block">
+              <Link 
+                to="/" 
+                className="flex items-center gap-2 rounded-lg bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10 border border-white/10"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Go to Website
+              </Link>
             </div>
           </div>
         </div>

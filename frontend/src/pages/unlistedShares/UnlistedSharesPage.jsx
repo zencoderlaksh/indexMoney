@@ -165,7 +165,7 @@ const UnlistedSharesPage = () => {
   const location = useLocation();
   const isCatalogPage = location.pathname === "/unlisted-shares";
   const { user } = useAuthStore();
-  const isVerifiedPartner = user?.isPartner && user?.partnerStatus === "verified";
+  const isVerifiedPartner = user?.isPartner && (user?.partnerStatus === "verified" || user?.partnerStatus === "pending");
 
   const [opportunities, setOpportunities] = useState(fallbackOpportunities);
   const [currentPage, setCurrentPage] = useState(1);
