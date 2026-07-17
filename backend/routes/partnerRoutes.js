@@ -1,5 +1,5 @@
 const express = require("express");
-const { submitApplication, getApplications } = require("../controllers/partnerController");
+const { submitApplication, getApplications, updateApplicationStatus } = require("../controllers/partnerController");
 const { requireAuth, requireAdmin } = require("../middlewares/auth");
 
 const router = express.Router();
@@ -9,5 +9,8 @@ router.post("/apply", submitApplication);
 
 // Admin route to view applications
 router.get("/applications", requireAuth, requireAdmin, getApplications);
+
+// Admin route to update application status
+router.patch("/:id/status", requireAuth, requireAdmin, updateApplicationStatus);
 
 module.exports = router;

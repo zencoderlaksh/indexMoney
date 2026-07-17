@@ -5,6 +5,7 @@ import About from "../pages/about/About";
 import SignupPage from "../pages/auth/SignupPage";
 import LoginPage from "../pages/auth/LoginPage";
 import VerifyOtpPage from "../pages/auth/VerifyOtpPage";
+import PartnerLoginPage from "../pages/auth/PartnerLoginPage";
 import AdminDashboardPage from "../pages/dashboard/AdminDashboardPage";
 import DashboardLayout from "../pages/dashboard/DashboardLayout";
 import ProfilePage from "../pages/dashboard/ProfilePage";
@@ -62,6 +63,7 @@ const AppRoutes = () => {
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/verify-otp" element={<VerifyOtpPage />} />
+      <Route path="/partner/login" element={<PartnerLoginPage />} />
 
       {/* Admin dashboard */}
       <Route

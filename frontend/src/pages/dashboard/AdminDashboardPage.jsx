@@ -29,6 +29,7 @@ import { looksLikeHtmlContent } from "../../lib/blogContent";
 import VideoManager from "./components/VideoManager";
 import ResearchManager from "./components/ResearchManager";
 import MediaManager from "./components/MediaManager";
+import PartnerManager from "./components/PartnerManager";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -1855,6 +1856,9 @@ const AdminDashboardPage = () => {
           </div>
           <div className="mt-8">
             <ResearchManager authHeaders={authHeaders} />
+          </div>
+          <div className="mt-8">
+            <PartnerManager authHeaders={authHeaders} />
           </div>
         </div>
       </main>

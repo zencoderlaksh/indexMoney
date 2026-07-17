@@ -38,3 +38,32 @@ exports.getApplications = async (req, res) => {
     res.status(500).json({ error: "Server error. Could not fetch applications." });
   }
 };
+
+// PATCH /api/partners/:id/status
+exports.updateApplicationStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    
+    if (!status || !["pending", "reviewed", "contacted", "rejected"].includes(status)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+
+    const application = await PartnerApplication.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!application) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    res.json({
+      message: "Status updated successfully",
+      data: application,
+    });
+  } catch (error) {
+    console.error("Error updating application status:", error);
+    res.status(500).json({ error: "Server error. Could not update status." });
+  }
+};

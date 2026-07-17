@@ -118,6 +118,19 @@ const LoginPage = () => {
           >
             {isLoading ? "Please wait..." : "Continue"}
           </button>
+          
+          <div className="mt-6 text-center border-t border-white/10 pt-6">
+            <p className="text-sm text-white/70">
+              Are you a Partner?{" "}
+              <button
+                type="button"
+                onClick={() => navigate("/partner/login")}
+                className="text-[#00f5ff] font-semibold hover:underline"
+              >
+                Login here
+              </button>
+            </p>
+          </div>
         </form>
       </div>
     </AuthLayout>
