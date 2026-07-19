@@ -426,7 +426,8 @@ const UnlistedShareDetailPage = () => {
     return itemCode === createSlug(code) && itemSlug === createSlug(slug);
   });
 
-  const pricePerUnit = parseCurrencyValue(share?.price);
+  const activePriceStr = isVerifiedPartner && share?.originalPrice ? share.originalPrice : share?.price;
+  const pricePerUnit = parseCurrencyValue(activePriceStr);
   const minimumUnits = parseUnits(share?.minimumInvestment);
   const selectedUnits = Math.max(units, minimumUnits);
   const finalAmount = selectedUnits * pricePerUnit;
@@ -434,7 +435,7 @@ const UnlistedShareDetailPage = () => {
   const fundamentals =
     share ?
       [
-        { label: "Current Price", value: share.price },
+        { label: "Current Price", value: activePriceStr },
         { label: "Market Cap", value: share.marketCap },
         { label: "ISIN", value: share.isin },
         { label: "Face Value", value: share.faceValue },
@@ -530,12 +531,14 @@ const UnlistedShareDetailPage = () => {
                       Price
                     </p>
                     <div className="mt-2 flex flex-col">
-                      {isVerifiedPartner && share?.originalPrice && (
-                        <p className="text-sm font-bold text-slate-400 line-through mb-0.5">{share.originalPrice}</p>
+                      {isVerifiedPartner && share?.originalPrice ? (
+                        <>
+                          <p className="text-sm font-bold text-slate-400 line-through mb-0.5">{share.price}</p>
+                          <p className="text-2xl font-black text-[#023e7d]">{share.originalPrice}</p>
+                        </>
+                      ) : (
+                        <p className="text-2xl font-black text-[#023e7d]">{share?.price}</p>
                       )}
-                      <p className="text-2xl font-black text-[#023e7d]">
-                        {share?.price}
-                      </p>
                     </div>
                   </div>
                   <div className="rounded-2xl bg-[#f1f5f9] p-5">
@@ -574,12 +577,14 @@ const UnlistedShareDetailPage = () => {
                 <div className="flex items-center justify-between gap-4">
                   <span className="text-slate-500 dark:text-slate-400">Price per unit</span>
                   <div className="flex flex-col items-end">
-                    {isVerifiedPartner && share?.originalPrice && (
-                      <span className="text-[11px] font-bold text-slate-400 line-through mb-0.5">{share.originalPrice}</span>
+                    {isVerifiedPartner && share?.originalPrice ? (
+                      <>
+                        <span className="text-[11px] font-bold text-slate-400 line-through mb-0.5">{share.price}</span>
+                        <span className="font-bold text-slate-950">{formatCurrency(pricePerUnit)}</span>
+                      </>
+                    ) : (
+                      <span className="font-bold text-slate-950">{formatCurrency(pricePerUnit)}</span>
                     )}
-                    <span className="font-bold text-slate-950">
-                      {formatCurrency(pricePerUnit)}
-                    </span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between gap-4">
