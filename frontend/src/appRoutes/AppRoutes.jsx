@@ -10,7 +10,12 @@ import PartnerSignupPage from "../pages/auth/PartnerSignupPage";
 import AdminDashboardPage from "../pages/dashboard/AdminDashboardPage";
 import DashboardLayout from "../pages/dashboard/DashboardLayout";
 import ProfilePage from "../pages/dashboard/ProfilePage";
-import PlaceholderPage from "../pages/dashboard/PlaceholderPage";
+import OverviewPage from "../pages/dashboard/OverviewPage";
+import PortfolioPage from "../pages/dashboard/PortfolioPage";
+import KYCPage from "../pages/dashboard/KYCPage";
+import EnquiriesPage from "../pages/dashboard/EnquiriesPage";
+import TransactionsPage from "../pages/dashboard/TransactionsPage";
+import InvoicesPage from "../pages/dashboard/InvoicesPage";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import SubscriptionPage from "../pages/subscription/SubscriptionPage";
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
@@ -89,12 +94,12 @@ const AppRoutes = () => {
       >
         <Route index element={<Navigate to="profile" replace />} />
         <Route path="profile" element={<ProfilePage />} />
-        <Route path="overview" element={<PlaceholderPage title="Overview" />} />
-        <Route path="portfolio" element={<PlaceholderPage title="Portfolio" />} />
-        <Route path="kyc" element={<PlaceholderPage title="KYC" />} />
-        <Route path="enquiries" element={<PlaceholderPage title="Enquiries" />} />
-        <Route path="transactions" element={<PlaceholderPage title="Transactions" />} />
-        <Route path="invoices" element={<PlaceholderPage title="Invoices" />} />
+        <Route path="overview" element={<OverviewPage />} />
+        <Route path="portfolio" element={<PortfolioPage />} />
+        <Route path="kyc" element={<KYCPage />} />
+        <Route path="enquiries" element={<EnquiriesPage />} />
+        <Route path="transactions" element={<TransactionsPage />} />
+        <Route path="invoices" element={<InvoicesPage />} />
       </Route>
 
       {/* Legacy /auth redirect */}
