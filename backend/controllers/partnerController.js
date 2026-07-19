@@ -58,6 +58,15 @@ exports.updateApplicationStatus = async (req, res) => {
       return res.status(404).json({ error: "Application not found" });
     }
 
+    // If marked as reviewed (or contacted), automatically approve the user account if it exists
+    if (status === "reviewed" || status === "contacted") {
+      const User = require("../models/userModel");
+      await User.findOneAndUpdate(
+        { email: application.email },
+        { isPartner: true, partnerStatus: "verified" }
+      );
+    }
+
     res.json({
       message: "Status updated successfully",
       data: application,
@@ -80,8 +89,12 @@ exports.submitPayment = async (req, res) => {
     }
 
     const user = await User.findById(req.user.id);
-    if (!user || !user.isPartner) {
-      return res.status(403).json({ error: "Not a valid partner account." });
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    if (user.partnerStatus === "verified" || user.isPartner) {
+      return res.status(400).json({ error: "You are already a verified partner." });
     }
 
     user.partnerPaymentRef = paymentRef;
@@ -98,7 +111,9 @@ exports.submitPayment = async (req, res) => {
 // GET /api/partners/verifications
 exports.getVerifications = async (req, res) => {
   try {
-    const partners = await User.find({ isPartner: true }).sort({ createdAt: -1 }).select("-otp -otpExpiresAt -password");
+    const partners = await User.find({ partnerStatus: { $in: ["pending", "verified", "rejected"] } })
+      .sort({ createdAt: -1 })
+      .select("-otp -otpExpiresAt -password");
     res.json({ data: partners });
   } catch (error) {
     console.error("Error fetching partner verifications:", error);
@@ -115,9 +130,11 @@ exports.updateVerificationStatus = async (req, res) => {
       return res.status(400).json({ error: "Invalid status value" });
     }
 
+    const isPartner = status === "verified";
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { partnerStatus: status },
+      { partnerStatus: status, isPartner },
       { new: true }
     ).select("-otp -otpExpiresAt -password");
 
