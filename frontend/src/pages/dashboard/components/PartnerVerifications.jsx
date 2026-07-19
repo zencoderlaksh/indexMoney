@@ -46,7 +46,7 @@ const PartnerVerifications = ({ authHeaders }) => {
       }
 
       setPartners(prev =>
-        prev.map(p => (p._id === id ? { ...p, partnerStatus: newStatus } : p))
+        prev.map(p => (p.id === id ? { ...p, partnerStatus: newStatus } : p))
       );
     } catch (err) {
       alert("Error updating verification: " + err.message);
@@ -88,7 +88,7 @@ const PartnerVerifications = ({ authHeaders }) => {
               </tr>
             ) : (
               partners.map((partner) => (
-                <tr key={partner._id}>
+                <tr key={partner.id}>
                   <td className="px-4 py-3">
                     <div className="text-sm font-bold text-slate-900">{partner.firstName} {partner.lastName}</div>
                     <div className="text-xs text-slate-500">{partner.email}</div>
@@ -109,7 +109,7 @@ const PartnerVerifications = ({ authHeaders }) => {
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleStatusChange(partner._id, "verified")}
+                        onClick={() => handleStatusChange(partner.id, "verified")}
                         disabled={partner.partnerStatus === "verified"}
                         className="p-1 text-green-600 hover:bg-green-50 rounded disabled:opacity-30"
                         title="Approve"
@@ -117,7 +117,7 @@ const PartnerVerifications = ({ authHeaders }) => {
                         <CheckCircle2 className="h-5 w-5" />
                       </button>
                       <button
-                        onClick={() => handleStatusChange(partner._id, "rejected")}
+                        onClick={() => handleStatusChange(partner.id, "rejected")}
                         disabled={partner.partnerStatus === "rejected"}
                         className="p-1 text-red-600 hover:bg-red-50 rounded disabled:opacity-30"
                         title="Reject"

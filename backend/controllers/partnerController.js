@@ -62,7 +62,7 @@ exports.updateApplicationStatus = async (req, res) => {
     if (status === "reviewed" || status === "contacted") {
       const User = require("../models/userModel");
       await User.findOneAndUpdate(
-        { email: application.email },
+        { email: { $regex: new RegExp(`^${application.email}$`, "i") } },
         { isPartner: true, partnerStatus: "verified" }
       );
     }
