@@ -16,9 +16,17 @@ import {
   ShieldAlert,
   Sparkles,
   TrendingUp,
+  Loader2,
 } from "lucide-react";
 
 import WhatsAppModal from "../../components/WhatsAppModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../components/ui/dialog";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -167,7 +175,8 @@ const UnlistedSharesPage = () => {
   const { user } = useAuthStore();
   const isVerifiedPartner = user?.isPartner && (user?.partnerStatus === "verified" || user?.partnerStatus === "pending");
 
-  const [opportunities, setOpportunities] = useState(fallbackOpportunities);
+  const [opportunities, setOpportunities] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [showAllNewArrivals, setShowAllNewArrivals] = useState(false);
   const [blogs, setBlogs] = useState([]);
@@ -209,12 +218,13 @@ const UnlistedSharesPage = () => {
 
     const loadUnlistedOpportunities = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(`${API_BASE}/unlisted/opportunities`, {
           signal: controller.signal,
         });
 
         if (!response.ok) {
-          return;
+          throw new Error("Network response was not ok");
         }
 
         const payload = await response.json();
@@ -222,16 +232,15 @@ const UnlistedSharesPage = () => {
 
         if (latestUpload?.opportunities?.length) {
           setOpportunities(latestUpload.opportunities);
-          // setSheetMeta({
-          //   title:
-          //     latestUpload.title?.trim() || "Indicative Opportunities Snapshot",
-          //   sourceFileName: latestUpload.sourceFileName || "",
-          // });
+        } else {
+          setOpportunities([]);
         }
       } catch (error) {
         if (error.name !== "AbortError") {
-          setOpportunities(fallbackOpportunities);
+          setOpportunities([]);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -316,8 +325,17 @@ const UnlistedSharesPage = () => {
               </div>
               
               <div className="flex flex-col">
-                {opportunities.slice(0, 3).map((item, idx) => (
-                  <div key={item.code || idx} className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/5 last:border-b-0 hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233] transition-colors">
+                {isLoading ? (
+                  <div className="flex items-center justify-center p-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-[#0353a4]" />
+                  </div>
+                ) : newArrivals.length === 0 ? (
+                  <div className="flex items-center justify-center p-8 text-xs text-slate-500">
+                    No opportunities available.
+                  </div>
+                ) : (
+                  newArrivals.slice(0, 3).map((item, idx) => (
+                    <div key={item.code || idx} className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/5 last:border-b-0 hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233] transition-colors">
                     <div className="flex items-center gap-4 min-w-0">
                       <div className="h-10 w-10 shrink-0 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1">
                         {item.logoUrl ? (
@@ -343,23 +361,55 @@ const UnlistedSharesPage = () => {
                       </span>
                     </div>
                   </div>
-                ))}
+                )))}
               </div>
 
-              <div className="bg-slate-50 dark:bg-[#001233] px-6 py-4 border-t border-slate-100 dark:border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Rates are indicative, not an offer to deal.
-                </span>
-                <button 
-                  onClick={() => {
-                    document.getElementById("opportunities-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
-                  className="text-[12px] font-semibold text-[#0353a4] hover:text-[#023e7d] flex items-center gap-1 group shrink-0"
-                >
-                  See full list 
-                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                </button>
-              </div>
+              <Dialog>
+                <div className="bg-slate-50 dark:bg-[#001233] px-6 py-4 border-t border-slate-100 dark:border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-b-[30px]">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Rates are indicative, not an offer to deal.
+                  </span>
+                  <DialogTrigger asChild>
+                    <button className="text-[12px] font-semibold text-[#0353a4] hover:text-[#023e7d] flex items-center gap-1 group shrink-0">
+                      See full list 
+                      <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                    </button>
+                  </DialogTrigger>
+                </div>
+                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Latest Indicative Prices</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex flex-col mt-4">
+                    {newArrivals.map((item, idx) => (
+                      <div key={`modal-${item.code || idx}`} className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/5 last:border-b-0 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className="h-10 w-10 shrink-0 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1">
+                            {item.logoUrl ? (
+                              <img src={item.logoUrl} alt={item.company} className="h-full w-full object-contain" />
+                            ) : (
+                              <span className="text-[10px] font-bold text-[#023e7d]">{getInitials(item.company)}</span>
+                            )}
+                          </div>
+                          <div className="flex flex-col min-w-0 pr-2">
+                            <span className="text-[13px] font-bold text-slate-800 dark:text-slate-100 line-clamp-1">{item.company}</span>
+                            <span className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">{item.sector}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end shrink-0 pl-2">
+                          <div className="flex flex-col items-end">
+                            {isVerifiedPartner && item.originalPrice && (
+                              <span className="text-[11px] font-bold text-slate-400 line-through mb-0.5">{item.originalPrice}</span>
+                            )}
+                            <span className="text-[15px] font-bold text-slate-800 dark:text-slate-100">{item.price}</span>
+                          </div>
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8]">Indicative</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
             </motion.div>
 
           </div>
@@ -386,8 +436,18 @@ const UnlistedSharesPage = () => {
             </div>
           </div>
 
-          <div className="grid min-w-0 gap-6 p-4 sm:p-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" key={currentPage}>
-            {displayedOpportunities.map((item, index) => {
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="h-10 w-10 animate-spin text-[#0353a4] mb-4" />
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Fetching opportunities...</p>
+            </div>
+          ) : displayedOpportunities.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">No opportunities available.</p>
+            </div>
+          ) : (
+            <div className="grid min-w-0 gap-6 p-4 sm:p-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" key={currentPage}>
+              {displayedOpportunities.map((item, index) => {
               return (
                 <motion.article
                   key={`${item.company}-${item.sector}`}
@@ -452,6 +512,7 @@ const UnlistedSharesPage = () => {
               );
             })}
           </div>
+          )}
 
           {totalPages > 1 && (
             <div className="border-t border-slate-100 dark:border-white/5 py-6 flex items-center justify-center gap-2">
@@ -529,8 +590,18 @@ const UnlistedSharesPage = () => {
               </button>
             </div>
 
-            <div className="grid min-w-0 gap-6 p-4 sm:p-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {(showAllNewArrivals ? newArrivals : newArrivals.slice(0, 4)).map((item, index) => {
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <Loader2 className="h-10 w-10 animate-spin text-[#0353a4] mb-4" />
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Fetching new arrivals...</p>
+              </div>
+            ) : newArrivals.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">No new arrivals available.</p>
+              </div>
+            ) : (
+              <div className="grid min-w-0 gap-6 p-4 sm:p-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {(showAllNewArrivals ? newArrivals : newArrivals.slice(0, 4)).map((item, index) => {
                 return (
                   <motion.article
                     key={`new-${item.company}-${item.sector}`}
@@ -595,6 +666,7 @@ const UnlistedSharesPage = () => {
                 );
               })}
             </div>
+            )}
 
             {!showAllNewArrivals && newArrivals.length > 4 && (
               <div className="pb-8 flex justify-center">

@@ -15,6 +15,7 @@ const navLinks = [
   { to: "/learn", label: "Learn" },
   { to: "/research", label: "Research" },
   { to: "/media", label: "Media" },
+  { to: "/knowledge-center", label: "Blogs" },
 ];
 
 const moreLinks = [
@@ -283,7 +284,7 @@ const Header = () => {
                 </button>
               </div>
               <nav className="flex flex-col px-4 py-4 gap-1 flex-1 overflow-y-auto bg-white dark:bg-[#001845]">
-                {[...navLinks, ...moreLinks].filter(l => l.label === "Home" || l.label === "Unlisted Shares" || l.label === "Sectors" || l.label === "DRHP Filed" || l.label === "Learn" || l.label === "Research" || l.label === "Media").map((l) => (
+                {[...navLinks, ...moreLinks].filter(l => l.label === "Home" || l.label === "Unlisted Shares" || l.label === "Sectors" || l.label === "DRHP Filed" || l.label === "Learn" || l.label === "Research" || l.label === "Media" || l.label === "Blogs").map((l) => (
                   <Link
                     key={l.to}
                     to={l.to}
