@@ -207,12 +207,14 @@ export const parseMarkdownToHtml = (markdown = "") => {
     }
 
     // Heuristic Heading detection for copied plain text from Google Docs
+    const plainText = trimmed.replace(/<[^>]*>/g, '').trim();
     const isLineHeading = 
-      trimmed.length < 85 && // reasonably short
-      !/[.,;:!?]$/.test(trimmed) && // doesn't end in sentence-ending punctuation
+      plainText.length > 0 &&
+      plainText.length < 85 && // reasonably short
+      !/[.,;:!?]$/.test(plainText) && // doesn't end in sentence-ending punctuation
       (i === 0 || // first line is usually a title/heading
-       trimmed.length < 45 || // very short lines are almost always headers
-       /^(Introduction|Conclusion|Summary|Section\s+\d+|Step\s+\d+|What is|Why|How to)\b/i.test(trimmed));
+       plainText.length < 45 || // very short lines are almost always headers
+       /^(Introduction|Conclusion|Summary|Section\s+\d+|Step\s+\d+|What is|Why|How to)\b/i.test(plainText));
 
     if (isLineHeading) {
       // Determine header level (first header = h2, others = h3)
