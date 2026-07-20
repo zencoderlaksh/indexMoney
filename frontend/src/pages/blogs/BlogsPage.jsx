@@ -58,7 +58,7 @@ const BlogContent = ({ content }) => {
 
   return (
     <div
-      className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-p:leading-8 prose-a:text-[#023e7d]"
+      className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-headings:font-bold prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-h4:text-base prose-p:leading-8 prose-a:text-[#023e7d]"
       dangerouslySetInnerHTML={{ __html: htmlContent }}
     />
   );
