@@ -248,6 +248,27 @@ const BlogsPage = () => {
               <section className="rounded-[30px] border border-[#7d8597] bg-white dark:bg-[#001845] p-6 shadow-[0_14px_36px_rgba(2,62,125,0.08)] md:p-9">
                 <BlogContent content={activeBlog.content} />
               </section>
+
+              {activeBlog.faqs && activeBlog.faqs.length > 0 && (
+                <section className="mt-12 rounded-[30px] border border-[#7d8597] bg-white dark:bg-[#001845] p-6 shadow-[0_14px_36px_rgba(2,62,125,0.08)] md:p-9">
+                  <h2 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">Frequently Asked Questions</h2>
+                  <div className="flex flex-col gap-4">
+                    {activeBlog.faqs.map((faq, idx) => (
+                      <details key={idx} className="group rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-[#002855] p-4 open:bg-white dark:open:bg-[#001845]">
+                        <summary className="flex cursor-pointer items-center justify-between font-semibold text-slate-800 dark:text-slate-100 marker:content-none">
+                          {faq.question}
+                          <span className="transition-transform group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9" /></svg>
+                          </span>
+                        </summary>
+                        <p className="mt-4 leading-7 text-slate-600 dark:text-slate-300">
+                          {faq.answer}
+                        </p>
+                      </details>
+                    ))}
+                  </div>
+                </section>
+              )}
             </article>
           }
         </div>

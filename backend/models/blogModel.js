@@ -24,6 +24,15 @@ const blogSchema = new mongoose.Schema(
       index: true,
     },
     publishedAt: { type: Date, default: null, index: true },
+    faqs: {
+      type: [
+        {
+          question: { type: String, trim: true },
+          answer: { type: String, trim: true }
+        }
+      ],
+      default: []
+    }
   },
   { timestamps: true },
 );

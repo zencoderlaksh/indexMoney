@@ -47,6 +47,7 @@ const emptyBlogForm = {
   metaDescription: "",
   keywords: "",
   status: "draft",
+  faqs: [],
 };
 
 const fmt = (value) => {
@@ -815,6 +816,28 @@ const AdminDashboardPage = () => {
     setBlogForm((current) => ({ ...current, [name]: value }));
   };
 
+  const handleBlogFaqChange = (index, field, value) => {
+    setBlogForm((curr) => {
+      const newFaqs = [...(curr.faqs || [])];
+      newFaqs[index] = { ...newFaqs[index], [field]: value };
+      return { ...curr, faqs: newFaqs };
+    });
+  };
+
+  const addBlogFaq = () => {
+    setBlogForm((curr) => ({
+      ...curr,
+      faqs: [...(curr.faqs || []), { question: "", answer: "" }],
+    }));
+  };
+
+  const removeBlogFaq = (index) => {
+    setBlogForm((curr) => ({
+      ...curr,
+      faqs: (curr.faqs || []).filter((_, i) => i !== index),
+    }));
+  };
+
   const editBlog = (blog) => {
     setBlogForm({
       id: blog.id || blog._id || "",
@@ -828,6 +851,7 @@ const AdminDashboardPage = () => {
       metaDescription: blog.metaDescription || "",
       keywords: Array.isArray(blog.keywords) ? blog.keywords.join(", ") : "",
       status: blog.status || "draft",
+      faqs: Array.isArray(blog.faqs) ? blog.faqs : [],
     });
     setBlogStatus({ kind: "", text: "" });
   };
@@ -1273,6 +1297,50 @@ const AdminDashboardPage = () => {
                   maxLength={170}
                   className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                 />
+
+                <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <p className="text-sm font-semibold text-slate-700">FAQs (Optional)</p>
+                    <button
+                      type="button"
+                      onClick={addBlogFaq}
+                      className="rounded-lg bg-[#023e7d] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0353a4]"
+                    >
+                      + Add FAQ
+                    </button>
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    {(blogForm.faqs || []).map((faq, idx) => (
+                      <div key={idx} className="relative rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+                        <button
+                          type="button"
+                          onClick={() => removeBlogFaq(idx)}
+                          className="absolute right-2 top-2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-red-500"
+                          title="Remove FAQ"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                        <input
+                          type="text"
+                          value={faq.question}
+                          onChange={(e) => handleBlogFaqChange(idx, "question", e.target.value)}
+                          placeholder="Question"
+                          className="mb-2 w-full rounded border border-slate-200 px-3 py-2 text-sm font-semibold outline-none focus:border-[#0466c8]"
+                        />
+                        <textarea
+                          rows={2}
+                          value={faq.answer}
+                          onChange={(e) => handleBlogFaqChange(idx, "answer", e.target.value)}
+                          placeholder="Answer"
+                          className="w-full resize-none rounded border border-slate-200 px-3 py-2 text-sm outline-none focus:border-[#0466c8]"
+                        />
+                      </div>
+                    ))}
+                    {(!blogForm.faqs || blogForm.faqs.length === 0) && (
+                      <p className="text-center text-xs text-slate-400">No FAQs added yet.</p>
+                    )}
+                  </div>
+                </div>
 
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <button
