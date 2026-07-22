@@ -506,6 +506,7 @@ const AdminDashboardPage = () => {
   const [blogForm, setBlogForm] = React.useState(emptyBlogForm);
   const [blogsLoading, setBlogsLoading] = React.useState(true);
   const [blogSaving, setBlogSaving] = React.useState(false);
+  const [imageUploading, setImageUploading] = React.useState(false);
   const [blogStatus, setBlogStatus] = React.useState({ kind: "", text: "" });
 
   React.useEffect(() => {
@@ -859,6 +860,39 @@ const AdminDashboardPage = () => {
   const resetBlogForm = () => {
     setBlogForm(emptyBlogForm);
     setBlogStatus({ kind: "", text: "" });
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setImageUploading(true);
+    setBlogStatus({ kind: "", text: "" });
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch(`${API_BASE}/upload`, {
+        method: "POST",
+        headers: authHeaders,
+        body: formData,
+      });
+
+      const json = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(json?.error || "Failed to upload image");
+      }
+
+      setBlogForm((curr) => ({ ...curr, coverImageUrl: json.url }));
+      setBlogStatus({ kind: "success", text: "Image uploaded successfully." });
+    } catch (error) {
+      setBlogStatus({ kind: "error", text: error.message || "Failed to upload image" });
+    } finally {
+      setImageUploading(false);
+      e.target.value = "";
+    }
   };
 
   const saveBlog = async (statusOverride) => {
@@ -1250,14 +1284,33 @@ const AdminDashboardPage = () => {
                 />
 
                 <div className="grid gap-4 md:grid-cols-2">
-                  <input
-                    name="coverImageUrl"
-                    type="url"
-                    value={blogForm.coverImageUrl}
-                    onChange={handleBlogChange}
-                    placeholder="Cover image URL"
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
-                  />
+                  <div className="flex flex-col gap-2">
+                    <input
+                      name="coverImageUrl"
+                      type="url"
+                      value={blogForm.coverImageUrl}
+                      onChange={handleBlogChange}
+                      placeholder="Cover image URL"
+                      className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
+                    />
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={imageUploading}
+                        className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
+                      />
+                      <button
+                        type="button"
+                        disabled={imageUploading}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-60"
+                      >
+                        <Upload className="h-4 w-4" />
+                        {imageUploading ? "Uploading..." : "Upload Cover Image"}
+                      </button>
+                    </div>
+                  </div>
                   <input
                     name="authorName"
                     type="text"

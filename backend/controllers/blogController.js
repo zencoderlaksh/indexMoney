@@ -61,6 +61,7 @@ const buildBlogPayload = (body = {}, existingBlog = null) => {
     metaTitle: String(body.metaTitle || title).trim().slice(0, 70),
     metaDescription: String(body.metaDescription || excerpt).trim().slice(0, 170),
     keywords: normalizeKeywords(body.keywords),
+    faqs: Array.isArray(body.faqs) ? body.faqs.map(f => ({ question: String(f.question || "").trim(), answer: String(f.answer || "").trim() })) : [],
     status,
     publishedAt:
       status === "published"
