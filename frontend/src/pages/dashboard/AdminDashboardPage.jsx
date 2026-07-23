@@ -267,6 +267,7 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
       <div className="mb-2 flex flex-wrap gap-2">
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => applyFormat("p")}
           className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
         >
@@ -274,6 +275,7 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
         </button>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => applyFormat("h2")}
           className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
         >
@@ -281,6 +283,7 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
         </button>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => applyFormat("h3")}
           className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
         >
@@ -288,6 +291,7 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
         </button>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => {
             document.execCommand("insertUnorderedList");
             notifyChange();
@@ -298,6 +302,7 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
         </button>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => {
             document.execCommand("insertOrderedList");
             notifyChange();
