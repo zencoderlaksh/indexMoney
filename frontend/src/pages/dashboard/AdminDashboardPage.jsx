@@ -232,7 +232,7 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
   };
 
   const applyFormat = (tag) => {
-    document.execCommand("formatBlock", false, tag);
+    document.execCommand("formatBlock", false, `<${tag.toUpperCase()}>`);
     notifyChange();
   };
 
@@ -319,7 +319,7 @@ const BlogRichTextEditor = ({ value, onChange, placeholder }) => {
         suppressContentEditableWarning
         onInput={notifyChange}
         onPaste={handlePaste}
-        className="min-h-[260px] max-h-[420px] overflow-y-auto rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
+        className="prose prose-slate prose-sm max-w-none prose-headings:font-bold prose-h2:text-xl prose-h3:text-lg min-h-[260px] max-h-[420px] overflow-y-auto rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
         data-placeholder={placeholder}
       />
 
