@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { motion } from "framer-motion";
+import Tilt from "react-parallax-tilt";
 import {
   ArrowRight,
   BadgeIndianRupee,
@@ -31,6 +32,31 @@ import {
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 const MotionArticle = motion.article;
+
+const TypewriterText = ({ text }) => {
+  const [displayText, setDisplayText] = useState("");
+  
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayText(text.slice(0, i + 1));
+      i++;
+      if (i === text.length) clearInterval(interval);
+    }, 60);
+    return () => clearInterval(interval);
+  }, [text]);
+
+  return (
+    <span>
+      {displayText}
+      <motion.span
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ repeat: Infinity, duration: 0.8 }}
+        className="inline-block w-[3px] h-[0.9em] bg-current ml-1 -mb-[0.1em] align-baseline rounded-full"
+      />
+    </span>
+  );
+};
 
 const WhatsAppIcon = ({ className = "" }) => (
   <svg
@@ -183,6 +209,7 @@ const UnlistedSharesPage = () => {
   
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState("");
+  const [hoveredCardId, setHoveredCardId] = useState(null);
 
   const itemsPerPage = 12;
   const totalPages = Math.ceil(opportunities.length / itemsPerPage);
@@ -270,7 +297,7 @@ const UnlistedSharesPage = () => {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(4,102,200,0.12),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(3,83,164,0.10),transparent_34%)]" />
 
       {!isCatalogPage && (
-        <section className="relative px-5 pb-10 pt-14 md:px-8 md:pt-18">
+        <section className="relative px-5 pb-10 pt-32 md:px-8 md:pt-40">
           <div className="mx-auto max-w-7xl grid gap-12 lg:grid-cols-[1fr_420px] xl:grid-cols-[1.1fr_480px] items-center">
             
             {/* Left Column */}
@@ -281,7 +308,7 @@ const UnlistedSharesPage = () => {
                 transition={{ duration: 0.48, delay: 0.08 }}
                 className="mt-6 text-4xl font-extrabold leading-[1.1] text-slate-800 dark:text-slate-100 md:text-5xl lg:text-6xl lg:leading-[1.15]"
               >
-                India's Growth. Your Opportunity.
+                <TypewriterText text="India's Growth. Your Opportunity." />
               </motion.h1>
 
               <motion.p
@@ -301,25 +328,54 @@ const UnlistedSharesPage = () => {
               >
                 <a
                   href="#opportunities-grid"
-                  className="rounded-2xl bg-[#0353a4] hover:bg-[#023e7d] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#0353a4]/20 transition-all hover:scale-[1.02]"
+                  className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0466c8] to-[#0353a4] px-7 py-4 text-sm font-bold text-white shadow-xl shadow-[#0353a4]/30 transition-all hover:scale-[1.03] flex items-center gap-2 group"
                 >
-                  Explore unlisted shares
+                  <span className="relative z-10">Explore unlisted shares</span>
+                  <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
+                  <motion.div
+                    className="absolute inset-0 z-0 bg-white/20 w-1/2"
+                    initial={{ x: "-200%", skewX: -20 }}
+                    animate={{ x: "300%" }}
+                    transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 1 }}
+                  />
                 </a>
               </motion.div>
             </div>
 
             {/* Right Column (Preview Card) */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.45, delay: 0.1 }}
-              className="rounded-[30px] border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 90 shadow-[0_16px_42px_rgba(2,62,125,0.06)] backdrop-blur-sm"
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: [0, -10, 0] }}
+              transition={{
+                opacity: { duration: 0.6, delay: 0.2 },
+                scale: { duration: 0.6, delay: 0.2, type: "spring" },
+                y: { repeat: Infinity, duration: 6, ease: "easeInOut", delay: 0.6 }
+              }}
+              className="relative rounded-[32px] p-[2px] group w-full shadow-[0_20px_50px_rgba(4,102,200,0.15)] hover:shadow-[0_20px_60px_rgba(4,102,200,0.25)] transition-shadow duration-500"
             >
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 px-6 py-5">
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0353a4]">
-                  Today's Indicative Prices
-                </span>
-                <span className="text-[10px] font-medium text-slate-400">
+              {/* Animated Gradient Border */}
+              <div className="absolute inset-0 z-0 overflow-hidden rounded-[32px]">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                  className="absolute inset-[-50%] w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_270deg,#0466c8_360deg)] opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+                />
+              </div>
+
+              {/* Card Inner */}
+              <div className="relative z-10 rounded-[30px] bg-white/95 dark:bg-[#001233]/95 backdrop-blur-xl flex flex-col overflow-hidden h-full">
+                
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-slate-50/50 dark:bg-white/5">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                  </span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0353a4]">
+                    Live Indicative Prices
+                  </span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-400 bg-white dark:bg-[#001845] px-2 py-1 rounded-md border border-slate-100 dark:border-white/5">
                   REF • {new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
                 </span>
               </div>
@@ -335,17 +391,24 @@ const UnlistedSharesPage = () => {
                   </div>
                 ) : (
                   newArrivals.slice(0, 3).map((item, idx) => (
-                    <div key={item.code || idx} className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/5 last:border-b-0 hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233] transition-colors">
+                    <motion.div 
+                      key={item.code || idx} 
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      whileHover={{ scale: 1.02, backgroundColor: "rgba(4,102,200,0.04)" }}
+                      transition={{ delay: 0.3 + (idx * 0.15), type: "spring", stiffness: 300 }}
+                      className="group/item flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/5 last:border-b-0 cursor-pointer"
+                    >
                     <div className="flex items-center gap-4 min-w-0">
-                      <div className="h-10 w-10 shrink-0 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1">
+                      <div className="h-10 w-10 shrink-0 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1 group-hover/item:border-[#0466c8]/40 group-hover/item:shadow-md transition-all">
                         {item.logoUrl ? (
-                          <img src={item.logoUrl} alt={item.company} className="h-full w-full object-contain" />
+                          <img src={item.logoUrl} alt={item.company} className="h-full w-full object-contain transform group-hover/item:scale-110 transition-transform duration-300" />
                         ) : (
                           <span className="text-[10px] font-bold text-[#023e7d]">{getInitials(item.company)}</span>
                         )}
                       </div>
                       <div className="flex flex-col min-w-0 pr-2">
-                        <span className="text-[13px] font-bold text-slate-800 dark:text-slate-100 line-clamp-1">{item.company}</span>
+                        <span className="text-[13px] font-bold text-slate-800 dark:text-slate-100 line-clamp-1 group-hover/item:text-[#0466c8] transition-colors">{item.company}</span>
                         <span className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">{item.sector}</span>
                       </div>
                     </div>
@@ -356,23 +419,23 @@ const UnlistedSharesPage = () => {
                         )}
                         <span className="text-[15px] font-bold text-slate-800 dark:text-slate-100">{item.price}</span>
                       </div>
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8]">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8] group-hover/item:text-[#023e7d] transition-colors">
                         Indicative
                       </span>
                     </div>
-                  </div>
+                    </motion.div>
                 )))}
               </div>
 
               <Dialog>
-                <div className="bg-slate-50 dark:bg-[#001233] px-6 py-4 border-t border-slate-100 dark:border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-b-[30px]">
+                <div className="bg-slate-50 dark:bg-[#001233] px-6 py-4 border-t border-slate-100 dark:border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 z-10">
                   <span className="text-[11px] text-slate-500 dark:text-slate-400">
                     Rates are indicative, not an offer to deal.
                   </span>
                   <DialogTrigger asChild>
-                    <button className="text-[12px] font-semibold text-[#0353a4] hover:text-[#023e7d] flex items-center gap-1 group shrink-0">
+                    <button className="text-[12px] font-semibold text-[#0353a4] hover:text-[#023e7d] flex items-center gap-1 group shrink-0 bg-[#0466c8]/10 hover:bg-[#0466c8]/20 px-3 py-1.5 rounded-full transition-colors">
                       See full list 
-                      <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                      <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                     </button>
                   </DialogTrigger>
                 </div>
@@ -410,6 +473,7 @@ const UnlistedSharesPage = () => {
                   </div>
                 </DialogContent>
               </Dialog>
+              </div>
             </motion.div>
 
           </div>
@@ -424,7 +488,7 @@ const UnlistedSharesPage = () => {
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
                 {isCatalogPage ? "INVESTMENT OPPORTUNITIES" : "CURATED FOR INVESTORS"}
               </p>
-              <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
+              <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl lg:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-[#0353a4] to-slate-800 dark:from-white dark:via-[#0466c8] dark:to-slate-300 drop-shadow-sm">
                 {isCatalogPage ? "India's Largest Collection of Unlisted Shares" : "Discover India's Most Promising Unlisted Companies"}
               </h2>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl text-center">
@@ -448,20 +512,41 @@ const UnlistedSharesPage = () => {
           ) : (
             <div className="grid min-w-0 gap-6 p-4 sm:p-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" key={currentPage}>
               {displayedOpportunities.map((item, index) => {
+                const cardId = `opp-${item.company}-${item.sector}`;
               return (
-                <motion.article
-                  key={`${item.company}-${item.sector}`}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.35, delay: index * 0.04 }}
-                  className="group flex min-w-0 flex-col rounded-[24px] border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] p-5 shadow-[0_10px_30px_rgba(2,62,125,0.03)] hover:shadow-[0_20px_40px_rgba(2,62,125,0.07)] transition-all duration-300 hover:-translate-y-1 hover:border-[#0466c8]"
+                <div 
+                  key={cardId}
+                  onMouseEnter={() => setHoveredCardId(cardId)}
+                  onMouseLeave={() => setHoveredCardId(null)}
+                  className={`transition-all duration-500 h-full relative ${hoveredCardId !== null && hoveredCardId !== cardId ? 'opacity-40 blur-[2px] scale-[0.98] pointer-events-none' : 'scale-100'} ${hoveredCardId === cardId ? 'z-50' : 'z-10'}`}
                 >
+                <Tilt
+                  tiltMaxAngleX={8}
+                  tiltMaxAngleY={8}
+                  perspective={1000}
+                  scale={1.05}
+                  transitionSpeed={2000}
+                  glareEnable={true}
+                  glareMaxOpacity={0.12}
+                  glareColor="#ffffff"
+                  glarePosition="all"
+                  glareBorderRadius="24px"
+                  className="h-full"
+                >
+                <motion.article
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: index * 0.08, type: "spring", stiffness: 200, damping: 20 }}
+                  className="group relative flex h-full min-w-0 flex-col rounded-[24px] border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-[#001845]/80 backdrop-blur-md p-5 shadow-sm hover:shadow-[0_20px_50px_rgba(4,102,200,0.12)] transition-all duration-500 hover:border-[#0466c8]/50 overflow-hidden"
+                >
+                  {/* Subtle hover gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0466c8]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   {/* Top Row: Logo, Name, Sector */}
                   <div className="flex items-start gap-3.5 min-w-0">
-                    <div className="h-12 w-12 shrink-0 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1.5">
+                    <div className="h-12 w-12 shrink-0 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1.5 group-hover:border-[#0466c8]/30 group-hover:shadow-md transition-all duration-300">
                       {item.logoUrl ? (
-                        <img src={item.logoUrl} alt={item.company} className="h-full w-full object-contain" />
+                        <img src={item.logoUrl} alt={item.company} className="h-full w-full object-contain transform group-hover:scale-110 transition-transform duration-500" />
                       ) : (
                         <span className="text-sm font-bold text-[#023e7d]">{getInitials(item.company)}</span>
                       )}
@@ -480,7 +565,7 @@ const UnlistedSharesPage = () => {
                       {isVerifiedPartner && item.originalPrice && (
                         <span className="text-sm font-bold text-slate-400 line-through mb-0.5">{item.originalPrice}</span>
                       )}
-                      <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{item.price}</span>
+                      <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight group-hover:text-[#0353a4] transition-colors duration-300">{item.price}</span>
                       <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8] mt-0.5">
                         Indicative
                       </span>
@@ -491,24 +576,26 @@ const UnlistedSharesPage = () => {
                   </div>
 
                   {/* Bottom Row: Enquire & Details Buttons */}
-                  <div className="mt-6 flex items-center gap-3 pt-2">
+                  <div className="mt-6 flex items-center gap-3 pt-2 relative z-10">
                     <button
                       onClick={() => {
                         setSelectedCompany(item.company);
                         setIsWhatsAppModalOpen(true);
                       }}
-                      className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#001233] rounded-xl transition-colors duration-200"
+                      className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#0353a4] rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
                     >
                       Enquire
                     </button>
                     <Link
                       to={getDetailPath(item)}
-                      className="px-4 py-2.5 text-center text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-[#0353a4] border border-slate-200 dark:border-white/10 hover:border-[#0353a4] bg-white dark:bg-[#001845] rounded-xl transition-colors duration-200"
+                      className="px-4 py-2.5 text-center text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-[#0353a4] border border-slate-200 dark:border-white/10 hover:border-[#0353a4] bg-white dark:bg-[#001845] rounded-xl transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
                     >
                       Details
                     </Link>
                   </div>
                 </motion.article>
+                </Tilt>
+                </div>
               );
             })}
           </div>

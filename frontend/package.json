@@ -27,6 +27,7 @@
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.71.2",
     "react-markdown": "^10.1.0",
+    "react-parallax-tilt": "^1.7.333",
     "react-router-dom": "^7.13.1",
     "recharts": "^3.8.0",
     "swiper": "^12.1.2",
