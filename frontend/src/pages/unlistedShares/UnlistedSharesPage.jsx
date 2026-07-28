@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import WhatsAppModal from "../../components/WhatsAppModal";
+import ShareButton from "../../components/ShareButton";
 import {
   Dialog,
   DialogContent,
@@ -592,6 +593,7 @@ const UnlistedSharesPage = () => {
                     >
                       Details
                     </Link>
+                    <ShareButton link={getDetailPath(item)} />
                   </div>
                 </motion.article>
                 </Tilt>
@@ -661,7 +663,7 @@ const UnlistedSharesPage = () => {
                 <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
                   NEW ON INDEXMONEY
                 </p>
-                <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
+                <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl lg:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-[#0353a4] to-slate-800 dark:from-white dark:via-[#0466c8] dark:to-slate-300 drop-shadow-sm">
                   Fresh Investment Opportunities
                 </h2>
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl text-center">
@@ -689,20 +691,41 @@ const UnlistedSharesPage = () => {
             ) : (
               <div className="grid min-w-0 gap-6 p-4 sm:p-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {(showAllNewArrivals ? newArrivals : newArrivals.slice(0, 4)).map((item, index) => {
+                  const cardId = `new-${item.company}-${item.sector}`;
                 return (
-                  <motion.article
-                    key={`new-${item.company}-${item.sector}`}
-                    initial={{ opacity: 0, y: 18 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.35, delay: index * 0.04 }}
-                    className="group flex min-w-0 flex-col rounded-[24px] border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] p-5 shadow-[0_10px_30px_rgba(2,62,125,0.03)] hover:shadow-[0_20px_40px_rgba(2,62,125,0.07)] transition-all duration-300 hover:-translate-y-1 hover:border-[#0466c8]"
+                  <div 
+                    key={cardId}
+                    onMouseEnter={() => setHoveredCardId(cardId)}
+                    onMouseLeave={() => setHoveredCardId(null)}
+                    className={`transition-all duration-500 h-full relative ${hoveredCardId !== null && hoveredCardId !== cardId ? 'opacity-40 blur-[2px] scale-[0.98] pointer-events-none' : 'scale-100'} ${hoveredCardId === cardId ? 'z-50' : 'z-10'}`}
                   >
+                  <Tilt
+                    tiltMaxAngleX={8}
+                    tiltMaxAngleY={8}
+                    perspective={1000}
+                    scale={1.05}
+                    transitionSpeed={2000}
+                    glareEnable={true}
+                    glareMaxOpacity={0.12}
+                    glareColor="#ffffff"
+                    glarePosition="all"
+                    glareBorderRadius="24px"
+                    className="h-full"
+                  >
+                  <motion.article
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.5, delay: index * 0.08, type: "spring", stiffness: 200, damping: 20 }}
+                    className="group relative flex h-full min-w-0 flex-col rounded-[24px] border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-[#001845]/80 backdrop-blur-md p-5 shadow-sm hover:shadow-[0_20px_50px_rgba(4,102,200,0.12)] transition-all duration-500 hover:border-[#0466c8]/50 overflow-hidden"
+                  >
+                    {/* Subtle hover gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#0466c8]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                     {/* Top Row: Logo, Name, Sector */}
                     <div className="flex items-start gap-3.5 min-w-0">
-                      <div className="h-12 w-12 shrink-0 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1.5">
+                      <div className="h-12 w-12 shrink-0 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1.5 group-hover:border-[#0466c8]/30 group-hover:shadow-md transition-all duration-300">
                         {item.logoUrl ? (
-                          <img src={item.logoUrl} alt={item.company} className="h-full w-full object-contain" />
+                          <img src={item.logoUrl} alt={item.company} className="h-full w-full object-contain transform group-hover:scale-110 transition-transform duration-500" />
                         ) : (
                           <span className="text-sm font-bold text-[#023e7d]">{getInitials(item.company)}</span>
                         )}
@@ -721,7 +744,7 @@ const UnlistedSharesPage = () => {
                         {isVerifiedPartner && item.originalPrice && (
                           <span className="text-sm font-bold text-slate-400 line-through mb-0.5">{item.originalPrice}</span>
                         )}
-                        <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{item.price}</span>
+                        <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight group-hover:text-[#0353a4] transition-colors duration-300">{item.price}</span>
                         <span className="text-[9px] font-bold uppercase tracking-wider text-[#0466c8] mt-0.5">
                           Indicative
                         </span>
@@ -732,24 +755,27 @@ const UnlistedSharesPage = () => {
                     </div>
 
                     {/* Bottom Row: Enquire & Details Buttons */}
-                    <div className="mt-6 flex items-center gap-3 pt-2">
+                    <div className="mt-6 flex items-center gap-3 pt-2 relative z-10">
                       <button
-                      onClick={() => {
-                        setSelectedCompany(item.company);
-                        setIsWhatsAppModalOpen(true);
-                      }}
-                      className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#001233] rounded-xl transition-colors duration-200"
-                    >
-                      Enquire
+                        onClick={() => {
+                          setSelectedCompany(item.company);
+                          setIsWhatsAppModalOpen(true);
+                        }}
+                        className="flex-1 py-2.5 text-center text-xs font-bold text-white bg-[#002855] hover:bg-[#0353a4] rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                      >
+                        Enquire
                       </button>
                       <Link
                         to={getDetailPath(item)}
-                        className="px-4 py-2.5 text-center text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-[#0353a4] border border-slate-200 dark:border-white/10 hover:border-[#0353a4] bg-white dark:bg-[#001845] rounded-xl transition-colors duration-200"
+                        className="px-4 py-2.5 text-center text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-[#0353a4] border border-slate-200 dark:border-white/10 hover:border-[#0353a4] bg-white dark:bg-[#001845] rounded-xl transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
                       >
                         Details
                       </Link>
+                      <ShareButton link={getDetailPath(item)} />
                     </div>
                   </motion.article>
+                  </Tilt>
+                  </div>
                 );
               })}
             </div>
@@ -759,10 +785,16 @@ const UnlistedSharesPage = () => {
               <div className="pb-8 flex justify-center">
                 <button
                   onClick={() => setShowAllNewArrivals(true)}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#0353a4] hover:bg-[#023e7d] px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:scale-[1.02]"
+                  className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0466c8] to-[#0353a4] px-7 py-4 text-sm font-bold text-white shadow-xl shadow-[#0353a4]/30 transition-all hover:scale-[1.03] flex items-center gap-2 group"
                 >
-                  View All New Arrivals
-                  <ArrowRight className="h-4 w-4" />
+                  <span className="relative z-10">View All New Arrivals</span>
+                  <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
+                  <motion.div
+                    className="absolute inset-0 z-0 bg-white/20 w-1/2"
+                    initial={{ x: "-200%", skewX: -20 }}
+                    animate={{ x: "300%" }}
+                    transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 1 }}
+                  />
                 </button>
               </div>
             )}
@@ -780,7 +812,7 @@ const UnlistedSharesPage = () => {
                 <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
                   MARKET SECTORS
                 </p>
-                <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
+                <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl lg:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-[#0353a4] to-slate-800 dark:from-white dark:via-[#0466c8] dark:to-slate-300 drop-shadow-sm">
                   Invest Across India's Fastest-Growing Industries
                 </h2>
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl text-center">
@@ -790,35 +822,51 @@ const UnlistedSharesPage = () => {
               
               <Link 
                 to="/sectors"
-                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] px-4 py-2 text-xs font-semibold text-[#0353a4] hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233] transition-colors"
+                className="group relative inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-[#001845]/50 px-5 py-2.5 text-xs font-bold text-[#0353a4] dark:text-[#4895ef] backdrop-blur-sm transition-all hover:border-[#0466c8]/30 hover:bg-[#0466c8]/5 hover:shadow-[0_8px_20px_rgba(4,102,200,0.1)]"
               >
-                All sectors <ArrowRight className="h-3 w-3" />
+                <span className="relative z-10">Explore All Sectors</span>
+                <ArrowRight className="h-3.5 w-3.5 relative z-10 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
 
             <div className="grid min-w-0 gap-5 p-5 sm:p-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {sectorsData.map((sec) => {
+              {sectorsData.map((sec, index) => {
                 return (
-                  <Link
+                  <motion.div
                     key={`home-sec-${sec.name}`}
-                    to={`/sectors?sector=${encodeURIComponent(sec.name)}`}
-                    className="group rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] p-5 shadow-[0_4px_12px_rgba(0,18,51,0.02)] hover:shadow-[0_16px_32px_rgba(0,18,51,0.05)] hover:border-[#0466c8] transition-all duration-300 flex items-center justify-between"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
                   >
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 dark:bg-[#001233] text-[#0353a4] group-hover:bg-[#0466c8]/10 group-hover:text-[#0466c8] transition-all">
-                        <Boxes className="h-5 w-5" />
+                    <Link
+                      to={`/sectors?sector=${encodeURIComponent(sec.name)}`}
+                      className="group relative flex items-center justify-between rounded-[20px] border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-[#001845]/80 p-5 shadow-[0_4px_12px_rgba(0,18,51,0.02)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:border-[#0466c8]/40 hover:shadow-[0_20px_40px_rgba(4,102,200,0.08)] overflow-hidden"
+                    >
+                      {/* Animated background gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#0466c8]/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      
+                      <div className="flex items-center gap-4 min-w-0 relative z-10">
+                        <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-slate-50 dark:bg-[#001233] text-[#0353a4] transition-all duration-500 group-hover:scale-110 group-hover:bg-[#0466c8] group-hover:text-white shadow-sm group-hover:shadow-md">
+                          <Boxes className="h-5 w-5 transition-transform duration-500 group-hover:rotate-12" />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate transition-colors duration-300 group-hover:text-[#0353a4]">
+                            {sec.name}
+                          </h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 opacity-75 animate-pulse"></span>
+                            <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                              {sec.count} {sec.count === 1 ? "opportunity" : "opportunities"}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-[#0353a4] transition-colors">
-                          {sec.name}
-                        </h3>
-                        <p className="text-xs text-slate-400 mt-0.5">
-                          {sec.count} {sec.count === 1 ? "share" : "shares"}
-                        </p>
+                      <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 dark:bg-white/5 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:bg-[#0466c8]/10 group-hover:translate-x-1">
+                        <ArrowRight className="h-4 w-4 text-[#0466c8]" />
                       </div>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-[#0466c8] group-hover:translate-x-0.5 transition-all shrink-0" />
-                  </Link>
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>
@@ -836,7 +884,7 @@ const UnlistedSharesPage = () => {
                 <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0466c8]">
                   KNOWLEDGE CENTRE
                 </p>
-                <h2 className="mt-2 text-2xl font-extrabold text-slate-800 dark:text-slate-100 sm:text-3xl">
+                <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl lg:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-[#0353a4] to-slate-800 dark:from-white dark:via-[#0466c8] dark:to-slate-300 drop-shadow-sm">
                   Unlisted shares, explained
                 </h2>
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
@@ -846,9 +894,10 @@ const UnlistedSharesPage = () => {
               
               <Link 
                 to="/knowledge-center"
-                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] px-4 py-2 text-xs font-semibold text-[#0353a4] hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-[#001233] transition-colors"
+                className="group relative inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-[#001845]/50 px-5 py-2.5 text-xs font-bold text-[#0353a4] dark:text-[#4895ef] backdrop-blur-sm transition-all hover:border-[#0466c8]/30 hover:bg-[#0466c8]/5 hover:shadow-[0_8px_20px_rgba(4,102,200,0.1)]"
               >
-                View all <ArrowRight className="h-3 w-3" />
+                <span className="relative z-10">View all articles</span>
+                <ArrowRight className="h-3.5 w-3.5 relative z-10 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
 
@@ -856,30 +905,37 @@ const UnlistedSharesPage = () => {
               {blogs.map((blog) => (
                 <MotionArticle
                   key={blog.id || blog.slug}
-                  initial={{ opacity: 0, y: 18 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4 }}
-                  className="overflow-hidden rounded-[24px] border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-[0_10px_30px_rgba(2,62,125,0.02)] hover:shadow-[0_20px_40px_rgba(2,62,125,0.06)] hover:border-[#0466c8] transition-all duration-300 flex flex-col"
+                  transition={{ duration: 0.5 }}
+                  className="group relative overflow-hidden rounded-[24px] border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-[#001845]/80 shadow-sm backdrop-blur-md hover:shadow-[0_20px_50px_rgba(4,102,200,0.12)] transition-all duration-500 hover:-translate-y-1 hover:border-[#0466c8]/50 flex flex-col"
                 >
-                  {blog.coverImageUrl ? (
-                    <img
-                      src={blog.coverImageUrl}
-                      alt={blog.title}
-                      className="h-56 w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-56 items-center justify-center bg-gradient-to-br from-[#ebf4f8] to-[#7d8597]/20 px-6 text-center">
-                      <span className="text-base font-bold text-[#023e7d]">{blog.title}</span>
-                    </div>
-                  )}
-                  <div className="p-6 flex-1 flex flex-col">
+                  {/* Subtle hover gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0466c8]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
+                  
+                  <div className="relative overflow-hidden h-56 z-10">
+                    {blog.coverImageUrl ? (
+                      <img
+                        src={blog.coverImageUrl}
+                        alt={blog.title}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#ebf4f8] to-[#7d8597]/20 px-6 text-center transition-transform duration-700 group-hover:scale-105">
+                        <span className="text-base font-bold text-[#023e7d]">{blog.title}</span>
+                      </div>
+                    )}
+                    {/* Image overlay gradient on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  </div>
+                  <div className="p-6 flex-1 flex flex-col relative z-10">
                     <div className="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                       <span>{new Date(blog.publishedAt || blog.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
                       <span>•</span>
                       <span className="text-[#0466c8]">{blog.category || "RESEARCH"}</span>
                     </div>
-                    <h3 className="text-xl font-bold leading-tight text-slate-800 dark:text-slate-100 line-clamp-2 hover:text-[#0353a4] transition-colors">
+                    <h3 className="text-xl font-bold leading-tight text-slate-800 dark:text-slate-100 line-clamp-2 transition-colors duration-300 group-hover:text-[#0353a4]">
                       <Link to={`/knowledge-center/${blog.slug}`}>{blog.title}</Link>
                     </h3>
                     <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-500 dark:text-slate-400 flex-1">
@@ -887,9 +943,9 @@ const UnlistedSharesPage = () => {
                     </p>
                     <Link
                       to={`/knowledge-center/${blog.slug}`}
-                      className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#023e7d] hover:text-[#0353a4]"
+                      className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#023e7d] transition-colors hover:text-[#0466c8]"
                     >
-                      Read Article <ArrowRight className="h-4 w-4" />
+                      Read Article <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </div>
                 </MotionArticle>
@@ -905,7 +961,7 @@ const UnlistedSharesPage = () => {
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0353a4]">
               YOUR INVESTMENT JOURNEY
             </p>
-            <h2 className="mt-3 text-3xl font-bold text-slate-800 dark:text-slate-100 md:text-4xl">
+            <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl lg:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-[#0353a4] to-slate-800 dark:from-white dark:via-[#0466c8] dark:to-slate-300 drop-shadow-sm pb-1">
               Your Journey to India's Private Market
             </h2>
             <p className="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
@@ -918,25 +974,45 @@ const UnlistedSharesPage = () => {
             />
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {steps.map((step, index) => (
               <motion.div
                 key={step.title}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.08 }}
-                className="rounded-[26px] border border-[#5c677d] bg-white/90 dark:bg-[#001845]/90 85 p-6 text-center shadow-[0_12px_34px_rgba(2,62,125,0.07)] backdrop-blur-sm flex flex-col h-full"
+                transition={{ duration: 0.5, delay: index * 0.1, type: "spring", stiffness: 200, damping: 20 }}
+                className="group relative h-72 w-full [perspective:1000px]"
               >
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0353a4] to-[#023e7d] text-base font-bold text-white shrink-0">
-                  {index + 1}
+                <div className="absolute inset-0 transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-[0_12px_34px_rgba(2,62,125,0.07)] hover:shadow-[0_24px_48px_rgba(4,102,200,0.15)] rounded-[26px]">
+                  
+                  {/* Front Side */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center rounded-[26px] border border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-[#001845]/90 p-6 text-center backdrop-blur-sm [backface-visibility:hidden]">
+                    <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[20px] bg-gradient-to-br from-[#0353a4] to-[#023e7d] shadow-lg shadow-[#0353a4]/30 text-3xl font-black text-white mb-6 group-hover:scale-110 transition-transform duration-500">
+                      {index + 1}
+                    </div>
+                    <h3 className="text-xl font-bold leading-tight text-slate-800 dark:text-slate-100 px-4">
+                      {step.title}
+                    </h3>
+                    <div className="absolute bottom-5 flex items-center justify-center opacity-50 group-hover:opacity-0 transition-opacity duration-300">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#0466c8]">Hover to read</span>
+                    </div>
+                  </div>
+
+                  {/* Back Side */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center rounded-[26px] border border-[#0466c8]/30 bg-gradient-to-br from-[#f8fbff] to-white dark:from-[#001845] dark:to-[#001233] p-8 text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0466c8]/10 text-[#0466c8] mb-4 shadow-inner">
+                      <span className="font-bold">{index + 1}</span>
+                    </div>
+                    <h3 className="text-lg font-bold leading-tight text-slate-800 dark:text-slate-100 mb-3">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                      {step.description}
+                    </p>
+                  </div>
+                  
                 </div>
-                <h3 className="mt-4 text-base font-bold leading-relaxed text-slate-800 dark:text-slate-100">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300 flex-grow">
-                  {step.description}
-                </p>
               </motion.div>
             ))}
           </div>

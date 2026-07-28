@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import WhatsAppModal from "../../components/WhatsAppModal";
+import ShareButton from "../../components/ShareButton";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -252,6 +253,7 @@ const DrhpFiledPage = () => {
                     >
                       Details
                     </Link>
+                    <ShareButton link={getDetailPath(item)} />
                   </div>
                 </MotionArticle>
               );
