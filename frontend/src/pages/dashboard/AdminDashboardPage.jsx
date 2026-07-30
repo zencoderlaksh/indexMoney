@@ -1899,6 +1899,20 @@ const AdminDashboardPage = () => {
                     className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
                   />
                 </div>
+                <div className="flex flex-col gap-1.5 justify-center mt-6">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="showInLivePriceCard"
+                      checked={unlistedForm.showInLivePriceCard}
+                      onChange={(e) => setUnlistedForm({ ...unlistedForm, showInLivePriceCard: e.target.checked })}
+                      className="h-5 w-5 rounded border-slate-300 text-[#0466c8] focus:ring-[#0466c8] focus:ring-2 cursor-pointer"
+                    />
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider select-none">
+                      Show in Live Indicative Price Card
+                    </span>
+                  </label>
+                </div>
               </div>
 
               <div className="mt-4 flex flex-col gap-1.5">
