@@ -365,7 +365,6 @@ const UnlistedShareDetailPage = () => {
   const [aiInsights, setAiInsights] = useState(null);
   const [isAILoading, setIsAILoading] = useState(false);
   const [partnerCustomPrice, setPartnerCustomPrice] = useState("");
-  const [showQR, setShowQR] = useState(false);
 
   const { user, token } = useAuthStore();
   const isVerifiedPartner = user?.isPartner && (user?.partnerStatus === "verified" || user?.partnerStatus === "pending");
@@ -674,28 +673,25 @@ const UnlistedShareDetailPage = () => {
               </div>
 
               {isVerifiedPartner ? (
-                <>
-                  <button
-                    onClick={() => setShowQR(!showQR)}
-                    className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#023e7d] to-[#0466c8] px-5 py-3.5 text-sm font-black text-white shadow-[0_12px_22px_rgba(2,62,125,0.22)] transition duration-200 hover:-translate-y-0.5"
-                  >
-                    Share the QR
-                  </button>
-                  {showQR && (
-                    <div className="mt-4 flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-slate-50/50 p-5">
-                      <p className="mb-1 text-sm font-bold text-slate-800 text-center">Scan to Pay</p>
-                      <p className="mb-4 text-lg font-black text-[#0466c8] text-center">{formatCurrency(finalAmount)}</p>
-                      <div className="rounded-xl bg-white p-2 shadow-sm ring-1 ring-slate-100">
-                        <img 
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=merchant@upi%26pn=Index%20Money%26am=${finalAmount}%26cu=INR`} 
-                          alt="Payment QR Code" 
-                          className="h-[180px] w-[180px]"
-                        />
-                      </div>
-                      <p className="mt-3 text-[10px] text-slate-400 text-center">Powered by UPI</p>
-                    </div>
-                  )}
-                </>
+                <button
+                  onClick={() => {
+                    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=merchant@upi%26pn=Index%20Money%26am=${finalAmount}%26cu=INR`;
+                    const shareText = `Pay ${formatCurrency(finalAmount)} for ${selectedUnits} units of ${share?.company}. Scan the QR code here: ${qrUrl}`;
+                    
+                    if (navigator.share) {
+                      navigator.share({
+                        title: `Payment for ${share?.company}`,
+                        text: shareText,
+                      }).catch(() => {});
+                    } else {
+                      navigator.clipboard.writeText(shareText);
+                      alert("Payment link copied to clipboard!");
+                    }
+                  }}
+                  className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#023e7d] to-[#0466c8] px-5 py-3.5 text-sm font-black text-white shadow-[0_12px_22px_rgba(2,62,125,0.22)] transition duration-200 hover:-translate-y-0.5"
+                >
+                  Share Payment Link
+                </button>
               ) : (
                 <a
                   href={`https://wa.me/919216180043?text=${investText}`}
