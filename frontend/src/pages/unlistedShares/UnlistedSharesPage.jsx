@@ -223,7 +223,7 @@ const UnlistedSharesPage = () => {
   }, [opportunities]);
 
   const livePriceStocks = React.useMemo(() => {
-    return opportunities.filter(o => o.showInLivePriceCard).slice().reverse();
+    return opportunities.filter(o => o.showInLivePriceCard === true || o.showInLivePriceCard === "true").slice().reverse();
   }, [opportunities]);
 
   const sectorsData = React.useMemo(() => {

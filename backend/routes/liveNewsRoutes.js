@@ -6,7 +6,7 @@ const {
   updateLiveNews,
   deleteLiveNews,
 } = require("../controllers/liveNewsController");
-const auth = require("../middlewares/auth");
+const { requireAdmin } = require("../middlewares/auth");
 
 const router = express.Router();
 
@@ -14,9 +14,9 @@ const router = express.Router();
 router.get("/", getActiveLiveNews);
 
 // Admin routes
-router.get("/admin", auth, getAllLiveNewsAdmin);
-router.post("/admin", auth, createLiveNews);
-router.put("/admin/:id", auth, updateLiveNews);
-router.delete("/admin/:id", auth, deleteLiveNews);
+router.get("/admin", requireAdmin, getAllLiveNewsAdmin);
+router.post("/admin", requireAdmin, createLiveNews);
+router.put("/admin/:id", requireAdmin, updateLiveNews);
+router.delete("/admin/:id", requireAdmin, deleteLiveNews);
 
 module.exports = router;

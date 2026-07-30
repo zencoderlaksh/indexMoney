@@ -734,6 +734,7 @@ const AdminDashboardPage = () => {
         aboutCompany: "",
         strengths: "",
         weaknesses: "",
+        showInLivePriceCard: false,
       });
 
       setUnlistedStatus({
@@ -1904,8 +1905,8 @@ const AdminDashboardPage = () => {
                     <input
                       type="checkbox"
                       name="showInLivePriceCard"
-                      checked={unlistedForm.showInLivePriceCard}
-                      onChange={(e) => setUnlistedForm({ ...unlistedForm, showInLivePriceCard: e.target.checked })}
+                      checked={unlistedForm.showInLivePriceCard || false}
+                      onChange={handleUnlistedChange}
                       className="h-5 w-5 rounded border-slate-300 text-[#0466c8] focus:ring-[#0466c8] focus:ring-2 cursor-pointer"
                     />
                     <span className="text-xs font-bold text-slate-700 uppercase tracking-wider select-none">
