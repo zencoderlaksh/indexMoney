@@ -11,6 +11,7 @@ const mediaRoutes = require("./mediaRoutes");
 const partnerRoutes = require("./partnerRoutes");
 const aiRoutes = require("./aiRoutes");
 const uploadRoutes = require("./uploadRoutes");
+const liveNewsRoutes = require("./liveNewsRoutes");
 
 const router = express.Router();
 
@@ -26,6 +27,7 @@ router.use("/media", mediaRoutes);
 router.use("/partners", partnerRoutes);
 router.use("/ai", aiRoutes);
 router.use("/upload", uploadRoutes);
+router.use("/live-news", liveNewsRoutes);
 
 router.get("/health", (req, res) => {
   res.json({ status: "ok" });

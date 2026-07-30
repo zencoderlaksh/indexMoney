@@ -364,6 +364,8 @@ const UnlistedShareDetailPage = () => {
   const [units, setUnits] = useState(1);
   const [aiInsights, setAiInsights] = useState(null);
   const [isAILoading, setIsAILoading] = useState(false);
+  const [partnerCustomPrice, setPartnerCustomPrice] = useState("");
+  const [showQR, setShowQR] = useState(false);
 
   const { user, token } = useAuthStore();
   const isVerifiedPartner = user?.isPartner && (user?.partnerStatus === "verified" || user?.partnerStatus === "pending");
@@ -426,8 +428,11 @@ const UnlistedShareDetailPage = () => {
     return itemCode === createSlug(code) && itemSlug === createSlug(slug);
   });
 
+  const retailPrice = parseCurrencyValue(share?.price);
+  const customSellingPrice = parseCurrencyValue(partnerCustomPrice || share?.price);
+  
   const activePriceStr = isVerifiedPartner && share?.originalPrice ? share.originalPrice : share?.price;
-  const pricePerUnit = parseCurrencyValue(activePriceStr);
+  const pricePerUnit = isVerifiedPartner ? customSellingPrice : retailPrice;
   const minimumUnits = parseUnits(share?.minimumInvestment);
   const selectedUnits = Math.max(units, minimumUnits);
   const finalAmount = selectedUnits * pricePerUnit;
@@ -574,19 +579,41 @@ const UnlistedShareDetailPage = () => {
               <div className="my-6 border-t border-dashed border-slate-200 dark:border-white/10" />
 
               <div className="space-y-5 text-sm">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-slate-500 dark:text-slate-400">Price per unit</span>
-                  <div className="flex flex-col items-end">
-                    {isVerifiedPartner && share?.originalPrice ? (
-                      <>
-                        <span className="text-[11px] font-bold text-slate-400 line-through mb-0.5">{share.price}</span>
-                        <span className="font-bold text-slate-950">{formatCurrency(pricePerUnit)}</span>
-                      </>
-                    ) : (
-                      <span className="font-bold text-slate-950">{formatCurrency(pricePerUnit)}</span>
-                    )}
+                {isVerifiedPartner ? (
+                  <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
+                    <div className="mb-3 text-xs font-bold text-indigo-900 uppercase tracking-wider">Partner Pricing</div>
+                    <div className="grid grid-cols-2 gap-4 mb-3">
+                      <div>
+                        <div className="text-slate-500 text-[11px] uppercase tracking-wider mb-0.5">Your Buy Price</div>
+                        <div className="font-bold text-indigo-700">{share?.originalPrice || "-"}</div>
+                      </div>
+                      <div>
+                        <div className="text-slate-500 text-[11px] uppercase tracking-wider mb-0.5">Retail Price</div>
+                        <div className="font-bold text-slate-700">{share?.price || "-"}</div>
+                      </div>
+                    </div>
+                    <div className="border-t border-indigo-100/60 pt-3">
+                      <label className="text-slate-500 text-xs block mb-1 font-medium">Your Custom Selling Price (Per Unit)</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₹</span>
+                        <input
+                          type="number"
+                          value={partnerCustomPrice}
+                          onChange={(e) => setPartnerCustomPrice(e.target.value)}
+                          placeholder={share?.price?.replace(/[^0-9.]/g, '') || ""}
+                          className="w-full rounded-lg border border-indigo-200 bg-white pl-7 pr-3 py-2 text-sm font-bold text-slate-800 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-slate-500 dark:text-slate-400">Price per unit</span>
+                    <div className="flex flex-col items-end">
+                      <span className="font-bold text-slate-950">{formatCurrency(pricePerUnit)}</span>
+                    </div>
+                  </div>
+                )}
                 <div className="flex items-center justify-between gap-4">
                   <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">
                     Settlement period
@@ -646,14 +673,39 @@ const UnlistedShareDetailPage = () => {
                 </div>
               </div>
 
-              <a
-                href={`https://wa.me/919216180043?text=${investText}`}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-7 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#0353a4] to-[#023e7d] px-5 py-3.5 text-sm font-black text-white shadow-[0_12px_22px_rgba(2,62,125,0.22)] transition duration-200 hover:-translate-y-0.5"
-              >
-                Invest Now
-              </a>
+              {isVerifiedPartner ? (
+                <>
+                  <button
+                    onClick={() => setShowQR(!showQR)}
+                    className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#023e7d] to-[#0466c8] px-5 py-3.5 text-sm font-black text-white shadow-[0_12px_22px_rgba(2,62,125,0.22)] transition duration-200 hover:-translate-y-0.5"
+                  >
+                    Share the QR
+                  </button>
+                  {showQR && (
+                    <div className="mt-4 flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-slate-50/50 p-5">
+                      <p className="mb-1 text-sm font-bold text-slate-800 text-center">Scan to Pay</p>
+                      <p className="mb-4 text-lg font-black text-[#0466c8] text-center">{formatCurrency(finalAmount)}</p>
+                      <div className="rounded-xl bg-white p-2 shadow-sm ring-1 ring-slate-100">
+                        <img 
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=merchant@upi%26pn=Index%20Money%26am=${finalAmount}%26cu=INR`} 
+                          alt="Payment QR Code" 
+                          className="h-[180px] w-[180px]"
+                        />
+                      </div>
+                      <p className="mt-3 text-[10px] text-slate-400 text-center">Powered by UPI</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <a
+                  href={`https://wa.me/919216180043?text=${investText}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-7 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#0353a4] to-[#023e7d] px-5 py-3.5 text-sm font-black text-white shadow-[0_12px_22px_rgba(2,62,125,0.22)] transition duration-200 hover:-translate-y-0.5"
+                >
+                  Invest Now
+                </a>
+              )}
               <a
                 href={`https://wa.me/919216180043?text=${whatsappText}`}
                 target="_blank"

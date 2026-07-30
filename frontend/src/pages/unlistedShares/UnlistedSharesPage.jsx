@@ -222,6 +222,10 @@ const UnlistedSharesPage = () => {
     return opportunities.slice().reverse();
   }, [opportunities]);
 
+  const livePriceStocks = React.useMemo(() => {
+    return opportunities.filter(o => o.showInLivePriceCard).slice().reverse();
+  }, [opportunities]);
+
   const sectorsData = React.useMemo(() => {
     const map = {};
     opportunities.forEach((o) => {
@@ -386,12 +390,12 @@ const UnlistedSharesPage = () => {
                   <div className="flex items-center justify-center p-8">
                     <Loader2 className="h-6 w-6 animate-spin text-[#0353a4]" />
                   </div>
-                ) : newArrivals.length === 0 ? (
+                ) : livePriceStocks.length === 0 ? (
                   <div className="flex items-center justify-center p-8 text-xs text-slate-500">
                     No opportunities available.
                   </div>
                 ) : (
-                  newArrivals.slice(0, 3).map((item, idx) => (
+                  livePriceStocks.slice(0, 3).map((item, idx) => (
                     <motion.div 
                       key={item.code || idx} 
                       initial={{ opacity: 0, x: 20 }}
@@ -445,7 +449,7 @@ const UnlistedSharesPage = () => {
                     <DialogTitle>Latest Indicative Prices</DialogTitle>
                   </DialogHeader>
                   <div className="flex flex-col mt-4">
-                    {newArrivals.map((item, idx) => (
+                    {livePriceStocks.map((item, idx) => (
                       <div key={`modal-${item.code || idx}`} className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/5 last:border-b-0 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                         <div className="flex items-center gap-4 min-w-0">
                           <div className="h-10 w-10 shrink-0 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#001845] shadow-sm flex items-center justify-center overflow-hidden p-1">

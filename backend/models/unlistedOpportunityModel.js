@@ -25,6 +25,7 @@ const unlistedOpportunitySchema = new mongoose.Schema(
     aboutCompany: { type: String, trim: true },
     strengths: { type: String, trim: true },
     weaknesses: { type: String, trim: true },
+    showInLivePriceCard: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

@@ -486,6 +486,7 @@ const AdminDashboardPage = () => {
     aboutCompany: "",
     strengths: "",
     weaknesses: "",
+    showInLivePriceCard: false,
   });
   const [unlistedLoading, setUnlistedLoading] = React.useState(true);
   const [unlistedSaving, setUnlistedSaving] = React.useState(false);
@@ -513,6 +514,18 @@ const AdminDashboardPage = () => {
   const [blogSaving, setBlogSaving] = React.useState(false);
   const [imageUploading, setImageUploading] = React.useState(false);
   const [blogStatus, setBlogStatus] = React.useState({ kind: "", text: "" });
+
+  const [liveNews, setLiveNews] = React.useState([]);
+  const [liveNewsLoading, setLiveNewsLoading] = React.useState(true);
+  const [liveNewsSaving, setLiveNewsSaving] = React.useState(false);
+  const [liveNewsStatus, setLiveNewsStatus] = React.useState({ kind: "", text: "" });
+  const [liveNewsForm, setLiveNewsForm] = React.useState({
+    id: "",
+    title: "",
+    content: "",
+    referenceUrl: "",
+    isActive: true,
+  });
 
   React.useEffect(() => {
     if (!user || !token) {
@@ -608,6 +621,23 @@ const AdminDashboardPage = () => {
     }
   }, [authHeaders, token]);
 
+  const loadLiveNews = React.useCallback(async () => {
+    if (!token) return;
+    try {
+      setLiveNewsLoading(true);
+      const res = await fetch(`${API_BASE}/live-news/admin`, {
+        headers: authHeaders,
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.error || "Unable to load live news");
+      setLiveNews(Array.isArray(json?.data) ? json.data : []);
+    } catch (error) {
+      setLiveNews([]);
+    } finally {
+      setLiveNewsLoading(false);
+    }
+  }, [authHeaders, token]);
+
   React.useEffect(() => {
     if (!user?.isAdmin || !token) return;
     
@@ -621,6 +651,7 @@ const AdminDashboardPage = () => {
     loadUnlisted,
     loadAdminData,
     loadBlogs,
+    loadLiveNews,
   ]);
 
   if (!user || !token || !user.isAdmin) return null;
@@ -638,8 +669,8 @@ const AdminDashboardPage = () => {
   
 
   const handleUnlistedChange = (e) => {
-    const { name, value } = e.target;
-    setUnlistedForm((curr) => ({ ...curr, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setUnlistedForm((curr) => ({ ...curr, [name]: type === "checkbox" ? checked : value }));
   };
 
   const saveUnlistedOpportunity = async () => {
@@ -978,6 +1009,68 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const handleLiveNewsChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setLiveNewsForm((curr) => ({ ...curr, [name]: type === "checkbox" ? checked : value }));
+  };
+
+  const saveLiveNews = async () => {
+    setLiveNewsStatus({ kind: "", text: "" });
+    if (!liveNewsForm.title.trim() || !liveNewsForm.content.trim()) {
+      setLiveNewsStatus({ kind: "error", text: "Title and content are required." });
+      return;
+    }
+    try {
+      setLiveNewsSaving(true);
+      const isEditing = Boolean(liveNewsForm.id);
+      const url = isEditing
+        ? `${API_BASE}/live-news/admin/${liveNewsForm.id}`
+        : `${API_BASE}/live-news/admin`;
+      const method = isEditing ? "PUT" : "POST";
+      const payload = { ...liveNewsForm };
+      if (!isEditing) delete payload.id;
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json", ...authHeaders },
+        body: JSON.stringify(payload),
+      });
+
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.error || "Failed to save live news");
+
+      setLiveNewsForm({ id: "", title: "", content: "", referenceUrl: "", isActive: true });
+      setLiveNewsStatus({ kind: "success", text: isEditing ? "Live news updated." : "Live news created." });
+      await loadLiveNews();
+    } catch (error) {
+      setLiveNewsStatus({ kind: "error", text: error.message || "Unable to save live news" });
+    } finally {
+      setLiveNewsSaving(false);
+    }
+  };
+
+  const deleteLiveNewsItem = async (id) => {
+    if (!window.confirm("Delete this live news item?")) return;
+    try {
+      setLiveNewsStatus({ kind: "", text: "" });
+      const res = await fetch(`${API_BASE}/live-news/admin/${id}`, {
+        method: "DELETE",
+        headers: authHeaders,
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.error || "Failed to delete live news");
+      
+      if (liveNewsForm.id === id) {
+        setLiveNewsForm({ id: "", title: "", content: "", referenceUrl: "", isActive: true });
+      }
+      setLiveNewsStatus({ kind: "success", text: "Live news deleted." });
+      await loadLiveNews();
+    } catch (error) {
+      setLiveNewsStatus({ kind: "error", text: error.message || "Unable to delete live news" });
+    }
+  };
+
+
   const userRows = usersData.map((entry) => ({
     ...entry,
     id: entry.id || entry._id || entry.email,
@@ -1089,6 +1182,13 @@ const AdminDashboardPage = () => {
             value={unlistedMeta.totalRows || "0"}
             sub="Opportunity rows"
             color="#205d63"
+          />
+          <StatCard
+            icon={BookOpen}
+            label="Live News"
+            value={liveNewsLoading ? "..." : liveNews.length}
+            sub="News items"
+            color="#e63946"
           />
         </div>
 
@@ -1533,6 +1633,129 @@ const AdminDashboardPage = () => {
           </section>
         </div>
 
+        {/* Live News CMS */}
+        <div className="mt-8">
+          <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <SectionHeader
+              icon={BookOpen}
+              eyebrow="Live News CMS"
+              title="Manage Live News"
+              description="Add, edit, or delete live news items for the frontend modal."
+            />
+            
+            <div className="grid gap-8 lg:grid-cols-[1.5fr_1fr]">
+              <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-6">
+                <h3 className="mb-6 text-sm font-bold text-slate-800">
+                  {liveNewsForm.id ? "Edit News Item" : "Create New News Item"}
+                </h3>
+                <StatusBanner kind={liveNewsStatus.kind} text={liveNewsStatus.text} />
+                
+                <div className="flex flex-col gap-4">
+                  <input
+                    name="title"
+                    type="text"
+                    value={liveNewsForm.title}
+                    onChange={handleLiveNewsChange}
+                    placeholder="News Title"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
+                  />
+                  <textarea
+                    name="content"
+                    rows={4}
+                    value={liveNewsForm.content}
+                    onChange={handleLiveNewsChange}
+                    placeholder="News Content..."
+                    className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
+                  />
+                  <input
+                    name="referenceUrl"
+                    type="text"
+                    value={liveNewsForm.referenceUrl}
+                    onChange={handleLiveNewsChange}
+                    placeholder="Reference URL (optional)"
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0466c8] focus:ring-2 focus:ring-[#0466c8]/20"
+                  />
+                  
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="newsIsActive"
+                      name="isActive"
+                      checked={liveNewsForm.isActive}
+                      onChange={handleLiveNewsChange}
+                      className="h-4 w-4 rounded border-slate-300 text-[#0466c8] focus:ring-[#0466c8]"
+                    />
+                    <label htmlFor="newsIsActive" className="text-sm font-medium text-slate-700">
+                      Active
+                    </label>
+                  </div>
+                  
+                  <div className="mt-4 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={saveLiveNews}
+                      disabled={liveNewsSaving}
+                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#023e7d] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                    >
+                      <Save className="h-4 w-4" />
+                      {liveNewsSaving ? "Saving..." : liveNewsForm.id ? "Update News" : "Save News"}
+                    </button>
+                    {liveNewsForm.id && (
+                      <button
+                        type="button"
+                        onClick={() => setLiveNewsForm({ id: "", title: "", content: "", referenceUrl: "", isActive: true })}
+                        className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-white"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="rounded-2xl border border-slate-100 bg-white">
+                <div className="border-b border-slate-100 p-4 font-bold text-slate-800">
+                  Existing News ({liveNews.length})
+                </div>
+                <div className="max-h-[500px] divide-y divide-slate-100 overflow-y-auto">
+                  {liveNews.length ?
+                    liveNews.map((news) => (
+                      <div key={news.id || news._id} className="p-4">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <h4 className="font-bold text-slate-900">{news.title}</h4>
+                          <span className={`px-2 py-0.5 rounded text-xs font-semibold ${news.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
+                            {news.isActive ? "Active" : "Inactive"}
+                          </span>
+                        </div>
+                        <p className="mt-1 line-clamp-2 text-xs text-slate-500">{news.content}</p>
+                        <div className="mt-3 flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setLiveNewsForm(news)}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                          >
+                            <Pencil className="h-3 w-3" /> Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deleteLiveNewsItem(news.id || news._id)}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-red-100 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-3 w-3" /> Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  : <div className="p-6 text-center text-sm text-slate-400">
+                      {liveNewsLoading ? "Loading..." : "No live news found."}
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
         <div className="mt-8">
           <section id="unlisted-form-section" className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
             <SectionHeader
@@ -1830,6 +2053,20 @@ const AdminDashboardPage = () => {
                     />
                   </div>
                 </div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="showInLivePriceCard"
+                  name="showInLivePriceCard"
+                  checked={unlistedForm.showInLivePriceCard}
+                  onChange={handleUnlistedChange}
+                  className="h-4 w-4 rounded border-slate-300 text-[#0466c8] focus:ring-[#0466c8]"
+                />
+                <label htmlFor="showInLivePriceCard" className="text-sm font-medium text-slate-700">
+                  Showcase in Live Indicative Price Card
+                </label>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
